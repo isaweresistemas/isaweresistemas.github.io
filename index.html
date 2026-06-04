@@ -4,16 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ISAWERE Sistemas — Sua Gestão em Outro Nível</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --blue-deep: #050d2e;
-    --blue-mid: #0a1f6e;
     --blue-bright: #1a5fff;
     --blue-electric: #2d8cff;
     --cyan: #00d4ff;
     --gold: #f5a623;
-    --green-edu: #1a9e5c;
     --white: #ffffff;
     --gray-light: #e8edf8;
     --gray-soft: #b0bcd4;
@@ -23,632 +21,744 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--blue-deep); color: var(--white); overflow-x: hidden; }
 
-  /* ── CAROUSEL ── */
-  #carousel {
-    position: relative; width: 100%; height: 420px; overflow: hidden;
-    background: #030a1e;
-  }
-  .carousel-track {
-    display: flex; height: 100%;
-    transition: transform 0.7s cubic-bezier(0.77,0,0.175,1);
-  }
-  .carousel-slide {
-    min-width: 100%; height: 100%; position: relative;
-    display: flex; align-items: center; padding: 0 8%;
-    flex-shrink: 0;
-  }
-  .cs-bg {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    opacity: 0.18;
-  }
-  .cs-overlay {
-    position: absolute; inset: 0;
-  }
-  .cs-content {
-    position: relative; max-width: 580px; z-index: 2;
-  }
-  .cs-tag {
-    display: inline-block; padding: 0.3rem 0.9rem;
-    border-radius: 50px; font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;
-  }
-  .cs-title {
-    font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.4rem);
-    font-weight: 800; line-height: 1.1; margin-bottom: 0.8rem;
-    letter-spacing: -0.5px;
-  }
-  .cs-desc { font-size: 0.92rem; line-height: 1.65; color: var(--gray-soft); margin-bottom: 1.4rem; max-width: 460px; }
-  .cs-btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.65rem 1.5rem; border-radius: 50px;
-    font-weight: 700; font-size: 0.85rem; text-decoration: none;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .cs-btn:hover { opacity: 0.85; transform: translateY(-2px); }
-
-  .carousel-nav {
-    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 10;
-  }
-  .carousel-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.3); border: none; cursor: pointer;
-    transition: background 0.3s, transform 0.3s; padding: 0;
-  }
-  .carousel-dot.active { background: var(--cyan); transform: scale(1.3); }
-
-  .carousel-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-    color: #fff; width: 40px; height: 40px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 10; font-size: 1rem;
-    transition: background 0.2s; backdrop-filter: blur(4px);
-  }
-  .carousel-arrow:hover { background: rgba(45,140,255,0.3); }
-  .carousel-arrow.prev { left: 16px; }
-  .carousel-arrow.next { right: 16px; }
-
-  /* ── HEADER ── */
+  /* ══════════════════════════════
+     HEADER
+  ══════════════════════════════ */
   header {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 200;
-    background: rgba(5,13,46,0.9);
-    backdrop-filter: blur(14px);
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 300;
+    background: rgba(5,13,46,0.92); backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(45,140,255,0.18);
-    padding: 0 5%;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px;
+    padding: 0 5%; display: flex; align-items: center;
+    justify-content: space-between; height: 64px;
   }
   .logo-text {
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
     background: linear-gradient(135deg, var(--cyan), var(--blue-electric));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
   }
-  nav { display: flex; gap: 1.8rem; align-items: center; }
-  nav a { font-size: 0.82rem; font-weight: 500; color: var(--gray-soft); text-decoration: none; transition: color 0.25s; }
-  nav a:hover { color: var(--cyan); }
-  .btn-contact {
+  .header-nav { display: flex; gap: 1.6rem; align-items: center; }
+  .header-nav a { font-size: 0.82rem; font-weight: 500; color: var(--gray-soft); text-decoration: none; transition: color 0.2s; }
+  .header-nav a:hover { color: var(--cyan); }
+  .btn-cta {
     background: linear-gradient(135deg, var(--blue-bright), var(--cyan));
     color: #fff; padding: 0.5rem 1.3rem; border-radius: 50px;
     font-weight: 600; font-size: 0.82rem; text-decoration: none;
-    transition: opacity 0.25s, transform 0.2s; white-space: nowrap;
+    transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
   }
-  .btn-contact:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-cta:hover { opacity: 0.88; transform: translateY(-1px); }
 
-  /* ── HERO ── */
-  #hero {
-    min-height: 88vh; display: flex; align-items: center;
-    padding: 100px 5% 70px; position: relative; overflow: hidden;
+  /* ══════════════════════════════
+     CAROUSEL
+  ══════════════════════════════ */
+  #carousel {
+    position: relative; width: 100%; height: 400px; overflow: hidden;
+    background: #030a1e; margin-top: 64px;
   }
-  .hero-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 60% at 70% 50%, rgba(26,95,255,0.22) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 70% at 20% 80%, rgba(0,212,255,0.10) 0%, transparent 60%),
-      linear-gradient(160deg, #050d2e 0%, #071545 60%, #050d2e 100%);
+  .carousel-track { display: flex; height: 100%; transition: transform 0.7s cubic-bezier(0.77,0,0.175,1); }
+  .carousel-slide {
+    min-width: 100%; height: 100%; position: relative;
+    display: flex; align-items: center; padding: 0 8%; flex-shrink: 0;
   }
-  .hero-grid {
-    position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(45,140,255,0.06) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(45,140,255,0.06) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 80% at 60% 50%, black, transparent);
+  .cs-overlay { position: absolute; inset: 0; }
+  .cs-content { position: relative; max-width: 600px; z-index: 2; }
+  .cs-tag {
+    display: inline-block; padding: 0.28rem 0.9rem; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 0.9rem;
   }
-  .hero-content { position: relative; max-width: 600px; }
-  .hero-badge {
+  .cs-title {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 800; line-height: 1.1; margin-bottom: 0.75rem; letter-spacing: -0.5px;
+  }
+  .cs-desc { font-size: 0.9rem; line-height: 1.65; color: var(--gray-soft); margin-bottom: 1.3rem; max-width: 480px; }
+  .cs-btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(45,140,255,0.15); border: 1px solid rgba(45,140,255,0.35);
-    padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem;
-    font-weight: 500; color: var(--cyan); margin-bottom: 1.4rem;
-    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.6rem 1.4rem; border-radius: 50px; font-weight: 700;
+    font-size: 0.83rem; text-decoration: none; transition: opacity 0.2s, transform 0.2s;
   }
-  .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
-  .hero-title {
-    font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 5vw, 3.6rem);
-    font-weight: 800; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 1.1rem;
+  .cs-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+  .carousel-nav {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 7px; z-index: 10;
   }
-  .hero-title .accent {
-    background: linear-gradient(135deg, var(--blue-electric), var(--cyan));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  .carousel-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.25); border: none; cursor: pointer;
+    transition: background 0.3s, transform 0.3s; padding: 0;
   }
-  .hero-sub { font-size: 1rem; line-height: 1.7; color: var(--gray-soft); margin-bottom: 2rem; max-width: 480px; }
-  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--blue-bright) 0%, var(--cyan) 100%);
-    color: #fff; padding: 0.85rem 2rem; border-radius: 50px;
-    font-weight: 700; font-size: 0.95rem; text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 24px rgba(26,95,255,0.45);
+  .carousel-dot.active { background: var(--cyan); transform: scale(1.35); }
+  .carousel-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+    color: #fff; width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; font-size: 1.1rem;
+    transition: background 0.2s; backdrop-filter: blur(4px);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,95,255,0.55); }
-  .btn-secondary {
-    background: transparent; color: var(--cyan);
-    border: 1.5px solid rgba(0,212,255,0.45); padding: 0.85rem 2rem;
-    border-radius: 50px; font-weight: 600; font-size: 0.95rem;
-    text-decoration: none; transition: background 0.25s, border-color 0.25s;
-  }
-  .btn-secondary:hover { background: rgba(0,212,255,0.08); border-color: var(--cyan); }
-  .hero-stats {
-    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
-    display: flex; flex-direction: column; gap: 1rem;
-  }
-  .stat-card {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2);
-    border-radius: 16px; padding: 1.2rem 1.6rem;
-    backdrop-filter: blur(8px); min-width: 180px;
-  }
-  .stat-num {
-    font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
-    background: linear-gradient(135deg, var(--white), var(--cyan));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .stat-label { font-size: 0.8rem; color: var(--gray-soft); margin-top: 0.2rem; }
+  .carousel-arrow:hover { background: rgba(45,140,255,0.3); }
+  .carousel-arrow.prev { left: 14px; }
+  .carousel-arrow.next { right: 14px; }
 
-  /* ── SECTIONS SHARED ── */
-  section { padding: 80px 5%; }
-  .section-label {
-    font-size: 0.73rem; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--cyan); margin-bottom: 0.7rem;
+  /* ══════════════════════════════
+     TAB NAVIGATION BAR
+  ══════════════════════════════ */
+  #tab-nav {
+    background: rgba(3,10,30,0.97);
+    border-bottom: 1px solid rgba(45,140,255,0.15);
+    position: sticky; top: 64px; z-index: 200;
+    padding: 0 5%;
+    backdrop-filter: blur(16px);
   }
-  .section-title {
-    font-family: 'Syne', sans-serif; font-size: clamp(1.7rem, 3vw, 2.6rem);
-    font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 1rem;
+  .tab-list {
+    display: flex; gap: 0; overflow-x: auto;
+    scrollbar-width: none; -ms-overflow-style: none;
   }
-  .section-desc { color: var(--gray-soft); max-width: 520px; line-height: 1.7; }
-
-  /* ── GRID LAYOUTS ── */
-  #products, #disciplines, #formations { background: linear-gradient(180deg, #050d2e 0%, #071040 100%); }
-  #why { background: linear-gradient(180deg, #071040 0%, #050d2e 100%); }
-
-  .section-header { text-align: center; margin-bottom: 3rem; }
-  .section-header .section-desc { margin: 0 auto; }
-
-  /* ── PRODUCT CARDS ── */
-  .products-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.4rem;
+  .tab-list::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 1rem 1.4rem; border: none; background: transparent;
+    color: var(--gray-soft); font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500; cursor: pointer;
+    white-space: nowrap; border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    position: relative;
   }
-  .product-card {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(45,140,255,0.15);
-    border-radius: 20px; padding: 1.8rem; position: relative; overflow: hidden;
+  .tab-btn .tab-icon { font-size: 1rem; }
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active { color: var(--white); border-bottom-color: var(--cyan); font-weight: 600; }
+  .tab-btn.active .tab-icon { filter: drop-shadow(0 0 6px var(--cyan)); }
+
+  /* active accent bar */
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--blue-bright), var(--cyan));
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* highlight badge on "Disciplinas" */
+  .tab-highlight {
+    display: inline-block; background: rgba(245,166,35,0.18);
+    color: var(--gold); border: 1px solid rgba(245,166,35,0.4);
+    font-size: 0.6rem; font-weight: 700; padding: 0.1rem 0.45rem;
+    border-radius: 50px; letter-spacing: 0.05em; text-transform: uppercase;
+    vertical-align: middle; margin-left: 2px; white-space: nowrap;
+  }
+
+  /* ══════════════════════════════
+     TAB PANELS
+  ══════════════════════════════ */
+  .tab-panel { display: none; padding: 60px 5%; }
+  .tab-panel.active { display: block; animation: fadeSlide 0.35s ease; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header { text-align: center; margin-bottom: 2.8rem; }
+  .panel-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 0.5rem;
+  }
+  .panel-title {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 800; letter-spacing: -0.5px; line-height: 1.12; margin-bottom: 0.8rem;
+  }
+  .panel-desc { color: var(--gray-soft); max-width: 500px; margin: 0 auto; line-height: 1.7; font-size: 0.95rem; }
+
+  /* ══════════════════════════════
+     CARDS GRID
+  ══════════════════════════════ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.4rem;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(45,140,255,0.15);
+    border-radius: 20px; padding: 1.8rem;
+    position: relative; overflow: hidden;
     transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
   }
-  .product-card::before {
-    content:''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(45,140,255,0.07) 0%, transparent 60%);
-    opacity: 0; transition: opacity 0.3s;
-    pointer-events: none;
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(45,140,255,0.06) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.3s; pointer-events: none;
   }
-  .product-card:hover { transform: translateY(-5px); border-color: rgba(45,140,255,0.4); box-shadow: 0 16px 48px rgba(26,95,255,0.18); }
-  .product-card:hover::before { opacity: 1; }
-  .product-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.1rem; }
-  .product-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
-  .product-tagline { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; }
-  .product-desc { font-size: 0.88rem; line-height: 1.65; color: var(--gray-soft); margin-bottom: 1.2rem; }
-  .product-features { list-style: none; margin-bottom: 1.4rem; display: flex; flex-direction: column; gap: 0.4rem; }
-  .product-features li { font-size: 0.83rem; color: var(--gray-light); display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.4; }
-  .product-features li::before { content: '✓'; font-weight: 700; font-size: 0.78rem; flex-shrink: 0; margin-top: 1px; }
-  .product-link {
+  .card:hover { transform: translateY(-5px); border-color: rgba(45,140,255,0.38); box-shadow: 0 14px 44px rgba(26,95,255,0.16); }
+  .card:hover::before { opacity: 1; }
+
+  /* special highlight card (robot promo) */
+  .card.card-promo {
+    border-color: rgba(245,166,35,0.35);
+    background: rgba(245,166,35,0.04);
+  }
+  .card.card-promo::before { background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, transparent 55%); }
+  .card.card-promo:hover { border-color: rgba(245,166,35,0.6); box-shadow: 0 14px 44px rgba(245,166,35,0.14); }
+
+  .card-icon {
+    width: 50px; height: 50px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1.1rem;
+  }
+  .card-name { font-family: 'Syne', sans-serif; font-size: 1.12rem; font-weight: 700; margin-bottom: 0.35rem; }
+  .card-tagline { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.7rem; }
+  .card-desc { font-size: 0.87rem; line-height: 1.65; color: var(--gray-soft); margin-bottom: 1.1rem; }
+
+  .card-features { list-style: none; margin-bottom: 1.3rem; display: flex; flex-direction: column; gap: 0.38rem; }
+  .card-features li {
+    font-size: 0.82rem; color: var(--gray-light);
+    display: flex; align-items: flex-start; gap: 0.45rem; line-height: 1.4;
+  }
+  .card-features li::before { content: '✓'; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* promo banner inside card */
+  .promo-banner {
+    display: flex; align-items: center; gap: 0.6rem;
+    background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(245,166,35,0.05));
+    border: 1px solid rgba(245,166,35,0.4); border-radius: 12px;
+    padding: 0.7rem 1rem; margin-bottom: 1.2rem; font-size: 0.82rem; line-height: 1.4;
+  }
+  .promo-banner strong { color: var(--gold); }
+  .promo-banner .promo-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+  .card-link {
     display: inline-flex; align-items: center; gap: 0.4rem;
-    font-size: 0.83rem; font-weight: 600; text-decoration: none;
-    padding: 0.5rem 1.1rem; border-radius: 50px;
+    font-size: 0.82rem; font-weight: 600; text-decoration: none;
+    padding: 0.48rem 1.1rem; border-radius: 50px;
     transition: opacity 0.2s, transform 0.2s;
   }
-  .product-link:hover { opacity: 0.82; transform: translateX(2px); }
+  .card-link:hover { opacity: 0.82; transform: translateX(2px); }
 
-  /* card themes */
-  .card-blue .product-icon { background: rgba(26,95,255,0.2); }
-  .card-blue .product-tagline, .card-blue .product-features li::before { color: var(--blue-electric); }
-  .card-blue .product-link { background: rgba(26,95,255,0.18); color: var(--blue-electric); }
+  /* colour themes */
+  .th-blue  .card-icon { background: rgba(26,95,255,0.2); }
+  .th-blue  .card-tagline, .th-blue  .card-features li::before { color: var(--blue-electric); }
+  .th-blue  .card-link { background: rgba(26,95,255,0.18); color: var(--blue-electric); }
 
-  .card-cyan .product-icon { background: rgba(0,212,255,0.15); }
-  .card-cyan .product-tagline, .card-cyan .product-features li::before { color: var(--cyan); }
-  .card-cyan .product-link { background: rgba(0,212,255,0.12); color: var(--cyan); }
+  .th-cyan  .card-icon { background: rgba(0,212,255,0.15); }
+  .th-cyan  .card-tagline, .th-cyan  .card-features li::before { color: var(--cyan); }
+  .th-cyan  .card-link { background: rgba(0,212,255,0.12); color: var(--cyan); }
 
-  .card-gold .product-icon { background: rgba(245,166,35,0.15); }
-  .card-gold .product-tagline, .card-gold .product-features li::before { color: var(--gold); }
-  .card-gold .product-link { background: rgba(245,166,35,0.12); color: var(--gold); }
+  .th-gold  .card-icon { background: rgba(245,166,35,0.15); }
+  .th-gold  .card-tagline, .th-gold  .card-features li::before { color: var(--gold); }
+  .th-gold  .card-link { background: rgba(245,166,35,0.12); color: var(--gold); }
 
-  .card-green .product-icon { background: rgba(0,230,130,0.15); }
-  .card-green .product-tagline, .card-green .product-features li::before { color: #00e682; }
-  .card-green .product-link { background: rgba(0,230,130,0.12); color: #00e682; }
+  .th-green .card-icon { background: rgba(0,230,130,0.15); }
+  .th-green .card-tagline, .th-green .card-features li::before { color: #00e682; }
+  .th-green .card-link { background: rgba(0,230,130,0.12); color: #00e682; }
 
-  .card-purple .product-icon { background: rgba(160,80,255,0.15); }
-  .card-purple .product-tagline, .card-purple .product-features li::before { color: #a050ff; }
-  .card-purple .product-link { background: rgba(160,80,255,0.12); color: #a050ff; }
+  .th-purple .card-icon { background: rgba(160,80,255,0.15); }
+  .th-purple .card-tagline, .th-purple .card-features li::before { color: #a050ff; }
+  .th-purple .card-link { background: rgba(160,80,255,0.12); color: #a050ff; }
 
-  .card-teal .product-icon { background: rgba(0,200,180,0.15); }
-  .card-teal .product-tagline, .card-teal .product-features li::before { color: #00c8b4; }
-  .card-teal .product-link { background: rgba(0,200,180,0.12); color: #00c8b4; }
+  .th-teal  .card-icon { background: rgba(0,200,180,0.15); }
+  .th-teal  .card-tagline, .th-teal  .card-features li::before { color: #00c8b4; }
+  .th-teal  .card-link { background: rgba(0,200,180,0.12); color: #00c8b4; }
 
-  .card-edugreen .product-icon { background: rgba(26,158,92,0.2); }
-  .card-edugreen .product-tagline, .card-edugreen .product-features li::before { color: #2ecf80; }
-  .card-edugreen .product-link { background: rgba(26,158,92,0.15); color: #2ecf80; }
+  .th-edu   .card-icon { background: rgba(26,158,92,0.2); }
+  .th-edu   .card-tagline, .th-edu   .card-features li::before { color: #2ecf80; }
+  .th-edu   .card-link { background: rgba(26,158,92,0.15); color: #2ecf80; }
 
-  .card-orange .product-icon { background: rgba(255,120,30,0.18); }
-  .card-orange .product-tagline, .card-orange .product-features li::before { color: #ff8c42; }
-  .card-orange .product-link { background: rgba(255,120,30,0.15); color: #ff8c42; }
+  .th-orange .card-icon { background: rgba(255,120,30,0.18); }
+  .th-orange .card-tagline, .th-orange .card-features li::before { color: #ff8c42; }
+  .th-orange .card-link { background: rgba(255,120,30,0.15); color: #ff8c42; }
 
-  /* ── WHY ISAWERE ── */
-  .why-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
-  .why-pills { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 2rem; }
-  .pill { padding: 0.5rem 1.1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; background: rgba(45,140,255,0.1); border: 1px solid rgba(45,140,255,0.25); color: var(--cyan); }
-  .why-benefits { display: flex; flex-direction: column; gap: 1.4rem; }
-  .benefit { display: flex; gap: 1.1rem; align-items: flex-start; padding: 1.3rem; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(45,140,255,0.12); transition: border-color 0.25s; }
+  .th-rose  .card-icon { background: rgba(255,60,100,0.15); }
+  .th-rose  .card-tagline, .th-rose  .card-features li::before { color: #ff6080; }
+  .th-rose  .card-link { background: rgba(255,60,100,0.12); color: #ff6080; }
+
+  /* ══════════════════════════════
+     WHY SECTION (inside "Por que" tab)
+  ══════════════════════════════ */
+  .why-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 2rem; }
+  .why-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.8rem; }
+  .pill { padding: 0.45rem 1rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600; background: rgba(45,140,255,0.1); border: 1px solid rgba(45,140,255,0.25); color: var(--cyan); }
+  .why-benefits { display: flex; flex-direction: column; gap: 1.2rem; }
+  .benefit { display: flex; gap: 1rem; align-items: flex-start; padding: 1.2rem; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(45,140,255,0.12); transition: border-color 0.25s; }
   .benefit:hover { border-color: rgba(45,140,255,0.3); }
-  .benefit-icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(26,95,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
-  .benefit-title { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 0.3rem; }
-  .benefit-desc { font-size: 0.86rem; color: var(--gray-soft); line-height: 1.6; }
+  .benefit-icon { width: 40px; height: 40px; border-radius: 11px; background: rgba(26,95,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .benefit-title { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 0.25rem; font-size: 0.95rem; }
+  .benefit-desc { font-size: 0.84rem; color: var(--gray-soft); line-height: 1.6; }
 
-  /* ── CONTACT ── */
-  #contact { background: linear-gradient(135deg, #050d2e 0%, #071545 100%); position: relative; overflow: hidden; }
-  #contact::before { content:''; position: absolute; top: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(26,95,255,0.15), transparent 70%); pointer-events: none; }
-  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-  .contact-methods { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 2rem; }
-  .contact-item { display: flex; align-items: center; gap: 1rem; padding: 0.95rem 1.3rem; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.15); text-decoration: none; color: var(--white); transition: background 0.25s, border-color 0.25s, transform 0.2s; }
-  .contact-item:hover { background: rgba(45,140,255,0.1); border-color: rgba(45,140,255,0.4); transform: translateX(4px); }
-  .contact-icon { font-size: 1.25rem; flex-shrink: 0; }
-  .contact-label { font-size: 0.72rem; color: var(--gray-soft); letter-spacing: 0.05em; text-transform: uppercase; }
-  .contact-value { font-weight: 600; font-size: 0.92rem; }
-  .social-links { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.4rem; }
-  .social-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.1rem; border-radius: 50px; background: rgba(45,140,255,0.1); border: 1px solid rgba(45,140,255,0.25); color: var(--cyan); font-size: 0.8rem; font-weight: 600; text-decoration: none; transition: background 0.25s, border-color 0.25s; }
-  .social-link:hover { background: rgba(45,140,255,0.2); border-color: var(--cyan); }
-  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-  .form-group label { font-size: 0.78rem; color: var(--gray-soft); font-weight: 500; }
-  .form-group input, .form-group select, .form-group textarea { background: rgba(255,255,255,0.05); border: 1px solid rgba(45,140,255,0.2); border-radius: 10px; padding: 0.72rem 1rem; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; transition: border-color 0.25s, background 0.25s; outline: none; width: 100%; }
-  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(176,188,212,0.5); }
+  /* ══════════════════════════════
+     CONTACT SECTION
+  ══════════════════════════════ */
+  #contact {
+    background: linear-gradient(135deg, #040c28 0%, #071545 100%);
+    padding: 70px 5%; position: relative; overflow: hidden;
+    border-top: 1px solid rgba(45,140,255,0.1);
+  }
+  #contact::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 450px; height: 450px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,95,255,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; position: relative; }
+  .contact-label-sm { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.5rem; }
+  .contact-title { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 0.8rem; }
+  .contact-sub { color: var(--gray-soft); font-size: 0.92rem; line-height: 1.7; margin-bottom: 1.8rem; }
+  .contact-methods { display: flex; flex-direction: column; gap: 0.8rem; }
+  .contact-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.14); text-decoration: none; color: var(--white); transition: background 0.22s, border-color 0.22s, transform 0.2s; }
+  .contact-item:hover { background: rgba(45,140,255,0.1); border-color: rgba(45,140,255,0.38); transform: translateX(4px); }
+  .ci-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .ci-label { font-size: 0.7rem; color: var(--gray-soft); letter-spacing: 0.05em; text-transform: uppercase; }
+  .ci-value { font-weight: 600; font-size: 0.9rem; }
+  .social-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.3rem; }
+  .social-btn { display: flex; align-items: center; gap: 0.45rem; padding: 0.48rem 1rem; border-radius: 50px; background: rgba(45,140,255,0.1); border: 1px solid rgba(45,140,255,0.25); color: var(--cyan); font-size: 0.78rem; font-weight: 600; text-decoration: none; transition: background 0.22s, border-color 0.22s; }
+  .social-btn:hover { background: rgba(45,140,255,0.2); border-color: var(--cyan); }
+
+  /* form */
+  .form-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(45,140,255,0.18); border-radius: 20px; padding: 2rem; }
+  .form-box-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 1.3rem; }
+  .contact-form { display: flex; flex-direction: column; gap: 0.9rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group label { font-size: 0.76rem; color: var(--gray-soft); font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(45,140,255,0.2);
+    border-radius: 10px; padding: 0.7rem 1rem; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.87rem;
+    transition: border-color 0.22s, background 0.22s; outline: none; width: 100%;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(176,188,212,0.45); }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue-electric); background: rgba(45,140,255,0.08); }
   .form-group select option { background: #071040; }
-  .form-group textarea { resize: vertical; min-height: 95px; }
-  .btn-submit { background: linear-gradient(135deg, var(--blue-bright), var(--cyan)); color: #fff; padding: 0.88rem 2rem; border: none; border-radius: 50px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 4px 20px rgba(26,95,255,0.4); align-self: flex-start; }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--blue-bright), var(--cyan));
+    color: #fff; padding: 0.85rem 2rem; border: none; border-radius: 50px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 20px rgba(26,95,255,0.38); align-self: flex-start;
+  }
   .btn-submit:hover { opacity: 0.88; transform: translateY(-2px); }
 
-  /* ── FOOTER ── */
-  footer { background: #030a1e; border-top: 1px solid rgba(45,140,255,0.12); padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-  .footer-left { font-size: 0.83rem; color: var(--gray-soft); }
-  .footer-left span { color: var(--cyan); font-weight: 600; }
-  .ceo-badge { display: flex; align-items: center; gap: 0.7rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.6rem 1.2rem; border-radius: 50px; }
-  .ceo-icon { font-size: 1.1rem; }
-  .ceo-text { font-size: 0.78rem; color: var(--gray-soft); }
-  .ceo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--white); }
-  .ceo-title { font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.05em; }
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    background: #020916; border-top: 1px solid rgba(45,140,255,0.1);
+    padding: 1.8rem 5%; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-copy { font-size: 0.82rem; color: var(--gray-soft); }
+  .footer-copy span { color: var(--cyan); font-weight: 600; }
+  .ceo-badge { display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.55rem 1.1rem; border-radius: 50px; }
+  .ceo-icon { font-size: 1rem; }
+  .ceo-role { font-size: 0.72rem; color: var(--gray-soft); }
+  .ceo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.86rem; }
+  .ceo-company { font-size: 0.68rem; color: var(--cyan); letter-spacing: 0.04em; }
 
-  /* ── STRIPE ── */
-  .stripe { height: 1px; background: linear-gradient(90deg, transparent, rgba(45,140,255,0.3), transparent); margin: 0 5%; }
+  /* ══════════════════════════════
+     DIVIDER
+  ══════════════════════════════ */
+  .stripe { height: 1px; background: linear-gradient(90deg, transparent, rgba(45,140,255,0.28), transparent); }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .hero-stats { display: none; }
-    .why-inner, .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-    nav { display: none; }
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+  @media (max-width: 860px) {
+    .header-nav { display: none; }
+    #carousel { height: 320px; }
+    .cs-title { font-size: 1.45rem; }
+    .tab-btn { padding: 0.85rem 0.9rem; font-size: 0.76rem; }
+    .tab-btn .tab-label { display: none; }
+    .tab-btn .tab-icon { font-size: 1.2rem; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .why-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
     .form-row { grid-template-columns: 1fr; }
-    .products-grid { grid-template-columns: 1fr; }
-    #carousel { height: 340px; }
-    .cs-title { font-size: 1.5rem; }
   }
 
-  /* ── SCROLL REVEAL ── */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  /* ══════════════════════════════
+     SCROLL REVEAL
+  ══════════════════════════════ */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ═══════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════ -->
 <header>
   <div class="logo-text">ISAWERE</div>
-  <nav>
-    <a href="#products">Sistemas</a>
-    <a href="#disciplines">Disciplinas</a>
-    <a href="#formations">Formações</a>
-    <a href="#why">Por que ISAWERE</a>
+  <nav class="header-nav">
+    <a href="#" onclick="switchTab('saude')">Saúde</a>
+    <a href="#" onclick="switchTab('educacao')">Educação</a>
+    <a href="#" onclick="switchTab('formacoes')">Formações</a>
+    <a href="#" onclick="switchTab('disciplinas')">Disciplinas</a>
+    <a href="#" onclick="switchTab('apps')">Aplicativos</a>
     <a href="#contact">Contato</a>
   </nav>
-  <a class="btn-contact" href="#contact">Fale Conosco</a>
+  <a class="btn-cta" href="#contact">Fale Conosco</a>
 </header>
 
-<!-- CAROUSEL -->
-<div id="carousel" style="margin-top:64px;">
+<!-- ═══════════════════════════════════════════
+     CAROUSEL
+════════════════════════════════════════════ -->
+<div id="carousel">
   <div class="carousel-track" id="carouselTrack">
 
-    <!-- Slide 1: Agendamentos -->
+    <!-- Slide 1 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#071040,#0a2060);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.92) 45%, rgba(26,95,255,0.08) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(5,10,40,0.97) 45%,rgba(26,95,255,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.15);color:var(--blue-electric);border:1px solid rgba(45,140,255,0.3);">🩺 Sistema de Saúde</div>
         <div class="cs-title">ISAWERE <span style="background:linear-gradient(135deg,var(--blue-electric),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Agendamentos Médicos</span></div>
-        <p class="cs-desc">O sistema completo para gestão de consultas, exames e filas de espera. Cadastre pacientes, agende em lote, emita comprovantes e acompanhe tudo em tempo real.</p>
+        <p class="cs-desc">Gestão completa de consultas, exames e filas de espera. Agende em lote, emita comprovantes e acompanhe tudo em tempo real.</p>
         <a class="cs-btn" href="https://www.youtube.com/watch?v=2AMZonJVXHM&t=3s" target="_blank" style="background:linear-gradient(135deg,var(--blue-bright),var(--cyan));color:#fff;">▶ Ver demonstração</a>
       </div>
     </div>
 
-    <!-- Slide 2: Prático Escolar -->
+    <!-- Slide 2 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#051e30,#073050);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.92) 45%, rgba(0,180,200,0.08) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(5,18,38,0.97) 45%,rgba(0,180,200,0.08) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">🏫 Gestão Escolar</div>
         <div class="cs-title">Prático <span style="background:linear-gradient(135deg,var(--cyan),#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Escolar</span></div>
-        <p class="cs-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Atestados, calendário, comunicação, plantão pedagógico e muito mais em um só lugar.</p>
+        <p class="cs-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Atestados, calendário, comunicação e muito mais em um só lugar.</p>
         <a class="cs-btn" href="https://www.youtube.com/watch?v=LX8vJSsw6xY&t=39s" target="_blank" style="background:linear-gradient(135deg,#0098b8,var(--cyan));color:#fff;">▶ Ver demonstração</a>
       </div>
     </div>
 
-    <!-- Slide 3: Prontuário -->
+    <!-- Slide 3 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#1a0d00,#2a1800);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.95) 45%, rgba(245,166,35,0.06) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(20,10,0,0.97) 45%,rgba(245,166,35,0.07) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.3);">📋 Clínicas & Consultórios</div>
         <div class="cs-title">Prontuário <span style="background:linear-gradient(135deg,var(--gold),#ffcc66);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Eletrônico</span></div>
-        <p class="cs-desc">Administre sua clínica com inteligência. Histórico completo do paciente, agenda visual, faturamento automático e relatórios para decisões mais seguras.</p>
+        <p class="cs-desc">Histórico completo do paciente, agenda visual, faturamento automático e relatórios para decisões mais seguras.</p>
         <a class="cs-btn" href="https://www.youtube.com/watch?v=Psy84PUhwu8" target="_blank" style="background:linear-gradient(135deg,#b87800,var(--gold));color:#fff;">▶ Ver demonstração</a>
       </div>
     </div>
 
-    <!-- Slide 4: Robótica -->
+    <!-- Slide 4 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#000d1a,#001830);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.93) 45%, rgba(0,160,255,0.06) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(0,8,20,0.97) 45%,rgba(0,160,255,0.07) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.12);color:#60c0ff;border:1px solid rgba(45,140,255,0.3);">🤖 Disciplina Escolar</div>
         <div class="cs-title">Robótica e <span style="background:linear-gradient(135deg,#60c0ff,#00e8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Educação Tecnológica</span></div>
-        <p class="cs-desc">Disciplina alinhada à BNCC para escolas municipais e estaduais. Pensamento computacional, programação, robótica e IA para alunos do Fundamental 1 e 2.</p>
-        <a class="cs-btn" href="#disciplines" style="background:linear-gradient(135deg,#1a5fff,#60c0ff);color:#fff;">Saiba mais →</a>
+        <p class="cs-desc">Disciplina alinhada à BNCC. Pensamento computacional, programação, robótica e IA para alunos do Fundamental 1 e 2.</p>
+        <a class="cs-btn" href="#" onclick="switchTab('disciplinas')" style="background:linear-gradient(135deg,#1a5fff,#60c0ff);color:#fff;">Saiba mais →</a>
       </div>
     </div>
 
-    <!-- Slide 5: Formação Docente -->
+    <!-- Slide 5 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#001a0d,#002515);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.93) 45%, rgba(26,158,92,0.06) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(0,14,6,0.97) 45%,rgba(26,158,92,0.07) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(26,158,92,0.15);color:#2ecf80;border:1px solid rgba(26,158,92,0.3);">🎓 Formação Docente</div>
         <div class="cs-title">Educação <span style="background:linear-gradient(135deg,#2ecf80,#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Tecnológica</span></div>
         <p class="cs-desc">Formação completa para professores implementarem a disciplina de Educação Tecnológica. 32h distribuídas em 4 encontros, online ou presencial.</p>
-        <a class="cs-btn" href="#formations" style="background:linear-gradient(135deg,#1a9e5c,#2ecf80);color:#fff;">Conhecer formação →</a>
+        <a class="cs-btn" href="#" onclick="switchTab('formacoes')" style="background:linear-gradient(135deg,#1a9e5c,#2ecf80);color:#fff;">Conhecer formação →</a>
       </div>
     </div>
 
-    <!-- Slide 6: Site ISAWERE -->
+    <!-- Slide 6 -->
     <div class="carousel-slide">
-      <div class="cs-bg" style="background: linear-gradient(135deg,#020b22,#071545);"></div>
-      <div class="cs-overlay" style="background: linear-gradient(90deg, rgba(5,13,46,0.88) 0%, rgba(26,95,255,0.12) 100%);"></div>
-      <div class="cs-content" style="max-width:700px;">
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.93) 0%,rgba(26,95,255,0.10) 100%);"></div>
+      <div class="cs-content" style="max-width:660px;">
         <div class="cs-tag" style="background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">🌐 Acesse Agora</div>
-        <div class="cs-title" style="font-size:clamp(1.8rem,4vw,3rem);">
+        <div class="cs-title" style="font-size:clamp(1.9rem,4vw,3rem);">
           <span style="background:linear-gradient(135deg,var(--white),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">www.isawere.com.br</span>
         </div>
-        <p class="cs-desc" style="font-size:1rem;color:var(--gray-light);">Tecnologia que organiza, agiliza e transforma. Sistemas modernos para saúde, educação e muito mais — tudo em um só lugar.</p>
+        <p class="cs-desc" style="color:var(--gray-light);">Tecnologia que organiza, agiliza e transforma. Sistemas modernos para saúde, educação e muito mais — tudo em um só lugar.</p>
         <a class="cs-btn" href="https://www.isawere.com.br" target="_blank" style="background:linear-gradient(135deg,var(--blue-bright),var(--cyan));color:#fff;">Visitar o site →</a>
       </div>
     </div>
 
   </div>
-
   <button class="carousel-arrow prev" onclick="carouselMove(-1)">‹</button>
   <button class="carousel-arrow next" onclick="carouselMove(1)">›</button>
   <div class="carousel-nav" id="carouselNav"></div>
 </div>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content reveal">
-    <div class="hero-badge"><span></span>Sistemas Web Modernos & Completos</div>
-    <h1 class="hero-title">
-      Sua gestão em<br><span class="accent">outro nível.</span>
-    </h1>
-    <p class="hero-sub">
-      Desenvolvemos sistemas web seguros, modernos e intuitivos para saúde, educação e muito mais — feitos para otimizar sua rotina e transformar resultados.
-    </p>
-    <div class="hero-ctas">
-      <a class="btn-primary" href="#products">Conheça os Sistemas</a>
-      <a class="btn-secondary" href="#contact">Falar com a equipe</a>
-    </div>
+<!-- ═══════════════════════════════════════════
+     TAB NAVIGATION
+════════════════════════════════════════════ -->
+<div id="tab-nav">
+  <div class="tab-list" role="tablist">
+    <button class="tab-btn active" data-tab="saude" onclick="switchTab('saude')">
+      <span class="tab-icon">🩺</span><span class="tab-label">Saúde</span>
+    </button>
+    <button class="tab-btn" data-tab="educacao" onclick="switchTab('educacao')">
+      <span class="tab-icon">🏫</span><span class="tab-label">Educação</span>
+    </button>
+    <button class="tab-btn" data-tab="formacoes" onclick="switchTab('formacoes')">
+      <span class="tab-icon">🎓</span><span class="tab-label">Formações</span>
+    </button>
+    <button class="tab-btn" data-tab="disciplinas" onclick="switchTab('disciplinas')">
+      <span class="tab-icon">🤖</span><span class="tab-label">Disciplinas</span>
+      <span class="tab-highlight">PROMOÇÃO</span>
+    </button>
+    <button class="tab-btn" data-tab="apps" onclick="switchTab('apps')">
+      <span class="tab-icon">📱</span><span class="tab-label">Aplicativos</span>
+    </button>
+    <button class="tab-btn" data-tab="porque" onclick="switchTab('porque')">
+      <span class="tab-icon">⭐</span><span class="tab-label">Por que ISAWERE</span>
+    </button>
   </div>
-  <div class="hero-stats">
-    <div class="stat-card reveal"><div class="stat-num" style="font-size:1.3rem;">Dezenas</div><div class="stat-label">de soluções desenvolvidas</div></div>
-    <div class="stat-card reveal"><div class="stat-num">100%</div><div class="stat-label">Web — acesse de qualquer lugar</div></div>
-    <div class="stat-card reveal"><div class="stat-num">🔒</div><div class="stat-label">Dados seguros com backup diário</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: SAÚDE
+════════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-saude">
+  <div class="panel-header reveal">
+    <div class="panel-label">Área da Saúde</div>
+    <h2 class="panel-title">Sistemas para Saúde & Clínicas</h2>
+    <p class="panel-desc">Soluções modernas para gestão de pacientes, consultas e clínicas — com agilidade, segurança e relatórios em tempo real.</p>
   </div>
-</section>
+  <div class="cards-grid">
 
-<div class="stripe"></div>
-
-<!-- SISTEMAS / PRODUCTS -->
-<section id="products">
-  <div class="section-header reveal">
-    <div class="section-label">Sistemas</div>
-    <h2 class="section-title">Soluções para cada área</h2>
-    <p class="section-desc">Cada sistema foi criado com foco em simplicidade, eficiência e resultado. Escolha o que resolve o seu desafio.</p>
-  </div>
-  <div class="products-grid">
-
-    <div class="product-card card-blue reveal">
-      <div class="product-icon">🩺</div>
-      <div class="product-name">ISAWERE Agendamentos</div>
-      <div class="product-tagline">Consultas & Exames Médicos</div>
-      <p class="product-desc">Gerencie filas, consultas e exames de forma simples, rápida e organizada — plataforma moderna para equipes de saúde.</p>
-      <ul class="product-features">
+    <div class="card th-blue reveal">
+      <div class="card-icon">🩺</div>
+      <div class="card-name">ISAWERE Agendamentos</div>
+      <div class="card-tagline">Consultas & Exames Médicos</div>
+      <p class="card-desc">Gerencie filas, consultas e exames de forma simples, rápida e organizada — plataforma moderna para equipes de saúde.</p>
+      <ul class="card-features">
         <li>Cadastro ágil de pacientes e encaminhamentos</li>
         <li>Agendamentos individuais ou em lote</li>
         <li>Comprovantes e listas para impressão</li>
         <li>Relatórios e indicadores em tempo real</li>
-        <li>Envio de informações por mensagem</li>
+        <li>Envio de informações de agendamento por mensagem</li>
       </ul>
-      <a class="product-link" href="https://www.youtube.com/watch?v=2AMZonJVXHM&amp;t=3s" target="_blank">▶ Ver demonstração <span>→</span></a>
+      <a class="card-link" href="https://www.youtube.com/watch?v=2AMZonJVXHM&t=3s" target="_blank">▶ Ver demonstração →</a>
     </div>
 
-    <div class="product-card card-cyan reveal">
-      <div class="product-icon">🏫</div>
-      <div class="product-name">Prático Escolar</div>
-      <div class="product-tagline">Secretaria & Gestão Escolar</div>
-      <p class="product-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Rotinas administrativas e pedagógicas em um único lugar.</p>
-      <ul class="product-features">
-        <li>Atestados, calendário e planejamentos</li>
-        <li>Comunicação interna entre professores e gestão</li>
-        <li>Plantão pedagógico e listas de alunos</li>
-        <li>Relatórios e indicadores gerenciais</li>
-        <li>Acesso responsivo em qualquer dispositivo</li>
-      </ul>
-      <a class="product-link" href="https://www.youtube.com/watch?v=LX8vJSsw6xY&amp;t=39s" target="_blank">▶ Ver demonstração <span>→</span></a>
-    </div>
-
-    <div class="product-card card-gold reveal">
-      <div class="product-icon">📋</div>
-      <div class="product-name">Prontuário Eletrônico</div>
-      <div class="product-tagline">Gestão de Clínicas</div>
-      <p class="product-desc">Administrar uma clínica ficou mais simples. Históricos completos, agenda visual, faturamento e indicadores financeiros automáticos.</p>
-      <ul class="product-features">
+    <div class="card th-gold reveal">
+      <div class="card-icon">📋</div>
+      <div class="card-name">Prontuário Eletrônico</div>
+      <div class="card-tagline">Gestão de Clínicas & Consultórios</div>
+      <p class="card-desc">Administre sua clínica com inteligência. Histórico completo, agenda visual, faturamento e indicadores automáticos.</p>
+      <ul class="card-features">
         <li>Cadastro com filtros inteligentes de pacientes</li>
         <li>Histórico completo em uma única tela</li>
         <li>Agenda visual e prática para toda a equipe</li>
-        <li>Faturamento e indicadores automáticos</li>
+        <li>Faturamento e indicadores financeiros automáticos</li>
         <li>Relatórios para decisões mais seguras</li>
       </ul>
-      <a class="product-link" href="https://www.youtube.com/watch?v=Psy84PUhwu8" target="_blank">▶ Ver demonstração <span>→</span></a>
+      <a class="card-link" href="https://www.youtube.com/watch?v=Psy84PUhwu8" target="_blank">▶ Ver demonstração →</a>
     </div>
 
-    <div class="product-card card-purple reveal">
-      <div class="product-icon">💍</div>
-      <div class="product-name">Gestão de Casamentos</div>
-      <div class="product-tagline">Eventos & Festas</div>
-      <p class="product-desc">Organize cada detalhe do grande dia com tecnologia. Convidados, presentes, senhas, etapas do evento — tudo centralizado.</p>
-      <ul class="product-features">
-        <li>Geração e gerenciamento de senhas</li>
-        <li>Lista de presentes com controle de entrega</li>
-        <li>Checklist completo das etapas da festa</li>
-        <li>Confirmação de presença de convidados</li>
-        <li>Painel visual para a equipe organizadora</li>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: EDUCAÇÃO
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-educacao">
+  <div class="panel-header reveal">
+    <div class="panel-label">Área da Educação</div>
+    <h2 class="panel-title">Sistemas para Escolas & Instituições</h2>
+    <p class="panel-desc">Do gerenciamento da secretaria escolar aos jogos educacionais — tecnologia pensada para transformar o ambiente educacional.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card th-cyan reveal">
+      <div class="card-icon">🏫</div>
+      <div class="card-name">Prático Escolar</div>
+      <div class="card-tagline">Secretaria & Gestão Escolar Completa</div>
+      <p class="card-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Rotinas administrativas e pedagógicas em um único lugar.</p>
+      <ul class="card-features">
+        <li>Atestados, calendário escolar e planejamentos</li>
+        <li>Comunicação interna entre professores e gestão</li>
+        <li>Plantão pedagógico e listas de alunos</li>
+        <li>Relatórios e indicadores gerenciais</li>
+        <li>Acesso responsivo: computador, tablet ou celular</li>
       </ul>
-      <a class="product-link" href="#contact">Solicitar informações <span>→</span></a>
+      <a class="card-link" href="https://www.youtube.com/watch?v=LX8vJSsw6xY&t=39s" target="_blank">▶ Ver demonstração →</a>
     </div>
 
-    <div class="product-card card-green reveal">
-      <div class="product-icon">🎮</div>
-      <div class="product-name">School Games</div>
-      <div class="product-tagline">Painel Educacional & Escola Virtual</div>
-      <p class="product-desc">Ambiente virtual que simula a escola — o aluno navega por salas, faz quizzes por disciplina, visita a biblioteca, quadra e cantina, acumulando pontos.</p>
-      <ul class="product-features">
+    <div class="card th-green reveal">
+      <div class="card-icon">🎮</div>
+      <div class="card-name">School Games</div>
+      <div class="card-tagline">Escola Virtual Interativa</div>
+      <p class="card-desc">Ambiente virtual que simula a escola — o aluno navega pelos ambientes, faz quizzes por disciplina e acumula pontos.</p>
+      <ul class="card-features">
         <li>Mapa interativo: direção, salas, cantina, quadra e biblioteca</li>
         <li>Quizzes por disciplina com feedbacks automáticos</li>
         <li>Sistema de pontos, energia e inventário (mochila)</li>
         <li>Perguntas cadastradas pelos próprios professores</li>
         <li>Acesso via celular, tablet ou computador</li>
       </ul>
-      <a class="product-link" href="#contact">Solicitar informações <span>→</span></a>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
     </div>
 
-  </div>
-</section>
-
-<div class="stripe"></div>
-
-<!-- DISCIPLINAS -->
-<section id="disciplines">
-  <div class="section-header reveal">
-    <div class="section-label">Disciplinas Escolares</div>
-    <h2 class="section-title">Inovação dentro da sala de aula</h2>
-    <p class="section-desc">A ISAWERE oferece também disciplinas estruturadas e aplicadas nas escolas, preparando alunos para o mundo digital.</p>
-  </div>
-  <div class="products-grid">
-
-    <!-- ROBÓTICA -->
-    <div class="product-card card-teal reveal">
-      <div class="product-icon">🤖</div>
-      <div class="product-name">Disciplina de Robótica</div>
-      <div class="product-tagline">Robótica & Educação Tecnológica — Prof. Ivan Rosas</div>
-      <p class="product-desc">Disciplina alinhada à BNCC que mobiliza robótica, programação e IA para desenvolver pensamento crítico e criatividade, preparando alunos para o mercado globalizado.</p>
-      <ul class="product-features">
-        <li><strong>Level 1 – Fund. 1:</strong> Personalização de códigos (Low Code) e lógica com blocos</li>
-        <li><strong>Level 2 – Fund. 2:</strong> Programação de jogos, criação de sites e robótica avançada</li>
-        <li>3 etapas: Conectar / Criar / Multiplicar</li>
-        <li>Infraestrutura: kits de robótica, notebooks, bancada e internet</li>
-        <li>Carga horária: 20 aulas/mês | Público: 1º ao 9º ano</li>
+    <div class="card th-teal reveal">
+      <div class="card-icon">🕹️</div>
+      <div class="card-name">Softwares & Jogos Educacionais</div>
+      <div class="card-tagline">Personalizado para sua Instituição</div>
+      <p class="card-desc">Desenvolvemos jogos e softwares educacionais sob medida para a realidade e currículo da sua escola — engajamento real com aprendizagem.</p>
+      <ul class="card-features">
+        <li>Jogos por disciplina e faixa etária</li>
+        <li>Conteúdo alinhado ao currículo da escola</li>
+        <li>Interface intuitiva para alunos de todas as idades</li>
+        <li>Acompanhamento de progresso e desempenho</li>
+        <li>100% web — sem instalação</li>
       </ul>
-      <a class="product-link" href="#contact">Falar com consultor <span>→</span></a>
-    </div>
-
-    <!-- EDUCAÇÃO TECNOLÓGICA -->
-    <div class="product-card card-edugreen reveal">
-      <div class="product-icon">💻</div>
-      <div class="product-name">Educação Tecnológica</div>
-      <div class="product-tagline">Cultura Digital & Tecnologias Interdisciplinares</div>
-      <p class="product-desc">Adequação às novas exigências educacionais do MEC, integrando a tecnologia ao currículo com intencionalidade — sem exigir laboratório de informática no início.</p>
-      <ul class="product-features">
-        <li>Planejamento de aulas com tecnologias (Google Workspace, Canva, Kahoot, Scratch)</li>
-        <li>Metodologias ativas e projetos interdisciplinares</li>
-        <li>Cultura digital e protagonismo estudantil</li>
-        <li>Impressora 3D aplicada em Ciências, Matemática, Arte e Robótica</li>
-        <li>Avaliação com instrumentos tecnológicos qualitativos</li>
-      </ul>
-      <a class="product-link" href="#contact">Solicitar proposta <span>→</span></a>
+      <a class="card-link" href="#contact">Solicitar proposta →</a>
     </div>
 
   </div>
-</section>
+</div>
 
-<div class="stripe"></div>
-
-<!-- FORMAÇÕES DOCENTES -->
-<section id="formations">
-  <div class="section-header reveal">
-    <div class="section-label">Formações Docentes</div>
-    <h2 class="section-title">Capacitação que transforma escolas</h2>
-    <p class="section-desc">Formações práticas e objetivas para professores e equipes pedagógicas — online, presencial ou híbrido.</p>
+<!-- ═══════════════════════════════════════════
+     PANEL: FORMAÇÕES
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-formacoes">
+  <div class="panel-header reveal">
+    <div class="panel-label">Formações Docentes</div>
+    <h2 class="panel-title">Capacitação que transforma escolas</h2>
+    <p class="panel-desc">Formações práticas e objetivas para professores e equipes pedagógicas — online, presencial ou híbrido.</p>
   </div>
-  <div class="products-grid">
+  <div class="cards-grid">
 
-    <!-- FORMAÇÃO ED. TECNOLÓGICA -->
-    <div class="product-card card-edugreen reveal">
-      <div class="product-icon">🎓</div>
-      <div class="product-name">Formação: Educação Tecnológica</div>
-      <div class="product-tagline">Para Professores de Todos os Componentes Curriculares</div>
-      <p class="product-desc">Estrutura uma cultura tecnológica na escola, permitindo que a instituição esteja alinhada às diretrizes do MEC e integre tecnologia ao currículo com intencionalidade.</p>
-      <ul class="product-features">
+    <div class="card th-edu reveal">
+      <div class="card-icon">🎓</div>
+      <div class="card-name">Formação: Educação Tecnológica</div>
+      <div class="card-tagline">Para Professores de Todos os Componentes Curriculares</div>
+      <p class="card-desc">Estrutura uma cultura tecnológica na escola, alinhando a instituição às diretrizes do MEC e integrando tecnologia ao currículo com intencionalidade.</p>
+      <ul class="card-features">
         <li>Carga horária: 32h em 4 encontros (flexível)</li>
         <li>Modalidade: online e presencial</li>
         <li>Apps: Google Workspace, Canva, Padlet, Kahoot</li>
         <li>Programas: Wordwall, Mentimeter, Scratch, Google Classroom</li>
         <li>Investimento: sob consulta</li>
       </ul>
-      <a class="product-link" href="#contact">Agendar visita <span>→</span></a>
+      <a class="card-link" href="#contact">Agendar visita →</a>
     </div>
 
-    <!-- FORMAÇÃO FERRAMENTAS TI -->
-    <div class="product-card card-orange reveal">
-      <div class="product-icon">🛠️</div>
-      <div class="product-name">Formação: Ferramentas de TI</div>
-      <div class="product-tagline">Tecnologias para Gestão & Ensino</div>
-      <p class="product-desc">Capacitação prática em ferramentas digitais de uso cotidiano para professores, coordenadores e gestores escolares — otimizando comunicação, planejamento e avaliação.</p>
-      <ul class="product-features">
+    <div class="card th-orange reveal">
+      <div class="card-icon">🛠️</div>
+      <div class="card-name">Formação: Ferramentas de TI para Educadores</div>
+      <div class="card-tagline">Tecnologias para Gestão & Ensino</div>
+      <p class="card-desc">Capacitação prática em ferramentas digitais do dia a dia para professores, coordenadores e gestores — otimizando comunicação, planejamento e avaliação.</p>
+      <ul class="card-features">
         <li>Google Drive, Docs, Sheets e Forms</li>
         <li>Apresentações dinâmicas e recursos visuais</li>
         <li>Criação de formulários e pesquisas pedagógicas</li>
         <li>Gerenciamento de turmas e comunicação digital</li>
         <li>Flexível — online ou presencial, sob demanda</li>
       </ul>
-      <a class="product-link" href="#contact">Solicitar informações <span>→</span></a>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
     </div>
 
   </div>
-</section>
+</div>
 
-<div class="stripe"></div>
+<!-- ═══════════════════════════════════════════
+     PANEL: DISCIPLINAS
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-disciplinas">
+  <div class="panel-header reveal">
+    <div class="panel-label">Disciplinas Escolares</div>
+    <h2 class="panel-title">Inovação dentro da sala de aula</h2>
+    <p class="panel-desc">Disciplinas estruturadas e aplicadas nas escolas, preparando alunos para o mundo digital com base na BNCC.</p>
+  </div>
+  <div class="cards-grid">
 
-<!-- WHY ISAWERE -->
-<section id="why">
+    <div class="card card-promo th-teal reveal">
+      <div class="card-icon">🤖</div>
+      <div class="card-name">Disciplina de Robótica</div>
+      <div class="card-tagline">Robótica & Educação Tecnológica — Prof. Ivan Rosas</div>
+
+      <!-- PROMO BANNER -->
+      <div class="promo-banner">
+        <span class="promo-icon">🎁</span>
+        <div><strong>Assine e ganhe um robô!</strong> Ao contratar a disciplina de Robótica, sua escola recebe um robô educacional para interagir com os estudantes em sala de aula.</div>
+      </div>
+
+      <p class="card-desc">Disciplina alinhada à BNCC que mobiliza robótica, programação e IA para desenvolver pensamento crítico e criatividade, preparando alunos para o mundo globalizado.</p>
+      <ul class="card-features">
+        <li><strong>Level 1 – Fund. 1:</strong> Personalização de códigos (Low Code) e lógica com blocos animados</li>
+        <li><strong>Level 2 – Fund. 2:</strong> Programação de jogos, criação de sites e robótica avançada</li>
+        <li>3 etapas: Conectar / Criar / Multiplicar</li>
+        <li>Infraestrutura: kits de robótica, notebooks e internet</li>
+        <li>Carga horária: 20 aulas/mês | Público: 1º ao 9º ano</li>
+      </ul>
+      <a class="card-link" href="#contact" style="background:rgba(245,166,35,0.18);color:var(--gold);">🎁 Quero esta oferta →</a>
+    </div>
+
+    <div class="card th-edu reveal">
+      <div class="card-icon">💻</div>
+      <div class="card-name">Educação Tecnológica</div>
+      <div class="card-tagline">Cultura Digital & Tecnologias Interdisciplinares</div>
+      <p class="card-desc">Adequação às novas exigências educacionais do MEC, integrando a tecnologia ao currículo com intencionalidade — sem exigir laboratório de informática no início.</p>
+      <ul class="card-features">
+        <li>Planejamento de aulas com Google Workspace, Canva, Kahoot e Scratch</li>
+        <li>Metodologias ativas e projetos interdisciplinares</li>
+        <li>Cultura digital e protagonismo estudantil</li>
+        <li>Impressora 3D aplicada em Ciências, Matemática, Arte e Robótica</li>
+        <li>Avaliação com instrumentos tecnológicos qualitativos</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar proposta →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: APLICATIVOS
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-apps">
+  <div class="panel-header reveal">
+    <div class="panel-label">Aplicativos & Sistemas Especializados</div>
+    <h2 class="panel-title">Soluções para outros segmentos</h2>
+    <p class="panel-desc">Além de saúde e educação, desenvolvemos sistemas sob medida para eventos, gestão administrativa e financeira.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card th-purple reveal">
+      <div class="card-icon">💍</div>
+      <div class="card-name">Gestão de Casamentos</div>
+      <div class="card-tagline">Organização Completa de Eventos</div>
+      <p class="card-desc">Organize cada detalhe do grande dia com tecnologia. Convidados, presentes, senhas e etapas do evento — tudo centralizado e acessível.</p>
+      <ul class="card-features">
+        <li>Geração e gerenciamento de senhas do evento</li>
+        <li>Lista de presentes com controle de entrega</li>
+        <li>Checklist completo das etapas da festa</li>
+        <li>Confirmação de presença de convidados</li>
+        <li>Painel visual para a equipe organizadora</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
+    </div>
+
+    <div class="card th-rose reveal">
+      <div class="card-icon">📊</div>
+      <div class="card-name">Sistemas Administrativos & Financeiros</div>
+      <div class="card-tagline">Controle & Gestão para sua Empresa</div>
+      <p class="card-desc">Desenvolvemos sistemas de gestão administrativa e financeira personalizados para a realidade do seu negócio — controle total em uma plataforma web.</p>
+      <ul class="card-features">
+        <li>Controle de receitas, despesas e fluxo de caixa</li>
+        <li>Gestão de clientes, fornecedores e contratos</li>
+        <li>Relatórios gerenciais e indicadores de desempenho</li>
+        <li>Acesso multi-usuário com níveis de permissão</li>
+        <li>Personalizado conforme as necessidades da empresa</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar proposta →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: POR QUE ISAWERE
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-porque">
+  <div class="panel-header reveal">
+    <div class="panel-label">Por que ISAWERE</div>
+    <h2 class="panel-title">Tecnologia que resolve de verdade.</h2>
+    <p class="panel-desc">Sistemas e formações criados com foco em quem usa no dia a dia — simples, rápidos e acessíveis sem instalação.</p>
+  </div>
   <div class="why-inner">
     <div class="reveal">
-      <div class="section-label">Por que ISAWERE</div>
-      <h2 class="section-title">Tecnologia que resolve de verdade.</h2>
-      <p class="section-desc">Nossos sistemas e formações são criados com foco em quem usa no dia a dia — simples, rápidos e acessíveis de qualquer navegador, sem instalação.</p>
+      <p style="color:var(--gray-soft);line-height:1.75;font-size:0.95rem;">A ISAWERE Sistemas nasceu em Campina Grande — PB, com o propósito de oferecer tecnologia de qualidade para escolas, clínicas e empresas de todos os tamanhos. Cada solução é desenvolvida com foco em quem realmente usa: professores, secretárias, médicos, gestores.</p>
       <div class="why-pills">
         <div class="pill">100% Web</div>
         <div class="pill">Sem instalação</div>
@@ -658,6 +768,8 @@
         <div class="pill">Multi-dispositivo</div>
         <div class="pill">Saúde & Educação</div>
         <div class="pill">Formações presenciais</div>
+        <div class="pill">Personalizado</div>
+        <div class="pill">Campina Grande — PB</div>
       </div>
     </div>
     <div class="why-benefits">
@@ -679,7 +791,7 @@
         <div class="benefit-icon">📊</div>
         <div>
           <div class="benefit-title">Decisões baseadas em dados</div>
-          <div class="benefit-desc">Relatórios e indicadores automáticos para acompanhar resultados com mais segurança.</div>
+          <div class="benefit-desc">Relatórios e indicadores automáticos para acompanhar resultados com mais segurança e clareza.</div>
         </div>
       </div>
       <div class="benefit reveal">
@@ -691,46 +803,48 @@
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <div class="stripe"></div>
 
-<!-- CONTACT -->
+<!-- ═══════════════════════════════════════════
+     CONTACT
+════════════════════════════════════════════ -->
 <section id="contact">
   <div class="contact-inner">
     <div class="reveal">
-      <div class="section-label">Entre em Contato</div>
-      <h2 class="section-title">Vamos conversar sobre o seu projeto?</h2>
-      <p class="section-desc">Nossa equipe está pronta para apresentar a solução ideal para a sua realidade. Sem complicação.</p>
+      <div class="contact-label-sm">Entre em Contato</div>
+      <h2 class="contact-title">Vamos conversar sobre o seu projeto?</h2>
+      <p class="contact-sub">Nossa equipe está pronta para apresentar a solução ideal para a sua realidade. Sem complicação.</p>
       <div class="contact-methods">
         <a class="contact-item" href="https://wa.me/5583996750560" target="_blank">
-          <div class="contact-icon">📱</div>
-          <div><div class="contact-label">WhatsApp</div><div class="contact-value">(83) 99675-0560</div></div>
+          <div class="ci-icon">📱</div>
+          <div><div class="ci-label">WhatsApp</div><div class="ci-value">(83) 99675-0560</div></div>
         </a>
         <a class="contact-item" href="mailto:isaweresistemas@gmail.com">
-          <div class="contact-icon">✉️</div>
-          <div><div class="contact-label">E-mail</div><div class="contact-value">isaweresistemas@gmail.com</div></div>
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-label">E-mail</div><div class="ci-value">isaweresistemas@gmail.com</div></div>
         </a>
         <a class="contact-item" href="https://www.isawere.com.br" target="_blank">
-          <div class="contact-icon">🌐</div>
-          <div><div class="contact-label">Site</div><div class="contact-value">www.isawere.com.br</div></div>
+          <div class="ci-icon">🌐</div>
+          <div><div class="ci-label">Site</div><div class="ci-value">www.isawere.com.br</div></div>
         </a>
-        <a class="contact-item" style="pointer-events:none;">
-          <div class="contact-icon">📍</div>
-          <div><div class="contact-label">Localização</div><div class="contact-value">Campina Grande — PB</div></div>
-        </a>
+        <div class="contact-item" style="pointer-events:none;">
+          <div class="ci-icon">📍</div>
+          <div><div class="ci-label">Localização</div><div class="ci-value">Campina Grande — PB</div></div>
+        </div>
       </div>
-      <div class="social-links">
-        <a class="social-link" href="https://www.youtube.com/@IsawereSistemas" target="_blank">▶ YouTube</a>
-        <a class="social-link" href="https://www.linkedin.com/company/isawere-sistemas" target="_blank">in LinkedIn</a>
-        <a class="social-link" href="https://www.instagram.com/isaweresistemas" target="_blank">📸 Instagram</a>
-        <a class="social-link" href="https://wa.me/5583996750560" target="_blank">💬 WhatsApp</a>
+      <div class="social-row">
+        <a class="social-btn" href="https://www.youtube.com/@IsawereSistemas" target="_blank">▶ YouTube</a>
+        <a class="social-btn" href="https://www.linkedin.com/company/isawere-sistemas" target="_blank">in LinkedIn</a>
+        <a class="social-btn" href="https://www.instagram.com/isaweresistemas" target="_blank">📸 Instagram</a>
+        <a class="social-btn" href="https://wa.me/5583996750560" target="_blank">💬 WhatsApp</a>
       </div>
     </div>
 
     <div class="reveal">
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(45,140,255,0.18);border-radius:20px;padding:2rem;">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:1.3rem;">Solicite uma demonstração</div>
+      <div class="form-box">
+        <div class="form-box-title">Solicite uma demonstração</div>
         <div class="contact-form">
           <div class="form-row">
             <div class="form-group"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div>
@@ -741,20 +855,26 @@
             <label>Interesse</label>
             <select>
               <option value="">Selecione uma solução...</option>
-              <optgroup label="── Sistemas ──">
+              <optgroup label="── Saúde ──">
                 <option>ISAWERE Agendamentos Médicos</option>
-                <option>Prático Escolar</option>
                 <option>Prontuário Eletrônico para Clínicas</option>
-                <option>Gestão de Casamentos</option>
-                <option>School Games (Painel Educacional)</option>
               </optgroup>
-              <optgroup label="── Disciplinas ──">
-                <option>Disciplina de Robótica</option>
-                <option>Disciplina de Educação Tecnológica</option>
+              <optgroup label="── Educação ──">
+                <option>Prático Escolar</option>
+                <option>School Games (Escola Virtual)</option>
+                <option>Softwares & Jogos Educacionais Personalizados</option>
               </optgroup>
               <optgroup label="── Formações ──">
                 <option>Formação: Educação Tecnológica</option>
-                <option>Formação: Ferramentas de TI</option>
+                <option>Formação: Ferramentas de TI para Educadores</option>
+              </optgroup>
+              <optgroup label="── Disciplinas ──">
+                <option>Disciplina de Robótica (+ Robô Grátis 🎁)</option>
+                <option>Disciplina de Educação Tecnológica</option>
+              </optgroup>
+              <optgroup label="── Aplicativos ──">
+                <option>Gestão de Casamentos</option>
+                <option>Sistema Administrativo & Financeiro</option>
               </optgroup>
               <option>Tenho interesse em mais de uma solução</option>
             </select>
@@ -769,69 +889,104 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">
+  <div class="footer-copy">
     © 2025 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
-    <span style="font-size:0.76rem;color:rgba(176,188,212,0.6);">Sistemas web modernos, seguros e completos para sua empresa ou instituição.</span>
+    <span style="font-size:0.75rem;color:rgba(176,188,212,0.55);">Sistemas web modernos, seguros e completos para sua empresa ou instituição.</span>
   </div>
   <div class="ceo-badge">
     <div class="ceo-icon">👤</div>
     <div>
-      <div class="ceo-text">Fundador & CEO</div>
+      <div class="ceo-role">Fundador & CEO</div>
       <div class="ceo-name">Ivan Rosas</div>
-      <div class="ceo-title">ISAWERE Sistemas</div>
+      <div class="ceo-company">ISAWERE Sistemas</div>
     </div>
   </div>
 </footer>
 
 <script>
-  // ── CAROUSEL ──
-  let current = 0;
-  const total = 6;
-  const track = document.getElementById('carouselTrack');
-  const navEl = document.getElementById('carouselNav');
+/* ═══════════════════════════════════
+   CAROUSEL
+═══════════════════════════════════ */
+let current = 0;
+const TOTAL = 6;
+const track = document.getElementById('carouselTrack');
+const navEl = document.getElementById('carouselNav');
 
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('button');
-    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTo(i);
-    navEl.appendChild(d);
-  }
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('aria-label', 'Slide ' + (i+1));
+  d.onclick = () => goTo(i);
+  navEl.appendChild(d);
+}
 
-  function goTo(n) {
-    current = (n + total) % total;
-    track.style.transform = `translateX(-${current * 100}%)`;
-    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
-  }
+function goTo(n) {
+  current = (n + TOTAL) % TOTAL;
+  track.style.transform = `translateX(-${current * 100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+}
+function carouselMove(dir) { goTo(current + dir); }
 
-  function carouselMove(dir) { goTo(current + dir); }
+let autoTimer = setInterval(() => goTo(current + 1), 3500);
+const carEl = document.getElementById('carousel');
+carEl.addEventListener('mouseenter', () => clearInterval(autoTimer));
+carEl.addEventListener('mouseleave', () => { autoTimer = setInterval(() => goTo(current + 1), 3500); });
 
-  let autoTimer = setInterval(() => goTo(current + 1), 3500);
-  document.getElementById('carousel').addEventListener('mouseenter', () => clearInterval(autoTimer));
-  document.getElementById('carousel').addEventListener('mouseleave', () => { autoTimer = setInterval(() => goTo(current + 1), 3500); });
-
-  // ── SCROLL REVEAL ──
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 70);
-        observer.unobserve(e.target);
-      }
+/* ═══════════════════════════════════
+   TAB SYSTEM
+═══════════════════════════════════ */
+function switchTab(tabId) {
+  // hide all panels
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  // deactivate all buttons
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // activate target
+  const panel = document.getElementById('panel-' + tabId);
+  if (panel) {
+    panel.classList.add('active');
+    // re-trigger reveal animations inside the panel
+    panel.querySelectorAll('.reveal').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => revealObserver.observe(el), 10);
     });
-  }, { threshold: 0.08 });
-  reveals.forEach(r => observer.observe(r));
+  }
+  const btn = document.querySelector('[data-tab="' + tabId + '"]');
+  if (btn) {
+    btn.classList.add('active');
+    // scroll tab into view on mobile
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+  // scroll page to tab nav
+  document.getElementById('tab-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return false;
+}
 
-  // ── FORM → WHATSAPP ──
-  function handleFormSubmit() {
-    const nome = document.querySelector('input[placeholder="Seu nome completo"]').value.trim();
-    const tel  = document.querySelector('input[placeholder="(83) 99999-9999"]').value.trim();
-    const email = document.querySelector('input[placeholder="seu@email.com"]').value.trim();
-    const solucao = document.querySelector('select').value;
-    const msg = document.querySelector('textarea').value.trim();
+/* ═══════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 65);
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(r => revealObserver.observe(r));
 
-    if (!nome || !solucao) { alert('Por favor, preencha seu nome e a solução de interesse.'); return; }
+/* ═══════════════════════════════════
+   FORM → WHATSAPP
+═══════════════════════════════════ */
+function handleFormSubmit() {
+  const nome    = document.querySelector('input[placeholder="Seu nome completo"]').value.trim();
+  const tel     = document.querySelector('input[placeholder="(83) 99999-9999"]').value.trim();
+  const email   = document.querySelector('input[placeholder="seu@email.com"]').value.trim();
+  const solucao = document.querySelector('select').value;
+  const msg     = document.querySelector('textarea').value.trim();
 
-    const texto = `Olá! Gostaria de saber mais sobre as soluções da *ISAWERE Sistemas*.
+  if (!nome || !solucao) { alert('Por favor, preencha seu nome e a solução de interesse.'); return; }
+
+  const texto = `Olá! Gostaria de saber mais sobre as soluções da *ISAWERE Sistemas*.
 
 👤 *Nome:* ${nome}
 📞 *Telefone:* ${tel || 'Não informado'}
@@ -841,8 +996,8 @@ ${msg ? `📝 *Mensagem:* ${msg}` : ''}
 
 Vi o site e gostaria de mais informações!`;
 
-    window.open(`https://wa.me/5583996750560?text=${encodeURIComponent(texto)}`, '_blank');
-  }
+  window.open(`https://wa.me/5583996750560?text=${encodeURIComponent(texto)}`, '_blank');
+}
 </script>
 </body>
 </html>
