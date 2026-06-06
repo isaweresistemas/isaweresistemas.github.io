@@ -362,9 +362,13 @@
   ══════════════════════════════ */
   @media (max-width: 860px) {
     .header-nav { display: none; }
-    .carousel-slide { padding: 2.5rem 5% 3rem; }
-    .cs-title { font-size: 1.3rem; }
-    .cs-desc { font-size: 0.82rem; }
+    /* Carousel mobile: altura automática, padding reduzido, conteúdo sempre visível */
+    .carousel-slide { padding: 2rem 5% 3.5rem; align-items: flex-start; min-height: auto; }
+    .cs-content { max-width: 100%; }
+    .cs-tag { font-size: 0.65rem; margin-bottom: 0.6rem; }
+    .cs-title { font-size: clamp(1.15rem, 5.5vw, 1.5rem); line-height: 1.2; word-break: break-word; }
+    .cs-desc { font-size: 0.8rem; max-width: 100%; margin-bottom: 1rem; }
+    .cs-btn { font-size: 0.78rem; padding: 0.5rem 1.1rem; }
     /* Tab: only icon visible; on active, show label below icon */
     .tab-btn { padding: 0.65rem 0.7rem 0.7rem; font-size: 0.72rem; gap: 0.2rem; flex-direction: column; align-items: center; min-width: 0; }
     .tab-btn .tab-label { display: none; font-size: 0.62rem; line-height: 1.1; text-align: center; max-width: 58px; white-space: normal; }
@@ -445,7 +449,7 @@
       <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(0,8,20,0.97) 45%,rgba(0,160,255,0.07) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.12);color:#60c0ff;border:1px solid rgba(45,140,255,0.3);">🤖 Disciplina Escolar</div>
-        <div class="cs-title">Robótica e <span style="background:linear-gradient(135deg,#60c0ff,#00e8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Educação Tecnológica</span></div>
+        <div class="cs-title">Robótica e <span style="background:linear-gradient(135deg,#60c0ff,#00e8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Educação<br>Tecnológica</span></div>
         <p class="cs-desc">Disciplina alinhada à BNCC. Pensamento computacional, programação, robótica e IA para alunos do Fundamental 1 e 2.</p>
         <a class="cs-btn" href="#" onclick="switchTab('disciplinas')" style="background:linear-gradient(135deg,#1a5fff,#60c0ff);color:#fff;">Saiba mais →</a>
       </div>
@@ -467,7 +471,7 @@
       <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.93) 0%,rgba(26,95,255,0.10) 100%);"></div>
       <div class="cs-content" style="max-width:660px;">
         <div class="cs-tag" style="background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">🌐 Acesse Agora</div>
-        <div class="cs-title" style="font-size:clamp(1.9rem,4vw,3rem);">
+        <div class="cs-title" style="font-size:clamp(1.4rem,5vw,3rem);">
           <span style="background:linear-gradient(135deg,var(--white),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">www.isawere.com.br</span>
         </div>
         <p class="cs-desc" style="color:var(--gray-light);">Tecnologia que organiza, agiliza e transforma. Sistemas modernos para saúde, educação e muito mais — tudo em um só lugar.</p>
@@ -591,6 +595,21 @@
         <li>Acesso via celular, tablet ou computador</li>
       </ul>
       <a class="card-link" href="#contact">Solicitar informações →</a>
+    </div>
+
+    <div class="card th-gold reveal" style="border-color:rgba(251,191,36,0.35);background:rgba(251,191,36,0.04);">
+      <div class="card-icon" style="background:rgba(251,191,36,0.18);">🎮</div>
+      <div class="card-name">Jogos Clássicos Gratuitos</div>
+      <div class="card-tagline" style="color:#fbbf24;">Plataforma de Jogos Educativos</div>
+      <p class="card-desc">Acesse nossa plataforma gratuita de jogos clássicos com fins educativos — diversão e aprendizagem para alunos de todas as idades, direto no navegador.</p>
+      <ul class="card-features" style="--check-color:#fbbf24;">
+        <li>Raciocínio, memória e lógica</li>
+        <li>Ação, aventura e criatividade</li>
+        <li>Clássicos educativos: School Game, Bolhas Baby e mais</li>
+        <li>100% gratuito — sem instalação</li>
+        <li>Funciona em celular, tablet e computador</li>
+      </ul>
+      <a class="card-link" href="jogos.html" style="background:rgba(251,191,36,0.18);color:#fbbf24;">🎮 Acessar plataforma de jogos →</a>
     </div>
 
     <div class="card th-teal reveal">
@@ -899,7 +918,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-copy">
-    © 2025 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+    © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
     <span style="font-size:0.75rem;color:rgba(176,188,212,0.55);">Sistemas web modernos, seguros e completos para sua empresa ou instituição.</span>
   </div>
   <div class="ceo-badge">

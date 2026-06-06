@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogos Educativos Personalizados — ISAWERE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-deep: #050d2e;
+    --blue-bright: #1a5fff;
+    --blue-electric: #2d8cff;
+    --cyan: #00d4ff;
+    --gold: #f5a623;
+    --white: #ffffff;
+    --gray-light: #e8edf8;
+    --gray-soft: #b0bcd4;
+    /* Fun accent colors for categories */
+    --cat-raciocinio: #a78bfa;
+    --cat-acao: #f87171;
+    --cat-aventura: #34d399;
+    --cat-criatividade: #fb923c;
+    --cat-esporte: #38bdf8;
+    --cat-classicos: #fbbf24;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--blue-deep);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ══════════════════════════════
+     HEADER
+  ══════════════════════════════ */
+  header {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 300;
+    background: rgba(5,13,46,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(45,140,255,0.18);
+    padding: 0 5%; display: flex; align-items: center;
+    justify-content: space-between; height: 64px;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--cyan), var(--blue-electric));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .btn-home {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.82rem; font-weight: 500; color: var(--gray-soft);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .btn-home:hover { color: var(--cyan); }
+  .btn-cta {
+    background: linear-gradient(135deg, var(--blue-bright), var(--cyan));
+    color: #fff; padding: 0.5rem 1.3rem; border-radius: 50px;
+    font-weight: 600; font-size: 0.82rem; text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .btn-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ══════════════════════════════
+     HERO
+  ══════════════════════════════ */
+  .hero {
+    padding-top: 64px;
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #030b25 0%, #071540 50%, #050d2e 100%);
+    min-height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  /* Animated floating blobs */
+  .hero-blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(70px); pointer-events: none; opacity: 0.35;
+    animation: blobFloat 8s ease-in-out infinite alternate;
+  }
+  .hero-blob-1 { width: 400px; height: 400px; background: radial-gradient(circle, #a78bfa, transparent); top: -100px; left: -80px; animation-delay: 0s; }
+  .hero-blob-2 { width: 300px; height: 300px; background: radial-gradient(circle, #34d399, transparent); top: 50px; right: -60px; animation-delay: -3s; }
+  .hero-blob-3 { width: 250px; height: 250px; background: radial-gradient(circle, #f87171, transparent); bottom: -60px; left: 40%; animation-delay: -5s; }
+  @keyframes blobFloat {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-30px) scale(1.08); }
+  }
+
+  .hero-inner { position: relative; z-index: 2; padding: 4rem 5% 3.5rem; max-width: 800px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.4);
+    color: #c4b5fd; padding: 0.35rem 1rem; border-radius: 50px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .hero-title {
+    font-family: 'Nunito', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 0.9rem;
+  }
+  .hero-title span {
+    background: linear-gradient(135deg, #a78bfa, #34d399, var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem); color: var(--gray-soft);
+    line-height: 1.7; max-width: 560px; margin: 0 auto 1.8rem;
+  }
+  .hero-highlight {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(167,139,250,0.18), rgba(52,211,153,0.12));
+    border: 1px solid rgba(167,139,250,0.3); border-radius: 12px;
+    padding: 0.75rem 1.5rem; font-size: 0.88rem; color: #c4b5fd; font-weight: 500;
+  }
+  .hero-highlight strong { color: #a78bfa; }
+
+  /* Floating emoji decorations */
+  .hero-emojis span {
+    position: absolute; font-size: 2rem; opacity: 0.18;
+    animation: emojiDrift 10s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .hero-emojis span:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
+  .hero-emojis span:nth-child(2) { top: 60%; left: 8%; animation-delay: -2s; }
+  .hero-emojis span:nth-child(3) { top: 15%; right: 6%; animation-delay: -4s; }
+  .hero-emojis span:nth-child(4) { top: 65%; right: 7%; animation-delay: -6s; }
+  .hero-emojis span:nth-child(5) { bottom: 10%; left: 20%; animation-delay: -1s; }
+  .hero-emojis span:nth-child(6) { bottom: 10%; right: 22%; animation-delay: -3s; }
+  @keyframes emojiDrift {
+    from { transform: translateY(0) rotate(-5deg); }
+    to   { transform: translateY(-20px) rotate(8deg); }
+  }
+
+  /* ══════════════════════════════
+     STATS BAR
+  ══════════════════════════════ */
+  .stats-bar {
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 1.2rem 5%;
+    display: flex; align-items: center; justify-content: center;
+    gap: 2.5rem; flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Nunito', sans-serif; font-size: 1.6rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--cyan), #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.7rem; color: var(--gray-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.15rem; }
+  .stat-div { width: 1px; height: 36px; background: rgba(255,255,255,0.1); }
+
+  /* ══════════════════════════════
+     GAMES SECTION
+  ══════════════════════════════ */
+  .games-section { padding: 60px 5%; }
+
+  .category-block { margin-bottom: 3.5rem; }
+  .category-header {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.4rem; padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .category-icon { font-size: 1.5rem; }
+  .category-name {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .category-count {
+    margin-left: auto; font-size: 0.7rem; font-weight: 600;
+    padding: 0.2rem 0.6rem; border-radius: 50px;
+    background: rgba(255,255,255,0.07); color: var(--gray-soft);
+  }
+
+  /* Game cards grid */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .game-card {
+    position: relative; border-radius: 18px; overflow: hidden;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.09);
+    padding: 1.4rem 1.2rem 1.2rem;
+    text-decoration: none; color: var(--white);
+    display: flex; flex-direction: column; gap: 0.5rem;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .game-card::before {
+    content: ''; position: absolute; inset: 0;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    border-radius: 18px;
+  }
+  .game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  }
+  .game-card:hover::before { opacity: 1; }
+
+  .game-emoji { font-size: 2rem; line-height: 1; margin-bottom: 0.2rem; }
+  .game-name {
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.95rem;
+    line-height: 1.2;
+  }
+  .game-desc { font-size: 0.78rem; color: var(--gray-soft); line-height: 1.5; flex: 1; }
+  .game-play {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.72rem; font-weight: 700; margin-top: 0.3rem;
+    padding: 0.3rem 0.8rem; border-radius: 50px;
+    transition: opacity 0.2s;
+  }
+  .game-card:hover .game-play { opacity: 0.85; }
+
+  /* Category color themes */
+  .cat-raciocinio .game-card { border-color: rgba(167,139,250,0.2); }
+  .cat-raciocinio .game-card::before { background: linear-gradient(135deg, rgba(167,139,250,0.12), transparent 60%); }
+  .cat-raciocinio .game-card:hover { border-color: rgba(167,139,250,0.5); box-shadow: 0 16px 48px rgba(167,139,250,0.15); }
+  .cat-raciocinio .category-name { color: var(--cat-raciocinio); }
+  .cat-raciocinio .game-play { background: rgba(167,139,250,0.15); color: #c4b5fd; }
+
+  .cat-acao .game-card { border-color: rgba(248,113,113,0.2); }
+  .cat-acao .game-card::before { background: linear-gradient(135deg, rgba(248,113,113,0.12), transparent 60%); }
+  .cat-acao .game-card:hover { border-color: rgba(248,113,113,0.5); box-shadow: 0 16px 48px rgba(248,113,113,0.15); }
+  .cat-acao .category-name { color: var(--cat-acao); }
+  .cat-acao .game-play { background: rgba(248,113,113,0.15); color: #fca5a5; }
+
+  .cat-aventura .game-card { border-color: rgba(52,211,153,0.2); }
+  .cat-aventura .game-card::before { background: linear-gradient(135deg, rgba(52,211,153,0.12), transparent 60%); }
+  .cat-aventura .game-card:hover { border-color: rgba(52,211,153,0.5); box-shadow: 0 16px 48px rgba(52,211,153,0.15); }
+  .cat-aventura .category-name { color: var(--cat-aventura); }
+  .cat-aventura .game-play { background: rgba(52,211,153,0.15); color: #6ee7b7; }
+
+  .cat-criatividade .game-card { border-color: rgba(251,146,60,0.2); }
+  .cat-criatividade .game-card::before { background: linear-gradient(135deg, rgba(251,146,60,0.12), transparent 60%); }
+  .cat-criatividade .game-card:hover { border-color: rgba(251,146,60,0.5); box-shadow: 0 16px 48px rgba(251,146,60,0.15); }
+  .cat-criatividade .category-name { color: var(--cat-criatividade); }
+  .cat-criatividade .game-play { background: rgba(251,146,60,0.15); color: #fdba74; }
+
+  .cat-esporte .game-card { border-color: rgba(56,189,248,0.2); }
+  .cat-esporte .game-card::before { background: linear-gradient(135deg, rgba(56,189,248,0.12), transparent 60%); }
+  .cat-esporte .game-card:hover { border-color: rgba(56,189,248,0.5); box-shadow: 0 16px 48px rgba(56,189,248,0.15); }
+  .cat-esporte .category-name { color: var(--cat-esporte); }
+  .cat-esporte .game-play { background: rgba(56,189,248,0.15); color: #7dd3fc; }
+
+  .cat-classicos .game-card { border-color: rgba(251,191,36,0.2); }
+  .cat-classicos .game-card::before { background: linear-gradient(135deg, rgba(251,191,36,0.12), transparent 60%); }
+  .cat-classicos .game-card:hover { border-color: rgba(251,191,36,0.5); box-shadow: 0 16px 48px rgba(251,191,36,0.15); }
+  .cat-classicos .category-name { color: var(--cat-classicos); }
+  .cat-classicos .game-play { background: rgba(251,191,36,0.15); color: #fde68a; }
+
+  /* ══════════════════════════════
+     CUSTOM BANNER
+  ══════════════════════════════ */
+  .custom-banner {
+    margin: 0 5% 3rem;
+    background: linear-gradient(135deg, rgba(167,139,250,0.1) 0%, rgba(52,211,153,0.08) 50%, rgba(56,189,248,0.1) 100%);
+    border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 24px; padding: 2.5rem;
+    display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+  }
+  .custom-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(52,211,153,0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .custom-banner-icon { font-size: 3.5rem; flex-shrink: 0; position: relative; }
+  .custom-banner-text { flex: 1; position: relative; }
+  .custom-banner-tag {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #a78bfa; margin-bottom: 0.5rem;
+  }
+  .custom-banner-title {
+    font-family: 'Nunito', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 900; line-height: 1.2; margin-bottom: 0.6rem;
+  }
+  .custom-banner-desc { font-size: 0.88rem; color: var(--gray-soft); line-height: 1.6; }
+  .custom-banner-btn {
+    background: linear-gradient(135deg, #a78bfa, #34d399);
+    color: #fff; padding: 0.7rem 1.6rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.85rem; text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s; white-space: nowrap; flex-shrink: 0;
+    position: relative;
+  }
+  .custom-banner-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+
+  /* ══════════════════════════════
+     CONTACT SECTION
+  ══════════════════════════════ */
+  #contact {
+    background: linear-gradient(135deg, #040c28 0%, #071545 100%);
+    padding: 70px 5%; position: relative; overflow: hidden;
+    border-top: 1px solid rgba(45,140,255,0.1);
+  }
+  #contact::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 450px; height: 450px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,95,255,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; position: relative; }
+  .contact-label-sm { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.5rem; }
+  .contact-title { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 0.8rem; }
+  .contact-sub { color: var(--gray-soft); font-size: 0.92rem; line-height: 1.7; margin-bottom: 1.8rem; }
+  .contact-methods { display: flex; flex-direction: column; gap: 0.8rem; }
+  .contact-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.14); text-decoration: none; color: var(--white); transition: background 0.22s, border-color 0.22s, transform 0.2s; }
+  .contact-item:hover { background: rgba(45,140,255,0.1); border-color: rgba(45,140,255,0.38); transform: translateX(4px); }
+  .ci-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .ci-label { font-size: 0.7rem; color: var(--gray-soft); letter-spacing: 0.05em; text-transform: uppercase; }
+  .ci-value { font-weight: 600; font-size: 0.9rem; }
+  .social-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.3rem; }
+  .social-btn { display: flex; align-items: center; gap: 0.45rem; padding: 0.48rem 1rem; border-radius: 50px; background: rgba(45,140,255,0.1); border: 1px solid rgba(45,140,255,0.25); color: var(--cyan); font-size: 0.78rem; font-weight: 600; text-decoration: none; transition: background 0.22s, border-color 0.22s; }
+  .social-btn:hover { background: rgba(45,140,255,0.2); border-color: var(--cyan); }
+
+  .form-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(45,140,255,0.18); border-radius: 20px; padding: 2rem; }
+  .form-box-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 1.3rem; }
+  .contact-form { display: flex; flex-direction: column; gap: 0.9rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group label { font-size: 0.76rem; color: var(--gray-soft); font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(45,140,255,0.2);
+    border-radius: 10px; padding: 0.7rem 1rem; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.87rem;
+    transition: border-color 0.22s, background 0.22s; outline: none; width: 100%;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(176,188,212,0.45); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue-electric); background: rgba(45,140,255,0.08); }
+  .form-group select option { background: #071040; }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--blue-bright), var(--cyan));
+    color: #fff; padding: 0.85rem 2rem; border: none; border-radius: 50px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 20px rgba(26,95,255,0.38); align-self: flex-start;
+  }
+  .btn-submit:hover { opacity: 0.88; transform: translateY(-2px); }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    background: #020916; border-top: 1px solid rgba(45,140,255,0.1);
+    padding: 1.8rem 5%; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-copy { font-size: 0.82rem; color: var(--gray-soft); }
+  .footer-copy span { color: var(--cyan); font-weight: 600; }
+  .ceo-badge { display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.55rem 1.1rem; border-radius: 50px; }
+  .ceo-icon { font-size: 1rem; }
+  .ceo-role { font-size: 0.72rem; color: var(--gray-soft); }
+  .ceo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.86rem; }
+  .ceo-company { font-size: 0.68rem; color: var(--cyan); letter-spacing: 0.04em; }
+
+  .stripe { height: 1px; background: linear-gradient(90deg, transparent, rgba(45,140,255,0.28), transparent); }
+
+  /* ══════════════════════════════
+     SCROLL REVEAL
+  ══════════════════════════════ */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+  @media (max-width: 860px) {
+    .games-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .custom-banner { flex-direction: column; text-align: center; }
+    .stats-bar { gap: 1.2rem; }
+    .stat-div { display: none; }
+  }
+  @media (max-width: 480px) {
+    .games-grid { grid-template-columns: 1fr 1fr; }
+    .game-card { padding: 1rem; }
+    .game-emoji { font-size: 1.6rem; }
+    .game-name { font-size: 0.85rem; }
+    .game-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-text">ISAWERE</div>
+  <a class="btn-home" href="https://www.isawere.com.br">← Voltar ao site</a>
+  <a class="btn-cta" href="#contact">Personalizar Jogo</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-emojis">
+    <span>🎮</span><span>🧩</span><span>🏆</span><span>🎯</span><span>⭐</span><span>🚀</span>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge">🎓 ISAWERE Sistemas</div>
+    <h1 class="hero-title">
+      Jogos Educativos<br><span>Personalizados</span>
+    </h1>
+    <p class="hero-sub">
+      Desenvolvemos jogos educativos sob medida para a identidade da sua escola ou negócio — personalizados com nome, cores, conteúdo e currículo.
+    </p>
+    <div class="hero-highlight">
+      ✏️ <strong>Personalizamos</strong> o jogo para a sua escola ou o seu negócio
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">21</div>
+    <div class="stat-label">Jogos disponíveis</div>
+  </div>
+  <div class="stat-div"></div>
+  <div class="stat-item">
+    <div class="stat-num">6</div>
+    <div class="stat-label">Categorias</div>
+  </div>
+  <div class="stat-div"></div>
+  <div class="stat-item">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Personalizável</div>
+  </div>
+  <div class="stat-div"></div>
+  <div class="stat-item">
+    <div class="stat-num">Web</div>
+    <div class="stat-label">Sem instalação</div>
+  </div>
+</div>
+
+<!-- GAMES SECTION -->
+<section class="games-section">
+
+  <!-- RACIOCÍNIO & MEMÓRIA -->
+  <div class="category-block cat-raciocinio reveal">
+    <div class="category-header">
+      <span class="category-icon">🧠</span>
+      <span class="category-name">Raciocínio & Memória</span>
+      <span class="category-count">5 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/jogo-memoria.php">
+        <div class="game-emoji">🃏</div>
+        <div class="game-name">Jogo da Memória</div>
+        <div class="game-desc">Encontre os pares e treine a memória visual. Personalizável com imagens da sua escola.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/jogo-da-velha.php">
+        <div class="game-emoji">⭕</div>
+        <div class="game-name">Jogo da Velha</div>
+        <div class="game-desc">O clássico duelo estratégico de X e O. Dois jogadores, lógica e concentração.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/cruzadinhas.php">
+        <div class="game-emoji">📝</div>
+        <div class="game-name">Cruzadinhas</div>
+        <div class="game-desc">Palavras cruzadas temáticas. Conteúdo pode ser alinhado ao currículo escolar.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/sete-erros.php">
+        <div class="game-emoji">🔍</div>
+        <div class="game-name">Sete Erros</div>
+        <div class="game-desc">Encontre as diferenças entre duas imagens. Ótimo para atenção e concentração.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/forca.php">
+        <div class="game-emoji">🔤</div>
+        <div class="game-name">Forca</div>
+        <div class="game-desc">Adivinhe a palavra letra por letra. Vocabulário e ortografia de forma divertida.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- AÇÃO & HABILIDADE -->
+  <div class="category-block cat-acao reveal">
+    <div class="category-header">
+      <span class="category-icon">⚡</span>
+      <span class="category-name">Ação & Habilidade</span>
+      <span class="category-count">5 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/snake.php">
+        <div class="game-emoji">🐍</div>
+        <div class="game-name">Snake</div>
+        <div class="game-desc">A famosa cobrinha que não pode parar. Reflexos, agilidade e foco em ação.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/tetris.php">
+        <div class="game-emoji">🟦</div>
+        <div class="game-name">Tetris</div>
+        <div class="game-desc">Encaixe as peças e não deixe a pilha crescer. Raciocínio espacial e velocidade.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/breakout.php">
+        <div class="game-emoji">🧱</div>
+        <div class="game-name">Breakout</div>
+        <div class="game-desc">Quebre todos os blocos com a bola sem deixá-la cair. Coordenação e precisão.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/pac-man.php">
+        <div class="game-emoji">🟡</div>
+        <div class="game-name">Pac-Man</div>
+        <div class="game-desc">Coma os pontos e fuja dos fantasmas no labirinto. Estratégia e reflexos.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/starall.php">
+        <div class="game-emoji">⭐</div>
+        <div class="game-name">Star All</div>
+        <div class="game-desc">Colete estrelas e supere obstáculos nessa aventura espacial de ação.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- AVENTURA & RPG -->
+  <div class="category-block cat-aventura reveal">
+    <div class="category-header">
+      <span class="category-icon">🗺️</span>
+      <span class="category-name">Aventura & RPG</span>
+      <span class="category-count">3 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/braventura.php">
+        <div class="game-emoji">⚔️</div>
+        <div class="game-name">Braventura</div>
+        <div class="game-desc">Uma aventura épica com desafios educativos integrados à narrativa do jogo.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/carmen-aventureira.php">
+        <div class="game-emoji">🌍</div>
+        <div class="game-name">Carmen Aventureira</div>
+        <div class="game-desc">Explore o mundo com Carmen e aprenda sobre geografia, culturas e idiomas.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/cacatesouro.php">
+        <div class="game-emoji">🏴‍☠️</div>
+        <div class="game-name">Caça ao Tesouro</div>
+        <div class="game-desc">Resolva pistas e encontre o tesouro escondido. Lógica e raciocínio em ação.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CRIATIVIDADE & ARTE -->
+  <div class="category-block cat-criatividade reveal">
+    <div class="category-header">
+      <span class="category-icon">🎨</span>
+      <span class="category-name">Criatividade & Arte</span>
+      <span class="category-count">3 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/colorir.php">
+        <div class="game-emoji">🖌️</div>
+        <div class="game-name">Colorir</div>
+        <div class="game-desc">Pinte imagens temáticas com sua criatividade. Ideal para crianças do fundamental.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/dress-up.php">
+        <div class="game-emoji">👗</div>
+        <div class="game-name">Dress Up</div>
+        <div class="game-desc">Monte looks e combinações criativas. Expressão artística e criatividade infantil.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/salao-beleza.php">
+        <div class="game-emoji">💄</div>
+        <div class="game-name">Salão de Beleza</div>
+        <div class="game-desc">Crie produções e estilos no salão virtual. Estimula criatividade e coordenação.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ESPORTE -->
+  <div class="category-block cat-esporte reveal">
+    <div class="category-header">
+      <span class="category-icon">🏆</span>
+      <span class="category-name">Esporte</span>
+      <span class="category-count">2 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/footgol.php">
+        <div class="game-emoji">⚽</div>
+        <div class="game-name">Footgol</div>
+        <div class="game-desc">Um emocionante jogo de futebol para dois jogadores. Competição e diversão.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/race-game.php">
+        <div class="game-emoji">🏎️</div>
+        <div class="game-name">Race Game</div>
+        <div class="game-desc">Pilote na pista e seja o mais rápido. Reflexos e tomada de decisão em alta velocidade.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CLÁSSICOS EDUCATIVOS -->
+  <div class="category-block cat-classicos reveal">
+    <div class="category-header">
+      <span class="category-icon">🌟</span>
+      <span class="category-name">Clássicos Educativos</span>
+      <span class="category-count">3 jogos</span>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="private/schoolgame.php">
+        <div class="game-emoji">🏫</div>
+        <div class="game-name">School Game</div>
+        <div class="game-desc">Ambiente virtual escolar com quizzes por disciplina, pontos e desafios pedagógicos.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/bolhas-baby.php">
+        <div class="game-emoji">🫧</div>
+        <div class="game-name">Bolhas Baby</div>
+        <div class="game-desc">Estoure bolhas coloridas! Coordenação motora e diversão para os menores.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+      <a class="game-card" href="private/jogo-memoria.php">
+        <div class="game-emoji">🤖</div>
+        <div class="game-name">Robô Educativo</div>
+        <div class="game-desc">Interaja com o robô e responda perguntas temáticas. IA educacional divertida.</div>
+        <div class="game-play">▶ Jogar agora</div>
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- CUSTOM BANNER -->
+<div class="custom-banner reveal">
+  <div class="custom-banner-icon">🎨</div>
+  <div class="custom-banner-text">
+    <div class="custom-banner-tag">✏️ Personalização completa</div>
+    <div class="custom-banner-title">Quer um jogo com a cara da sua escola?</div>
+    <div class="custom-banner-desc">Personalizamos qualquer jogo com nome da escola, cores, logotipo, conteúdo curricular e muito mais. Solicite uma demonstração gratuita.</div>
+  </div>
+  <a class="custom-banner-btn" href="#contact">Quero personalizar →</a>
+</div>
+
+<div class="stripe"></div>
+
+<!-- CONTACT SECTION -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <div class="contact-label-sm">Entre em Contato</div>
+      <h2 class="contact-title">Vamos conversar sobre o seu projeto?</h2>
+      <p class="contact-sub">Nossa equipe está pronta para apresentar a solução ideal para a sua realidade. Sem complicação.</p>
+      <div class="contact-methods">
+        <a class="contact-item" href="https://wa.me/5583996750560" target="_blank">
+          <div class="ci-icon">📱</div>
+          <div><div class="ci-label">WhatsApp</div><div class="ci-value">(83) 99675-0560</div></div>
+        </a>
+        <a class="contact-item" href="mailto:isaweresistemas@gmail.com">
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-label">E-mail</div><div class="ci-value">isaweresistemas@gmail.com</div></div>
+        </a>
+        <a class="contact-item" href="https://www.isawere.com.br" target="_blank">
+          <div class="ci-icon">🌐</div>
+          <div><div class="ci-label">Site</div><div class="ci-value">www.isawere.com.br</div></div>
+        </a>
+        <div class="contact-item" style="pointer-events:none;">
+          <div class="ci-icon">📍</div>
+          <div><div class="ci-label">Localização</div><div class="ci-value">Campina Grande — PB</div></div>
+        </div>
+      </div>
+      <div class="social-row">
+        <a class="social-btn" href="https://www.youtube.com/@IsawereSistemas" target="_blank">▶ YouTube</a>
+        <a class="social-btn" href="https://www.linkedin.com/company/isawere-sistemas" target="_blank">in LinkedIn</a>
+        <a class="social-btn" href="https://www.instagram.com/isaweresistemas" target="_blank">📸 Instagram</a>
+        <a class="social-btn" href="https://wa.me/5583996750560" target="_blank">💬 WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="form-box">
+        <div class="form-box-title">Solicite uma demonstração</div>
+        <div class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group"><label>Nome</label><input id="j-nome" type="text" placeholder="Seu nome completo"></div>
+            <div class="form-group"><label>Telefone / WhatsApp</label><input id="j-tel" type="tel" placeholder="(83) 99999-9999"></div>
+          </div>
+          <div class="form-group"><label>E-mail</label><input id="j-email" type="email" placeholder="seu@email.com"></div>
+          <div class="form-group">
+            <label>Interesse</label>
+            <select id="j-solucao">
+              <option value="">Selecione um jogo ou opção...</option>
+              <optgroup label="── Raciocínio & Memória ──">
+                <option>Jogo da Memória</option>
+                <option>Jogo da Velha</option>
+                <option>Cruzadinhas</option>
+                <option>Sete Erros</option>
+                <option>Forca</option>
+              </optgroup>
+              <optgroup label="── Ação & Habilidade ──">
+                <option>Snake</option>
+                <option>Tetris</option>
+                <option>Breakout</option>
+                <option>Pac-Man</option>
+                <option>Star All</option>
+              </optgroup>
+              <optgroup label="── Aventura & RPG ──">
+                <option>Braventura</option>
+                <option>Carmen Aventureira</option>
+                <option>Caça ao Tesouro</option>
+              </optgroup>
+              <optgroup label="── Criatividade & Arte ──">
+                <option>Colorir</option>
+                <option>Dress Up</option>
+                <option>Salão de Beleza</option>
+              </optgroup>
+              <optgroup label="── Esporte ──">
+                <option>Footgol</option>
+                <option>Race Game</option>
+              </optgroup>
+              <optgroup label="── Clássicos Educativos ──">
+                <option>School Game</option>
+                <option>Bolhas Baby</option>
+                <option>Robô Educativo</option>
+              </optgroup>
+              <option>Quero personalizar mais de um jogo</option>
+              <option>Quero um jogo novo do zero</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Mensagem (opcional)</label><textarea id="j-msg" placeholder="Conte um pouco sobre sua escola ou negócio..."></textarea></div>
+          <button class="btn-submit" id="btnSubmit" onclick="handleFormSubmit()">Enviar Mensagem →</button>
+        </div>
+        <!-- Mensagem de sucesso (oculta inicialmente) -->
+        <div id="formSucesso" style="display:none; text-align:center; padding: 2rem 1rem;">
+          <div style="font-size:2.5rem; margin-bottom:0.8rem;">✅</div>
+          <div style="font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:0.5rem; color:#00d4ff;">Mensagem enviada!</div>
+          <p style="color:#b0bcd4; font-size:0.9rem; line-height:1.6;">Obrigado pelo seu contato.<br>Responderemos em breve.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">
+    © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+    <span style="font-size:0.75rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+  </div>
+  <div class="ceo-badge">
+    <div class="ceo-icon">👤</div>
+    <div>
+      <div class="ceo-role">Fundador & CEO</div>
+      <div class="ceo-name">Ivan Rosas</div>
+      <div class="ceo-company">ISAWERE Sistemas</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* SCROLL REVEAL */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 65);
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(r => revealObserver.observe(r));
+
+/* ═══════════════════════════════════
+   FORM → GOOGLE SHEETS (mesma planilha do site principal)
+═══════════════════════════════════ */
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjg9_mb07OXI9dUhQEjL4ccFL66C2ecbItoqPQMxpNsBTWmmZY5boE-aPhZ5PlhKXSKQ/exec';
+
+async function handleFormSubmit() {
+  const nome    = document.getElementById('j-nome').value.trim();
+  const tel     = document.getElementById('j-tel').value.trim();
+  const email   = document.getElementById('j-email').value.trim();
+  const solucao = document.getElementById('j-solucao').value;
+  const msg     = document.getElementById('j-msg').value.trim();
+
+  if (!nome) { alert('Por favor, preencha seu nome.'); return; }
+  if (!solucao) { alert('Por favor, selecione o jogo de interesse.'); return; }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const payload = {
+    nome,
+    telefone: tel || '',
+    email: email || '',
+    interesse: '[Jogos] ' + solucao,
+    mensagem: msg || '',
+    data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Fortaleza' })
+  };
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // Exibe mensagem de sucesso
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSucesso').style.display = 'block';
+
+  } catch (err) {
+    alert('Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Mensagem →';
+  }
+}
+</script>
+</body>
+</html>
