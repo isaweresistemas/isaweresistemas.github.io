@@ -848,15 +848,15 @@
     <div class="reveal">
       <div class="form-box">
         <div class="form-box-title">Solicite uma demonstração</div>
-        <div class="contact-form">
+        <div class="contact-form" id="contactForm">
           <div class="form-row">
-            <div class="form-group"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div>
-            <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" placeholder="(83) 99999-9999"></div>
+            <div class="form-group"><label>Nome</label><input id="f-nome" type="text" placeholder="Seu nome completo"></div>
+            <div class="form-group"><label>Telefone / WhatsApp</label><input id="f-tel" type="tel" placeholder="(83) 99999-9999"></div>
           </div>
-          <div class="form-group"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div>
+          <div class="form-group"><label>E-mail</label><input id="f-email" type="email" placeholder="seu@email.com"></div>
           <div class="form-group">
             <label>Interesse</label>
-            <select>
+            <select id="f-solucao">
               <option value="">Selecione uma solução...</option>
               <optgroup label="── Saúde ──">
                 <option>ISAWERE Agendamentos Médicos</option>
@@ -882,8 +882,14 @@
               <option>Tenho interesse em mais de uma solução</option>
             </select>
           </div>
-          <div class="form-group"><label>Mensagem (opcional)</label><textarea placeholder="Conte um pouco sobre sua necessidade..."></textarea></div>
-          <button class="btn-submit" onclick="handleFormSubmit()">Enviar via WhatsApp →</button>
+          <div class="form-group"><label>Mensagem (opcional)</label><textarea id="f-msg" placeholder="Conte um pouco sobre sua necessidade..."></textarea></div>
+          <button class="btn-submit" id="btnSubmit" onclick="handleFormSubmit()">Enviar Mensagem →</button>
+        </div>
+        <!-- Mensagem de sucesso (oculta inicialmente) -->
+        <div id="formSucesso" style="display:none; text-align:center; padding: 2rem 1rem;">
+          <div style="font-size:2.5rem; margin-bottom:0.8rem;">✅</div>
+          <div style="font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:0.5rem; color:#00d4ff;">Mensagem enviada!</div>
+          <p style="color:#b0bcd4; font-size:0.9rem; line-height:1.6;">Obrigado pelo seu contato.<br>Responderemos em breve.</p>
         </div>
       </div>
     </div>
@@ -978,28 +984,52 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(r => revealObserver.observe(r));
 
 /* ═══════════════════════════════════
-   FORM → WHATSAPP
+   FORM → GOOGLE SHEETS
+   ⚠️  Substitua a URL abaixo pela URL
+       gerada no seu Apps Script.
 ═══════════════════════════════════ */
-function handleFormSubmit() {
-  const nome    = document.querySelector('input[placeholder="Seu nome completo"]').value.trim();
-  const tel     = document.querySelector('input[placeholder="(83) 99999-9999"]').value.trim();
-  const email   = document.querySelector('input[placeholder="seu@email.com"]').value.trim();
-  const solucao = document.querySelector('select').value;
-  const msg     = document.querySelector('textarea').value.trim();
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjg9_mb07OXI9dUhQEjL4ccFL66C2ecbItoqPQMxpNsBTWmmZY5boE-aPhZ5PlhKXSKQ/exec';
 
-  if (!nome || !solucao) { alert('Por favor, preencha seu nome e a solução de interesse.'); return; }
+async function handleFormSubmit() {
+  const nome    = document.getElementById('f-nome').value.trim();
+  const tel     = document.getElementById('f-tel').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const solucao = document.getElementById('f-solucao').value;
+  const msg     = document.getElementById('f-msg').value.trim();
 
-  const texto = `Olá! Gostaria de saber mais sobre as soluções da *ISAWERE Sistemas*.
+  if (!nome) { alert('Por favor, preencha seu nome.'); return; }
+  if (!solucao) { alert('Por favor, selecione a solução de interesse.'); return; }
 
-👤 *Nome:* ${nome}
-📞 *Telefone:* ${tel || 'Não informado'}
-📧 *E-mail:* ${email || 'Não informado'}
-💡 *Interesse:* ${solucao}
-${msg ? `📝 *Mensagem:* ${msg}` : ''}
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
 
-Vi o site e gostaria de mais informações!`;
+  const payload = {
+    nome,
+    telefone: tel || '',
+    email: email || '',
+    interesse: solucao,
+    mensagem: msg || '',
+    data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Fortaleza' })
+  };
 
-  window.open(`https://wa.me/5583996750560?text=${encodeURIComponent(texto)}`, '_blank');
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // Exibe mensagem de sucesso
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSucesso').style.display = 'block';
+
+  } catch (err) {
+    alert('Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Mensagem →';
+  }
 }
 </script>
 </body>
