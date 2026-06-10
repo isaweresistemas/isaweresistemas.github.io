@@ -27,8 +27,66 @@
         }
 
         .game-title { font-size: 1.8em; font-weight: bold; color: #4CAF50; }
+        .game-info  { display: flex; gap: 20px; font-size: 0.9em; }
 
-        .game-info { display: flex; gap: 20px; font-size: 0.9em; }
+        /* ── FASES ── */
+        .phases-bar {
+            display: flex; gap: 10px; justify-content: center;
+            padding: 14px 20px 0; flex-wrap: wrap;
+        }
+        .phase-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-size: 0.88em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .phase-btn.active {
+            background: linear-gradient(135deg, #4CAF50, #388e3c);
+            color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.5);
+            transform: translateY(-2px);
+        }
+        .phase-btn.unlocked:not(.active) {
+            background: rgba(255,255,255,0.1); border-color: #4CAF50; color: #4CAF50;
+        }
+        .phase-btn.soft-locked {
+            background: rgba(255,255,255,0.05); color: #888;
+            border-color: #555; cursor: pointer;
+        }
+        .phase-btn.soft-locked:hover { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #4CAF50; }
+        .phase-badge { font-size: 0.7em; padding: 2px 7px; border-radius: 50px; background: rgba(255,255,255,0.15); }
+
+        /* ── UNLOCK BOX ── */
+        .unlock-box {
+            display: none; max-width: 500px; width: 90%; margin: 14px auto 0;
+            background: rgba(0,0,0,0.85); border: 2px solid #4CAF50;
+            border-radius: 18px; padding: 20px; text-align: center; color: #fff;
+        }
+        .unlock-box.show { display: block; }
+        .unlock-title { font-size: 1em; font-weight: 800; color: #4CAF50; margin-bottom: 6px; }
+        .unlock-desc  { font-size: 0.85em; color: #aaa; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: white; padding: 10px 22px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 14px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #4CAF50;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; outline: none;
+            text-align: center; background: #111; color: #fff;
+        }
+        .unlock-submit {
+            background: linear-gradient(135deg, #4CAF50, #388e3c);
+            color: white; border: none; padding: 10px 16px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;
+        }
+        .unlock-submit:hover { opacity: 0.88; }
+        .unlock-error { color: #ff6b6b; font-size: 0.82em; margin-top: 8px; display: none; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
@@ -45,9 +103,13 @@
             color: white; font-size: 1.1em; font-weight: bold;
             cursor: pointer; transition: all 0.3s ease; text-align: center;
         }
-
         .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(76,175,80,0.4); }
         .menu-btn i { display: block; font-size: 2em; margin-bottom: 10px; }
+        .menu-btn.locked-menu {
+            background: linear-gradient(135deg, #555, #444);
+            cursor: pointer; opacity: 0.7;
+        }
+        .menu-btn.locked-menu:hover { opacity: 1; box-shadow: 0 8px 25px rgba(76,175,80,0.3); }
 
         .section {
             display: none;
@@ -55,7 +117,6 @@
             border-radius: 15px; padding: 25px;
             margin-bottom: 20px; border: 2px solid #4CAF50;
         }
-
         .section.active { display: block; }
 
         .section-title {
@@ -72,12 +133,10 @@
             border: 3px solid #fff; border-radius: 10px; height: 500px;
             position: relative; overflow: hidden;
         }
-
         .field::before {
             content: ''; position: absolute; top: 50%; left: 0; right: 0;
             height: 2px; background: white; transform: translateY(-50%);
         }
-
         .field::after {
             content: ''; position: absolute; top: 50%; left: 50%;
             width: 100px; height: 100px; border: 2px solid white;
@@ -90,7 +149,6 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: bold; font-size: 0.8em; cursor: pointer; transition: all 0.3s ease;
         }
-
         .player-slot:hover { transform: scale(1.2); background: #1976D2; }
         .goalkeeper { background: #FF9800 !important; }
 
@@ -110,7 +168,6 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px; border-bottom: 1px solid #4CAF50; cursor: pointer; transition: background 0.3s ease;
         }
-
         .player-item:hover { background: rgba(76,175,80,0.2); }
         .player-info { display: flex; align-items: center; gap: 10px; }
 
@@ -129,8 +186,8 @@
             border-radius: 10px; border: 2px solid #4CAF50;
         }
 
-        .team-name { font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
-        .team-logo { font-size: 4em; margin: 10px 0; }
+        .team-name  { font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
+        .team-logo  { font-size: 4em; margin: 10px 0; }
         .score-display { font-size: 3em; font-weight: bold; color: #4CAF50; margin: 0 20px; }
 
         .match-controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
@@ -141,7 +198,6 @@
             font-weight: bold; transition: all 0.3s ease;
             text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
         }
-
         .btn:hover { background: #45a049; transform: translateY(-2px); }
         .btn-secondary { background: #2196F3; }
         .btn-secondary:hover { background: #1976D2; }
@@ -153,11 +209,9 @@
             width: 100%; border-collapse: collapse;
             background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden;
         }
-
         .league-table th, .league-table td {
             padding: 12px; text-align: center; border-bottom: 1px solid #4CAF50;
         }
-
         .league-table th { background: #4CAF50; color: white; font-weight: bold; }
         .league-table tr:hover { background: rgba(76,175,80,0.2); }
 
@@ -172,8 +226,31 @@
             background: rgba(255,193,7,0.2); border: 2px solid #FFC107;
             border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 20px;
         }
-
         .budget-amount { font-size: 1.5em; font-weight: bold; color: #FFC107; }
+
+        /* FASE 2 - formações extras */
+        .formation-selector {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+        }
+        .formation-btn {
+            background: rgba(76,175,80,0.2); border: 2px solid #4CAF50;
+            color: #fff; padding: 8px 16px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+        .formation-btn:hover, .formation-btn.active { background: #4CAF50; }
+
+        /* FASE 3 - estatísticas avançadas */
+        .advanced-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px; margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(0,0,0,0.5); border: 2px solid #4CAF50;
+            border-radius: 10px; padding: 15px; text-align: center;
+        }
+        .stat-card .stat-value { font-size: 2em; font-weight: bold; color: #4CAF50; }
+        .stat-card .stat-label { font-size: 0.8em; color: #aaa; margin-top: 5px; }
 
         .notification {
             position: fixed; top: 20px; right: 20px;
@@ -181,7 +258,6 @@
             border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 1000; transform: translateX(300px); transition: transform 0.3s ease;
         }
-
         .notification.show { transform: translateX(0); }
 
         /* ── ISAWERE FOOTER ── */
@@ -193,35 +269,29 @@
             display: flex; align-items: center;
             justify-content: space-between; flex-wrap: wrap; gap: 1rem;
         }
-
         .isawere-footer .logo-text {
             font-weight: 800; font-size: 1.2rem;
             background: linear-gradient(135deg, #00d4ff, #2d8cff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-decoration: none;
         }
-
         .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
         .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
-
         .isawere-footer .ceo-badge {
             display: flex; align-items: center; gap: 0.6rem;
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(45,140,255,0.2);
             padding: 0.5rem 1rem; border-radius: 50px;
         }
-
         .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
         .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
         .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
-
         .isawere-footer .btn-custom {
             background: linear-gradient(135deg, #1a5fff, #00d4ff);
             color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
             font-weight: 600; font-size: 0.78rem; text-decoration: none;
             transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
         }
-
         .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
 
         @media (max-width: 768px) {
@@ -248,19 +318,45 @@
         </div>
     </div>
 
+    <!-- FASES -->
+    <div class="phases-bar">
+        <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectPhase(1)">
+            🟢 Fase 1 <span class="phase-badge">GRÁTIS</span>
+        </button>
+        <button class="phase-btn soft-locked" id="phaseBtn2" onclick="tryUnlock(2)">
+            ⚽ Fase 2 <span class="phase-badge">SENHA</span>
+        </button>
+        <button class="phase-btn soft-locked" id="phaseBtn3" onclick="tryUnlock(3)">
+            🏆 Fase 3 <span class="phase-badge">SENHA</span>
+        </button>
+    </div>
+
+    <!-- UNLOCK BOX -->
+    <div class="unlock-box" id="unlockBox">
+        <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie novas fases!</div>
+        <div class="unlock-desc" id="unlockDesc"></div>
+        <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a><br>
+        <div class="unlock-input-row">
+            <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+                   onkeydown="if(event.key==='Enter') checkPassword()">
+            <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+        </div>
+        <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+    </div>
+
     <div class="container">
         <!-- Menu Principal -->
-        <div class="main-menu">
+        <div class="main-menu" id="mainMenu">
             <button class="menu-btn" onclick="showSection('team')">
                 <i class="fas fa-users"></i> Meu Time
             </button>
             <button class="menu-btn" onclick="showSection('match')">
                 <i class="fas fa-play"></i> Jogar Partida
             </button>
-            <button class="menu-btn" onclick="showSection('league')">
+            <button class="menu-btn" id="menuLeague" onclick="handleLockedSection('league',2)">
                 <i class="fas fa-trophy"></i> Campeonato
             </button>
-            <button class="menu-btn" onclick="showSection('transfers')">
+            <button class="menu-btn" id="menuTransfers" onclick="handleLockedSection('transfers',2)">
                 <i class="fas fa-exchange-alt"></i> Transferências
             </button>
         </div>
@@ -268,6 +364,18 @@
         <!-- Seção Meu Time -->
         <div id="team" class="section active">
             <h2 class="section-title"><i class="fas fa-users"></i> Formação do Time</h2>
+
+            <!-- Seletor de formação (Fase 2+) -->
+            <div id="formationSelector" style="display:none; margin-bottom:15px;">
+                <h3 style="color:#4CAF50;margin-bottom:10px;">⚙️ Escolha a Formação:</h3>
+                <div class="formation-selector">
+                    <button class="formation-btn active" onclick="changeFormation('4-4-2',this)">4-4-2</button>
+                    <button class="formation-btn" onclick="changeFormation('4-3-3',this)">4-3-3</button>
+                    <button class="formation-btn" onclick="changeFormation('3-5-2',this)">3-5-2</button>
+                    <button class="formation-btn" onclick="changeFormation('5-3-2',this)">5-3-2</button>
+                </div>
+            </div>
+
             <div class="team-formation">
                 <div class="field" id="field"></div>
                 <div class="team-stats">
@@ -276,6 +384,14 @@
                     <div class="stat-row"><span>Meio-campo:</span><span id="teamMidfield">72</span></div>
                     <div class="stat-row"><span>Defesa:</span><span id="teamDefense">78</span></div>
                     <div class="stat-row"><span>Overall:</span><span id="teamOverall">75</span></div>
+                    <!-- Stats Avançadas (Fase 3) -->
+                    <div id="advancedStatsPanel" style="display:none;margin-top:15px;">
+                        <div class="stat-row"><span>Vitórias:</span><span id="statWins">0</span></div>
+                        <div class="stat-row"><span>Empates:</span><span id="statDraws">0</span></div>
+                        <div class="stat-row"><span>Derrotas:</span><span id="statLosses">0</span></div>
+                        <div class="stat-row"><span>Gols Pró:</span><span id="statGF">0</span></div>
+                        <div class="stat-row"><span>Gols Contra:</span><span id="statGA">0</span></div>
+                    </div>
                 </div>
             </div>
             <h3 style="color:#4CAF50;margin-bottom:15px;">Elenco Completo</h3>
@@ -310,7 +426,7 @@
             <div id="matchEvents" style="margin-top:20px;"></div>
         </div>
 
-        <!-- Seção Campeonato -->
+        <!-- Seção Campeonato (Fase 2+) -->
         <div id="league" class="section">
             <h2 class="section-title"><i class="fas fa-trophy"></i> Tabela do Campeonato</h2>
             <table class="league-table">
@@ -328,7 +444,7 @@
             </div>
         </div>
 
-        <!-- Seção Transferências -->
+        <!-- Seção Transferências (Fase 2+) -->
         <div id="transfers" class="section">
             <h2 class="section-title"><i class="fas fa-exchange-alt"></i> Mercado de Transferências</h2>
             <div class="budget-display">
@@ -375,10 +491,128 @@
     </footer>
 
     <script>
+        /* ═══════════════════════════════════════════
+           CONFIGURAÇÃO DAS FASES
+        ═══════════════════════════════════════════ */
+        const phaseConfig = {
+            1: {
+                password: null, ytLink: null,
+                desc: '',
+                sections: ['team','match']
+            },
+            2: {
+                password: 'FOOTGOL2',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'Na Fase 2 você desbloqueia o Campeonato, o Mercado de Transferências e escolha de formações táticas! Assista ao vídeo no YouTube, pegue a senha e vire um técnico completo!',
+                sections: ['team','match','league','transfers']
+            },
+            3: {
+                password: 'TECNICO3',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'A Fase 3 libera estatísticas avançadas do time, mais formações táticas e jogadores com atributos especiais! Pegue a senha no canal da ISAWERE e domine o campeonato!',
+                sections: ['team','match','league','transfers']
+            }
+        };
+
+        let currentPhase   = 1;
+        let pendingPhase   = null;
+        let unlockedPhases = JSON.parse(localStorage.getItem('footgol_unlocked') || '[1]');
+
+        /* ── FASES ── */
+        function refreshPhaseBtns() {
+            [1,2,3].forEach(n => {
+                const btn = document.getElementById('phaseBtn' + n);
+                btn.className = 'phase-btn';
+                if (n === currentPhase) btn.classList.add('active', 'unlocked');
+                else if (unlockedPhases.includes(n)) btn.classList.add('unlocked');
+                else btn.classList.add('soft-locked');
+            });
+            refreshMenuLocks();
+        }
+
+        function refreshMenuLocks() {
+            const phase2Unlocked = unlockedPhases.includes(2);
+            ['menuLeague','menuTransfers'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.className = phase2Unlocked ? 'menu-btn' : 'menu-btn locked-menu';
+                    const icon = btn.querySelector('i');
+                    if (!phase2Unlocked && icon && !btn.innerHTML.includes('🔒')) {
+                        btn.innerHTML = btn.innerHTML.replace('</button>','') + ' 🔒';
+                    } else if (phase2Unlocked) {
+                        btn.innerHTML = btn.innerHTML.replace(' 🔒','');
+                    }
+                }
+            });
+            /* Formação avançada (fase 2+) */
+            const fSel = document.getElementById('formationSelector');
+            if (fSel) fSel.style.display = unlockedPhases.includes(2) ? 'block' : 'none';
+            /* Stats avançadas (fase 3) */
+            const aPanel = document.getElementById('advancedStatsPanel');
+            if (aPanel) aPanel.style.display = unlockedPhases.includes(3) ? 'block' : 'none';
+        }
+
+        function handleLockedSection(section, requiredPhase) {
+            if (unlockedPhases.includes(requiredPhase)) {
+                showSection(section);
+            } else {
+                tryUnlock(requiredPhase);
+            }
+        }
+
+        function selectPhase(n) {
+            if (!unlockedPhases.includes(n)) { tryUnlock(n); return; }
+            currentPhase = n;
+            pendingPhase = null;
+            document.getElementById('unlockBox').classList.remove('show');
+            localStorage.setItem('footgol_phase', currentPhase);
+            refreshPhaseBtns();
+        }
+
+        function tryUnlock(n) {
+            if (unlockedPhases.includes(n)) { selectPhase(n); return; }
+            pendingPhase = n;
+            const cfg = phaseConfig[n];
+            document.getElementById('unlockDesc').textContent = cfg.desc;
+            document.getElementById('unlockYtBtn').href = cfg.ytLink;
+            document.getElementById('unlockInput').value = '';
+            document.getElementById('unlockError').style.display = 'none';
+            document.getElementById('unlockBox').classList.add('show');
+            document.getElementById('unlockInput').focus();
+            document.getElementById('unlockBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function checkPassword() {
+            const input   = document.getElementById('unlockInput').value.trim().toUpperCase();
+            const correct = phaseConfig[pendingPhase].password.toUpperCase();
+            if (input === correct) {
+                if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('footgol_unlocked', JSON.stringify(unlockedPhases));
+                currentPhase = pendingPhase;
+                localStorage.setItem('footgol_phase', currentPhase);
+                document.getElementById('unlockBox').classList.remove('show');
+                refreshPhaseBtns();
+                showNotification(`🔓 Fase ${pendingPhase} desbloqueada!`);
+            } else {
+                document.getElementById('unlockError').style.display = 'block';
+                const inp = document.getElementById('unlockInput');
+                inp.style.borderColor = '#dc3545';
+                setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('unlockBox').classList.contains('show')) checkPassword();
+        });
+
+        /* ═══════════════════════════════════════════
+           LÓGICA DO JOGO
+        ═══════════════════════════════════════════ */
         let gameData = {
             budget: 1000000, season: 2024, round: 1,
             myTeam: { name:"Seu Time", players:[], formation:"4-4-2", overall:75 },
-            league: [], availablePlayers: []
+            league: [], availablePlayers: [],
+            currentFormation: "4-4-2"
         };
 
         const fieldPositions = {
@@ -387,6 +621,24 @@
                 { pos:"CB2", x:60, y:70 }, { pos:"LB",  x:80, y:70 }, { pos:"RM",  x:20, y:40 },
                 { pos:"CM1", x:40, y:40 }, { pos:"CM2", x:60, y:40 }, { pos:"LM",  x:80, y:40 },
                 { pos:"ST1", x:40, y:15 }, { pos:"ST2", x:60, y:15 }
+            ],
+            "4-3-3": [
+                { pos:"GK",  x:50, y:90 }, { pos:"RB",  x:20, y:72 }, { pos:"CB1", x:40, y:72 },
+                { pos:"CB2", x:60, y:72 }, { pos:"LB",  x:80, y:72 }, { pos:"CM1", x:30, y:45 },
+                { pos:"CM2", x:50, y:45 }, { pos:"CM3", x:70, y:45 }, { pos:"RW",  x:20, y:15 },
+                { pos:"ST",  x:50, y:12 }, { pos:"LW",  x:80, y:15 }
+            ],
+            "3-5-2": [
+                { pos:"GK",  x:50, y:90 }, { pos:"CB1", x:30, y:72 }, { pos:"CB2", x:50, y:72 },
+                { pos:"CB3", x:70, y:72 }, { pos:"RM",  x:15, y:45 }, { pos:"CM1", x:35, y:45 },
+                { pos:"CM2", x:55, y:45 }, { pos:"CM3", x:75, y:45 }, { pos:"LM",  x:88, y:45 },
+                { pos:"ST1", x:38, y:15 }, { pos:"ST2", x:62, y:15 }
+            ],
+            "5-3-2": [
+                { pos:"GK",  x:50, y:90 }, { pos:"RWB", x:10, y:68 }, { pos:"CB1", x:30, y:72 },
+                { pos:"CB2", x:50, y:72 }, { pos:"CB3", x:70, y:72 }, { pos:"LWB", x:90, y:68 },
+                { pos:"CM1", x:30, y:42 }, { pos:"CM2", x:50, y:42 }, { pos:"CM3", x:70, y:42 },
+                { pos:"ST1", x:38, y:15 }, { pos:"ST2", x:62, y:15 }
             ]
         };
 
@@ -448,10 +700,20 @@
             }
         }
 
+        function changeFormation(name, el) {
+            if (!fieldPositions[name]) return;
+            gameData.currentFormation = name;
+            document.querySelectorAll('.formation-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            setupField();
+            showNotification(`Formação alterada para ${name}`);
+        }
+
         function setupField() {
             const field = document.getElementById('field');
             field.innerHTML = '';
-            fieldPositions["4-4-2"].forEach((pos, index) => {
+            const formation = fieldPositions[gameData.currentFormation] || fieldPositions["4-4-2"];
+            formation.forEach((pos, index) => {
                 const slot = document.createElement('div');
                 slot.className = 'player-slot';
                 if (pos.pos === 'GK') slot.classList.add('goalkeeper');
@@ -525,6 +787,14 @@
             else if (hG === aG){ myTeam.draws++; myTeam.points += 1; showNotification("Empate! +1 ponto"); }
             else               { myTeam.losses++;                    showNotification("Derrota! Sem pontos"); }
             updateLeagueTable();
+            /* Atualizar painel de stats avançadas */
+            if (unlockedPhases.includes(3)) {
+                document.getElementById('statWins').textContent   = myTeam.wins;
+                document.getElementById('statDraws').textContent  = myTeam.draws;
+                document.getElementById('statLosses').textContent = myTeam.losses;
+                document.getElementById('statGF').textContent     = myTeam.goalsFor;
+                document.getElementById('statGA').textContent     = myTeam.goalsAgainst;
+            }
         }
 
         function simulateRound() {
@@ -637,7 +907,7 @@
         }
 
         function sellPlayer(i) {
-            const player   = gameData.myTeam.players[i];
+            const player    = gameData.myTeam.players[i];
             const sellPrice = Math.floor(player.price * 0.7);
             gameData.budget += sellPrice;
             gameData.myTeam.players.splice(i, 1);
@@ -653,14 +923,14 @@
             const starters = gameData.myTeam.players.slice(0, 11);
             const avg = starters.reduce((s, p) => s + p.rating, 0) / starters.length;
             gameData.myTeam.overall = Math.floor(avg);
-            document.getElementById('homeOverall').textContent = gameData.myTeam.overall;
-            document.getElementById('teamOverall').textContent = gameData.myTeam.overall;
+            document.getElementById('homeOverall').textContent  = gameData.myTeam.overall;
+            document.getElementById('teamOverall').textContent  = gameData.myTeam.overall;
             const atk = starters.filter(p => p.position === 'ST').reduce((s, p) => s + p.rating, 0) / 2 || 70;
             const mid = starters.filter(p => ['CM','RM','LM'].includes(p.position)).reduce((s, p) => s + p.rating, 0) / 4 || 70;
             const def = starters.filter(p => ['CB','RB','LB','GK'].includes(p.position)).reduce((s, p) => s + p.rating, 0) / 4 || 70;
-            document.getElementById('teamAttack').textContent  = Math.floor(atk);
+            document.getElementById('teamAttack').textContent   = Math.floor(atk);
             document.getElementById('teamMidfield').textContent = Math.floor(mid);
-            document.getElementById('teamDefense').textContent = Math.floor(def);
+            document.getElementById('teamDefense').textContent  = Math.floor(def);
         }
 
         function showNotification(msg) {
@@ -668,6 +938,11 @@
             n.textContent = msg; n.classList.add('show');
             setTimeout(() => n.classList.remove('show'), 3000);
         }
+
+        /* ── INIT ── */
+        const savedPhase = parseInt(localStorage.getItem('footgol_phase') || '1');
+        if (unlockedPhases.includes(savedPhase)) currentPhase = savedPhase;
+        refreshPhaseBtns();
 
         document.addEventListener('DOMContentLoaded', () => { initGame(); resetMatch(); });
     </script>

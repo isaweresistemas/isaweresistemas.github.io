@@ -13,7 +13,66 @@
         }
         .game-container { background: white; border-radius: 20px; padding: 30px; max-width: 1000px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 20px; }
         h1 { text-align: center; color: #fc6c85; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+
+        /* ── FASES ── */
+        .phases-bar {
+            display: flex; gap: 10px; justify-content: center;
+            margin-bottom: 18px; flex-wrap: wrap;
+        }
+        .phase-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-size: 0.88em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .phase-btn.active {
+            background: linear-gradient(135deg, #fc6c85, #e05170);
+            color: white; box-shadow: 0 4px 15px rgba(252,108,133,0.5);
+            transform: translateY(-2px);
+        }
+        .phase-btn.unlocked:not(.active) {
+            background: rgba(255,240,245,0.9); border-color: #fc6c85; color: #fc6c85;
+        }
+        .phase-btn.soft-locked {
+            background: rgba(255,255,255,0.6); color: #aaa;
+            border-color: #ddd; cursor: pointer;
+        }
+        .phase-btn.soft-locked:hover { background: rgba(255,240,245,0.8); border-color: #fc6c85; color: #fc6c85; }
+        .phase-badge { font-size: 0.7em; padding: 2px 7px; border-radius: 50px; background: rgba(255,255,255,0.25); }
+
+        /* ── UNLOCK BOX ── */
+        .unlock-box {
+            display: none; max-width: 500px; width: 90%; margin: 0 auto 18px;
+            background: rgba(255,255,255,0.97); border: 2px solid #fc6c85;
+            border-radius: 18px; padding: 20px; text-align: center; color: #333;
+        }
+        .unlock-box.show { display: block; }
+        .unlock-title { font-size: 1em; font-weight: 800; color: #fc6c85; margin-bottom: 6px; }
+        .unlock-desc { font-size: 0.85em; color: #555; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: white; padding: 10px 22px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 14px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #fc6c85;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; outline: none; text-align: center;
+        }
+        .unlock-submit {
+            background: linear-gradient(135deg, #fc6c85, #e05170);
+            color: white; border: none; padding: 10px 16px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;
+        }
+        .unlock-submit:hover { opacity: 0.88; }
+        .unlock-error { color: #dc3545; font-size: 0.82em; margin-top: 8px; display: none; }
+
         .game-area { display: grid; grid-template-columns: 350px 1fr; gap: 30px; margin-bottom: 30px; }
         .character-display { background: linear-gradient(180deg, #fff 0%, #ffe6f0 100%); border-radius: 15px; padding: 30px; text-align: center; position: relative; border: 3px solid #fc6c85; height: 600px; }
         .model { width: 200px; height: 500px; margin: 0 auto; position: relative; }
@@ -35,6 +94,7 @@
         .clothes-item { padding: 15px; border: 3px solid #ddd; border-radius: 10px; cursor: pointer; transition: all 0.3s; background: white; text-align: center; font-size: 30px; }
         .clothes-item:hover  { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .clothes-item.active { border-color: #fc6c85; background: #fff0f5; transform: scale(1.05); }
+        .clothes-item.locked { opacity: 0.35; cursor: default; pointer-events: none; position: relative; }
         .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
         .color-btn { width: 50px; height: 50px; border: 3px solid #ddd; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
         .color-btn:hover  { transform: scale(1.15); box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
@@ -74,11 +134,38 @@
     <div class="game-container">
         <h1>👗 Estilista de Moda</h1>
         <p class="subtitle">Monte o look perfeito!</p>
+
+        <!-- FASES -->
+        <div class="phases-bar">
+            <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectPhase(1)">
+                🟢 Fase 1 <span class="phase-badge">GRÁTIS</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn2" onclick="tryUnlock(2)">
+                👗 Fase 2 <span class="phase-badge">SENHA</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn3" onclick="tryUnlock(3)">
+                🌟 Fase 3 <span class="phase-badge">SENHA</span>
+            </button>
+        </div>
+
+        <!-- UNLOCK BOX -->
+        <div class="unlock-box" id="unlockBox">
+            <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie novas fases!</div>
+            <div class="unlock-desc" id="unlockDesc"></div>
+            <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a><br>
+            <div class="unlock-input-row">
+                <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+                       onkeydown="if(event.key==='Enter') checkPassword()">
+                <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+            </div>
+            <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+        </div>
+
         <div class="game-area">
             <div class="character-display">
                 <div class="model">
                     <div class="head">
-                        <div class="hair-model"></div>
+                        <div class="hair-model" id="hairDisplay"></div>
                         <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
                         <div class="smile"></div>
                     </div>
@@ -93,69 +180,8 @@
                     <div class="accessory-display" id="accessory"></div>
                 </div>
             </div>
-            <div class="controls">
-                <div class="control-section">
-                    <h3>👚 Blusa/Camiseta</h3>
-                    <div class="clothes-grid">
-                        <div class="clothes-item" onclick="setTop('tshirt',this)">👕</div>
-                        <div class="clothes-item" onclick="setTop('blouse',this)">👔</div>
-                        <div class="clothes-item" onclick="setTop('sweater',this)">🧥</div>
-                    </div>
-                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Blusa:</p>
-                    <div class="color-grid">
-                        <div class="color-btn" style="background:#ff6b9d" onclick="setTopColor('#ff6b9d',this)"></div>
-                        <div class="color-btn" style="background:#4ecdc4" onclick="setTopColor('#4ecdc4',this)"></div>
-                        <div class="color-btn" style="background:#ffe66d" onclick="setTopColor('#ffe66d',this)"></div>
-                        <div class="color-btn" style="background:#a8e6cf" onclick="setTopColor('#a8e6cf',this)"></div>
-                        <div class="color-btn" style="background:#c7ceea" onclick="setTopColor('#c7ceea',this)"></div>
-                        <div class="color-btn" style="background:#ffd3b6" onclick="setTopColor('#ffd3b6',this)"></div>
-                    </div>
-                </div>
-                <div class="control-section">
-                    <h3>👖 Calça/Saia</h3>
-                    <div class="clothes-grid">
-                        <div class="clothes-item" onclick="setBottom('pants',this)">👖</div>
-                        <div class="clothes-item" onclick="setBottom('skirt',this)">🩱</div>
-                        <div class="clothes-item" onclick="setBottom('shorts',this)">🩳</div>
-                    </div>
-                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Roupa de Baixo:</p>
-                    <div class="color-grid">
-                        <div class="color-btn" style="background:#2c3e50" onclick="setBottomColor('#2c3e50',this)"></div>
-                        <div class="color-btn" style="background:#3498db" onclick="setBottomColor('#3498db',this)"></div>
-                        <div class="color-btn" style="background:#e74c3c" onclick="setBottomColor('#e74c3c',this)"></div>
-                        <div class="color-btn" style="background:#9b59b6" onclick="setBottomColor('#9b59b6',this)"></div>
-                        <div class="color-btn" style="background:#1abc9c" onclick="setBottomColor('#1abc9c',this)"></div>
-                        <div class="color-btn" style="background:#f39c12" onclick="setBottomColor('#f39c12',this)"></div>
-                    </div>
-                </div>
-                <div class="control-section">
-                    <h3>👠 Sapatos</h3>
-                    <div class="clothes-grid">
-                        <div class="clothes-item" onclick="setShoes('sneakers',this)">👟</div>
-                        <div class="clothes-item" onclick="setShoes('heels',this)">👠</div>
-                        <div class="clothes-item" onclick="setShoes('boots',this)">👢</div>
-                    </div>
-                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor dos Sapatos:</p>
-                    <div class="color-grid">
-                        <div class="color-btn" style="background:#000"                   onclick="setShoesColor('#000',this)"></div>
-                        <div class="color-btn" style="background:#fff;border:3px solid #ccc" onclick="setShoesColor('#fff',this)"></div>
-                        <div class="color-btn" style="background:#8b4513"                onclick="setShoesColor('#8b4513',this)"></div>
-                        <div class="color-btn" style="background:#ff1493"                onclick="setShoesColor('#ff1493',this)"></div>
-                        <div class="color-btn" style="background:#00ced1"                onclick="setShoesColor('#00ced1',this)"></div>
-                        <div class="color-btn" style="background:#ffd700"                onclick="setShoesColor('#ffd700',this)"></div>
-                    </div>
-                </div>
-                <div class="control-section">
-                    <h3>✨ Acessórios</h3>
-                    <div class="clothes-grid">
-                        <div class="clothes-item" onclick="setAccessory('👜')">👜</div>
-                        <div class="clothes-item" onclick="setAccessory('👓')">👓</div>
-                        <div class="clothes-item" onclick="setAccessory('🎀')">🎀</div>
-                        <div class="clothes-item" onclick="setAccessory('💎')">💎</div>
-                        <div class="clothes-item" onclick="setAccessory('👑')">👑</div>
-                        <div class="clothes-item" onclick="setAccessory('')">❌</div>
-                    </div>
-                </div>
+            <div class="controls" id="controlsPanel">
+                <!-- preenchido pelo JS conforme a fase -->
             </div>
         </div>
         <div class="btn-row">
@@ -180,71 +206,335 @@
     </footer>
 
     <script>
-        var currentTopColor    = '#ff6b9d';
-        var currentBottomColor = '#3498db';
-        var currentShoesColor  = '#000';
+        /* ═══════════════════════════════════════════
+           CONFIGURAÇÃO DAS FASES
+        ═══════════════════════════════════════════ */
+        const phaseConfig = {
+            1: {
+                password: null, ytLink: null,
+                desc: '',
+                tops:        ['tshirt','blouse','sweater'],
+                bottoms:     ['pants','skirt','shorts'],
+                shoes:       ['sneakers','heels','boots'],
+                accessories: ['👜','👓','🎀','❌'],
+                hairColors:  ['#8b4513','#000','#ffd700'],
+                topColors:   ['#ff6b9d','#4ecdc4','#ffe66d','#a8e6cf','#c7ceea','#ffd3b6'],
+                bottomColors:['#2c3e50','#3498db','#e74c3c','#9b59b6','#1abc9c','#f39c12'],
+                shoeColors:  ['#000','#fff','#8b4513','#ff1493','#00ced1','#ffd700']
+            },
+            2: {
+                passwordKey: 'dress_fase2',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'Na Fase 2 você desbloqueia novas roupas e estilos exclusivos! Assista ao vídeo no YouTube, pegue a senha e continue montando looks incríveis!',
+                tops:        ['tshirt','blouse','sweater','jacket','dress'],
+                bottoms:     ['pants','skirt','shorts','leggings'],
+                shoes:       ['sneakers','heels','boots','sandals'],
+                accessories: ['👜','👓','🎀','💎','👑','🧣','❌'],
+                hairColors:  ['#8b4513','#000','#ffd700','#ff69b4','#c0392b','#7f8c8d'],
+                topColors:   ['#ff6b9d','#4ecdc4','#ffe66d','#a8e6cf','#c7ceea','#ffd3b6','#e74c3c','#9b59b6','#2ecc71','#3498db'],
+                bottomColors:['#2c3e50','#3498db','#e74c3c','#9b59b6','#1abc9c','#f39c12','#ff6b9d','#27ae60','#8e44ad','#d35400'],
+                shoeColors:  ['#000','#fff','#8b4513','#ff1493','#00ced1','#ffd700','#e74c3c','#9b59b6']
+            },
+            3: {
+                passwordKey: 'dress_fase3',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'A Fase 3 traz peças de alta costura e acessórios de luxo! Pegue a senha no canal da ISAWERE e mostre que você é um verdadeiro estilista!',
+                tops:        ['tshirt','blouse','sweater','jacket','dress','gown','suit'],
+                bottoms:     ['pants','skirt','shorts','leggings','culottes'],
+                shoes:       ['sneakers','heels','boots','sandals','pumps','loafers'],
+                accessories: ['👜','👓','🎀','💎','👑','🧣','💍','🕶️','🎩','❌'],
+                hairColors:  ['#8b4513','#000','#ffd700','#ff69b4','#c0392b','#7f8c8d','#00ced1','#9b59b6','#2ecc71','#fff'],
+                topColors:   ['#ff6b9d','#4ecdc4','#ffe66d','#a8e6cf','#c7ceea','#ffd3b6','#e74c3c','#9b59b6','#2ecc71','#3498db','#1a1a1a','#f5f5f5'],
+                bottomColors:['#2c3e50','#3498db','#e74c3c','#9b59b6','#1abc9c','#f39c12','#ff6b9d','#27ae60','#8e44ad','#d35400','#1a1a1a','#ecf0f1'],
+                shoeColors:  ['#000','#fff','#8b4513','#ff1493','#00ced1','#ffd700','#e74c3c','#9b59b6','#c0392b','#2c3e50']
+            }
+        };
+
+        /* Labels e formas de cada peça */
+        const topStyles = {
+            tshirt:  { label:'👕 Camiseta',   borderRadius:'20% 20% 0 0', clipPath:'none',   boxShadow:'' },
+            blouse:  { label:'👔 Blusa',       borderRadius:'30% 30% 0 0', clipPath:'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)', boxShadow:'' },
+            sweater: { label:'🧥 Suéter',      borderRadius:'25% 25% 0 0', clipPath:'none',   boxShadow:'inset 0 10px 20px rgba(0,0,0,0.1)' },
+            jacket:  { label:'🥼 Jaqueta',     borderRadius:'15% 15% 0 0', clipPath:'polygon(5% 0%, 95% 0%, 100% 15%, 100% 100%, 0% 100%, 0% 15%)', boxShadow:'inset 0 5px 10px rgba(0,0,0,0.15)' },
+            dress:   { label:'👗 Vestido',     borderRadius:'20% 20% 40% 40%', clipPath:'none', boxShadow:'' },
+            gown:    { label:'🩱 Longo',       borderRadius:'20% 20% 50% 50%', clipPath:'none', boxShadow:'inset 0 15px 25px rgba(255,255,255,0.2)' },
+            suit:    { label:'🤵 Terno',       borderRadius:'10% 10% 0 0', clipPath:'polygon(0% 0%, 40% 0%, 50% 20%, 60% 0%, 100% 0%, 100% 100%, 0% 100%)', boxShadow:'' }
+        };
+        const bottomStyles = {
+            pants:    { label:'👖 Calça',    borderRadius:'0 0 10px 10px',  clipPath:'polygon(10% 0%, 45% 0%, 45% 100%, 40% 100%, 35% 0%, 65% 0%, 60% 100%, 55% 100%, 55% 0%, 90% 0%, 85% 100%, 15% 100%)', height:'120px' },
+            skirt:    { label:'🩱 Saia',     borderRadius:'0 0 50% 50%',    clipPath:'none', height:'80px' },
+            shorts:   { label:'🩳 Shorts',   borderRadius:'0 0 15px 15px',  clipPath:'polygon(15% 0%, 45% 0%, 45% 80%, 40% 80%, 35% 0%, 65% 0%, 60% 80%, 55% 80%, 55% 0%, 85% 0%, 85% 80%, 15% 80%)', height:'70px' },
+            leggings: { label:'🖤 Legging',  borderRadius:'0 0 5px 5px',    clipPath:'polygon(10% 0%, 45% 0%, 45% 100%, 40% 100%, 35% 0%, 65% 0%, 60% 100%, 55% 100%, 55% 0%, 90% 0%, 85% 100%, 15% 100%)', height:'130px' },
+            culottes: { label:'👘 Pantacourt',borderRadius:'0 0 30% 30%',   clipPath:'none', height:'100px' }
+        };
+        const shoeStyles = {
+            sneakers: { label:'👟 Tênis',    r1:'50% 50% 20% 20%', r2:'50% 50% 20% 20%', h:'30px' },
+            heels:    { label:'👠 Salto',    r1:'40% 40% 10% 50%', r2:'40% 40% 50% 10%', h:'35px' },
+            boots:    { label:'👢 Bota',     r1:'30% 30% 5% 5%',   r2:'30% 30% 5% 5%',   h:'40px' },
+            sandals:  { label:'🩴 Sandália', r1:'60% 60% 30% 30%', r2:'60% 60% 30% 30%', h:'20px' },
+            pumps:    { label:'👡 Scarpin',  r1:'50% 50% 5% 40%',  r2:'50% 50% 40% 5%',  h:'32px' },
+            loafers:  { label:'🥿 Mocassim', r1:'40% 40% 15% 15%', r2:'40% 40% 15% 15%', h:'28px' }
+        };
+
+        let currentPhase    = 1;
+        let pendingPhase    = null;
+        let unlockedPhases  = JSON.parse(localStorage.getItem('dress_unlocked') || '[1]');
+
+        let currentTopColor    = '#ff6b9d';
+        let currentBottomColor = '#3498db';
+        let currentShoesColor  = '#000';
+        let currentHairColor   = '#8b4513';
+
+        /* ── FASES ── */
+        function refreshPhaseBtns() {
+            [1,2,3].forEach(n => {
+                const btn = document.getElementById('phaseBtn' + n);
+                btn.className = 'phase-btn';
+                if (n === currentPhase) btn.classList.add('active', 'unlocked');
+                else if (unlockedPhases.includes(n)) btn.classList.add('unlocked');
+                else btn.classList.add('soft-locked');
+            });
+        }
+
+        function selectPhase(n) {
+            if (!unlockedPhases.includes(n)) { tryUnlock(n); return; }
+            currentPhase = n;
+            pendingPhase = null;
+            document.getElementById('unlockBox').classList.remove('show');
+            localStorage.setItem('dress_phase', currentPhase);
+            refreshPhaseBtns();
+            buildControls();
+        }
+
+        function tryUnlock(n) {
+            if (unlockedPhases.includes(n)) { selectPhase(n); return; }
+            pendingPhase = n;
+            const cfg = phaseConfig[n];
+            document.getElementById('unlockDesc').textContent = cfg.desc;
+            document.getElementById('unlockYtBtn').href = cfg.ytLink;
+            document.getElementById('unlockInput').value = '';
+            document.getElementById('unlockError').style.display = 'none';
+            document.getElementById('unlockBox').classList.add('show');
+            document.getElementById('unlockInput').focus();
+        }
+
+        function checkPassword() {
+            const input   = document.getElementById('unlockInput').value.trim().toUpperCase();
+            const key     = phaseConfig[pendingPhase].passwordKey;
+            fetch('senhas.json')
+                .then(r => r.json())
+                .then(data => {
+                    const correct = (data[key] || '').toUpperCase();
+                    if (input === correct) {
+                        if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                        localStorage.setItem('dress_unlocked', JSON.stringify(unlockedPhases));
+                        currentPhase = pendingPhase;
+                        localStorage.setItem('dress_phase', currentPhase);
+                        document.getElementById('unlockBox').classList.remove('show');
+                        refreshPhaseBtns();
+                        buildControls();
+                    } else {
+                        document.getElementById('unlockError').style.display = 'block';
+                        const inp = document.getElementById('unlockInput');
+                        inp.style.borderColor = '#dc3545';
+                        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+                    document.getElementById('unlockError').style.display = 'block';
+                });
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('unlockBox').classList.contains('show')) checkPassword();
+        });
+
+        /* ── CONSTRUÇÃO DINÂMICA DOS CONTROLES ── */
+        function buildControls() {
+            const cfg   = phaseConfig[currentPhase];
+            const panel = document.getElementById('controlsPanel');
+            panel.innerHTML = '';
+
+            /* Cabelo */
+            let hairHTML = `<div class="control-section">
+                <h3>💇 Cor do Cabelo</h3>
+                <div class="color-grid">`;
+            cfg.hairColors.forEach(c => {
+                const border = c === '#fff' ? 'border:3px solid #ccc;' : '';
+                hairHTML += `<div class="color-btn" style="background:${c};${border}" onclick="setHairColor('${c}',this)"></div>`;
+            });
+            hairHTML += `</div></div>`;
+
+            /* Tops */
+            let topHTML = `<div class="control-section">
+                <h3>👚 Blusa / Camiseta</h3>
+                <div class="clothes-grid">`;
+            cfg.tops.forEach(t => {
+                topHTML += `<div class="clothes-item" onclick="setTop('${t}',this)">${topStyles[t].label}</div>`;
+            });
+            topHTML += `</div>
+                <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Blusa:</p>
+                <div class="color-grid">`;
+            cfg.topColors.forEach(c => {
+                const border = c === '#f5f5f5' || c === '#fff' ? 'border:3px solid #ccc;' : '';
+                topHTML += `<div class="color-btn" style="background:${c};${border}" onclick="setTopColor('${c}',this)"></div>`;
+            });
+            topHTML += `</div></div>`;
+
+            /* Bottoms */
+            let botHTML = `<div class="control-section">
+                <h3>👖 Calça / Saia</h3>
+                <div class="clothes-grid">`;
+            cfg.bottoms.forEach(b => {
+                botHTML += `<div class="clothes-item" onclick="setBottom('${b}',this)">${bottomStyles[b].label}</div>`;
+            });
+            botHTML += `</div>
+                <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Roupa de Baixo:</p>
+                <div class="color-grid">`;
+            cfg.bottomColors.forEach(c => {
+                const border = c === '#ecf0f1' ? 'border:3px solid #ccc;' : '';
+                botHTML += `<div class="color-btn" style="background:${c};${border}" onclick="setBottomColor('${c}',this)"></div>`;
+            });
+            botHTML += `</div></div>`;
+
+            /* Sapatos */
+            let shoeHTML = `<div class="control-section">
+                <h3>👠 Sapatos</h3>
+                <div class="clothes-grid">`;
+            cfg.shoes.forEach(s => {
+                shoeHTML += `<div class="clothes-item" onclick="setShoes('${s}',this)">${shoeStyles[s].label}</div>`;
+            });
+            shoeHTML += `</div>
+                <p style="margin:10px 0 5px 0;font-weight:bold;">Cor dos Sapatos:</p>
+                <div class="color-grid">`;
+            cfg.shoeColors.forEach(c => {
+                const border = c === '#fff' ? 'border:3px solid #ccc;' : '';
+                shoeHTML += `<div class="color-btn" style="background:${c};${border}" onclick="setShoesColor('${c}',this)"></div>`;
+            });
+            shoeHTML += `</div></div>`;
+
+            /* Acessórios */
+            let accHTML = `<div class="control-section">
+                <h3>✨ Acessórios</h3>
+                <div class="clothes-grid">`;
+            cfg.accessories.forEach(a => {
+                const emoji = a === '❌' ? '❌' : a;
+                accHTML += `<div class="clothes-item" onclick="setAccessory('${a === '❌' ? '' : a}')">${emoji}</div>`;
+            });
+            accHTML += `</div></div>`;
+
+            panel.innerHTML = hairHTML + topHTML + botHTML + shoeHTML + accHTML;
+
+            /* Restaurar seleções visuais */
+            applyCurrentOutfit();
+        }
+
+        function applyCurrentOutfit() {
+            /* apenas garante que o modelo exibe as cores atuais */
+            document.getElementById('hairDisplay').style.background = currentHairColor;
+            document.getElementById('top').style.background    = currentTopColor;
+            document.getElementById('bottom').style.background = currentBottomColor;
+            document.getElementById('shoe1').style.background  = currentShoesColor;
+            document.getElementById('shoe2').style.background  = currentShoesColor;
+        }
+
+        /* ── FUNÇÕES DE VESTIR ── */
+        function setHairColor(color, el) {
+            currentHairColor = color;
+            document.getElementById('hairDisplay').style.background = color;
+            document.querySelectorAll('.control-section')[0]
+                .querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
 
         function setTop(type, el) {
-            document.querySelectorAll('.control-section')[0].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[1]
+                .querySelectorAll('.clothes-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            var top = document.getElementById('top');
-            top.style.background = currentTopColor;
-            if      (type === 'tshirt')  { top.style.borderRadius = '20% 20% 0 0'; top.style.clipPath = 'none'; top.style.boxShadow = ''; }
-            else if (type === 'blouse')  { top.style.borderRadius = '30% 30% 0 0'; top.style.clipPath = 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)'; }
-            else if (type === 'sweater') { top.style.borderRadius = '25% 25% 0 0'; top.style.clipPath = 'none'; top.style.boxShadow = 'inset 0 10px 20px rgba(0,0,0,0.1)'; }
+            const top = document.getElementById('top');
+            const s   = topStyles[type];
+            top.style.background    = currentTopColor;
+            top.style.borderRadius  = s.borderRadius;
+            top.style.clipPath      = s.clipPath;
+            top.style.boxShadow     = s.boxShadow;
         }
 
         function setTopColor(color, el) {
             currentTopColor = color;
             document.getElementById('top').style.background = color;
-            document.querySelectorAll('.control-section')[0].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[1]
+                .querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
         }
 
         function setBottom(type, el) {
-            document.querySelectorAll('.control-section')[1].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[2]
+                .querySelectorAll('.clothes-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            var bottom = document.getElementById('bottom');
-            bottom.style.background = currentBottomColor;
-            if      (type === 'pants')  { bottom.style.borderRadius = '0 0 10px 10px'; bottom.style.clipPath = 'polygon(10% 0%, 45% 0%, 45% 100%, 40% 100%, 35% 0%, 65% 0%, 60% 100%, 55% 100%, 55% 0%, 90% 0%, 85% 100%, 15% 100%)'; bottom.style.height = '120px'; }
-            else if (type === 'skirt')  { bottom.style.borderRadius = '0 0 50% 50%'; bottom.style.clipPath = 'none'; bottom.style.height = '80px'; }
-            else if (type === 'shorts') { bottom.style.borderRadius = '0 0 15px 15px'; bottom.style.clipPath = 'polygon(15% 0%, 45% 0%, 45% 80%, 40% 80%, 35% 0%, 65% 0%, 60% 80%, 55% 80%, 55% 0%, 85% 0%, 85% 80%, 15% 80%)'; bottom.style.height = '70px'; }
+            const bottom = document.getElementById('bottom');
+            const s      = bottomStyles[type];
+            bottom.style.background    = currentBottomColor;
+            bottom.style.borderRadius  = s.borderRadius;
+            bottom.style.clipPath      = s.clipPath;
+            bottom.style.height        = s.height;
         }
 
         function setBottomColor(color, el) {
             currentBottomColor = color;
             document.getElementById('bottom').style.background = color;
-            document.querySelectorAll('.control-section')[1].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[2]
+                .querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
         }
 
         function setShoes(type, el) {
-            document.querySelectorAll('.control-section')[2].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[3]
+                .querySelectorAll('.clothes-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            var s1 = document.getElementById('shoe1'), s2 = document.getElementById('shoe2');
+            const s1 = document.getElementById('shoe1'), s2 = document.getElementById('shoe2');
+            const s  = shoeStyles[type];
             s1.style.background = currentShoesColor; s2.style.background = currentShoesColor;
-            if      (type === 'sneakers') { s1.style.borderRadius = s2.style.borderRadius = '50% 50% 20% 20%'; s1.style.height = s2.style.height = '30px'; }
-            else if (type === 'heels')    { s1.style.borderRadius = '40% 40% 10% 50%'; s2.style.borderRadius = '40% 40% 50% 10%'; s1.style.height = s2.style.height = '35px'; }
-            else if (type === 'boots')    { s1.style.borderRadius = s2.style.borderRadius = '30% 30% 5% 5%'; s1.style.height = s2.style.height = '40px'; }
+            s1.style.borderRadius = s.r1; s2.style.borderRadius = s.r2;
+            s1.style.height = s.h;        s2.style.height = s.h;
         }
 
         function setShoesColor(color, el) {
             currentShoesColor = color;
             document.getElementById('shoe1').style.background = color;
             document.getElementById('shoe2').style.background = color;
-            document.querySelectorAll('.control-section')[2].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            document.querySelectorAll('.control-section')[3]
+                .querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
         }
 
         function setAccessory(emoji) {
-            var acc = document.getElementById('accessory');
+            const acc = document.getElementById('accessory');
             acc.textContent = emoji; acc.style.opacity = emoji ? '1' : '0';
         }
 
-        // Inicializar
-        setTop('tshirt',    document.querySelectorAll('.control-section')[0].querySelectorAll('.clothes-item')[0]);
-        setBottom('pants',  document.querySelectorAll('.control-section')[1].querySelectorAll('.clothes-item')[0]);
-        setShoes('sneakers',document.querySelectorAll('.control-section')[2].querySelectorAll('.clothes-item')[0]);
+        /* ── INIT ── */
+        const savedPhase = parseInt(localStorage.getItem('dress_phase') || '1');
+        if (unlockedPhases.includes(savedPhase)) currentPhase = savedPhase;
+        refreshPhaseBtns();
+        buildControls();
+
+        /* Selecionar primeiras peças automaticamente após build */
+        setTimeout(() => {
+            const sections = document.querySelectorAll('.control-section');
+            if (sections[1]) {
+                const firstTop = sections[1].querySelector('.clothes-item');
+                if (firstTop) setTop(firstTop.getAttribute('onclick').match(/'([^']+)'/)[1], firstTop);
+            }
+            if (sections[2]) {
+                const firstBot = sections[2].querySelector('.clothes-item');
+                if (firstBot) setBottom(firstBot.getAttribute('onclick').match(/'([^']+)'/)[1], firstBot);
+            }
+            if (sections[3]) {
+                const firstShoe = sections[3].querySelector('.clothes-item');
+                if (firstShoe) setShoes(firstShoe.getAttribute('onclick').match(/'([^']+)'/)[1], firstShoe);
+            }
+        }, 0);
     </script>
 </body>
 </html>

@@ -440,13 +440,13 @@
             1: { rows: 4, cols: 8, ballSpeed: 4, paddleWidth: 100, lives: 3, password: null, ytLink: null, desc: '' },
             2: {
                 rows: 6, cols: 9, ballSpeed: 5.5, paddleWidth: 85, lives: 3,
-                password: 'BREAKOUT2',
+                passwordKey: 'breakout_fase2',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'Na Fase 2 há mais tijolos e a bola vai mais rápido! Assista ao nosso vídeo no YouTube, pegue a senha e continue o desafio!'
             },
             3: {
                 rows: 8, cols: 10, ballSpeed: 7.5, paddleWidth: 70, lives: 2,
-                password: 'MASTER3',
+                passwordKey: 'breakout_fase3',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'A Fase 3 é para os mestres: mais tijolos, barra menor e velocidade máxima! Pegue a senha no canal da ISAWERE e enfrente o desafio!'
             }
@@ -489,21 +489,30 @@
 
         function checkPassword() {
             const input = document.getElementById('unlockInput').value.trim().toUpperCase();
-            const correct = phaseConfig[pendingPhase].password.toUpperCase();
-            if (input === correct) {
-                if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-                localStorage.setItem('breakout_unlocked', JSON.stringify(unlockedPhases));
-                currentPhase = pendingPhase;
-                localStorage.setItem('breakout_phase', currentPhase);
-                document.getElementById('unlockBox').classList.remove('show');
-                refreshPhaseBtns();
-                location.reload();
-            } else {
-                document.getElementById('unlockError').style.display = 'block';
-                const inp = document.getElementById('unlockInput');
-                inp.style.borderColor = '#dc3545';
-                setTimeout(() => { inp.style.borderColor = ''; }, 1200);
-            }
+            const key   = phaseConfig[pendingPhase].passwordKey;
+            fetch('senhas.json')
+                .then(r => r.json())
+                .then(data => {
+                    const correct = (data[key] || '').toUpperCase();
+                    if (input === correct) {
+                        if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                        localStorage.setItem('breakout_unlocked', JSON.stringify(unlockedPhases));
+                        currentPhase = pendingPhase;
+                        localStorage.setItem('breakout_phase', currentPhase);
+                        document.getElementById('unlockBox').classList.remove('show');
+                        refreshPhaseBtns();
+                        location.reload();
+                    } else {
+                        document.getElementById('unlockError').style.display = 'block';
+                        const inp = document.getElementById('unlockInput');
+                        inp.style.borderColor = '#dc3545';
+                        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+                    document.getElementById('unlockError').style.display = 'block';
+                });
         }
 
         // Restaurar fase salva

@@ -334,7 +334,7 @@ const phaseConfig = {
     2: {
         name: '🔥 Fase 2 — Intermediário',
         badgeStyle: 'background:rgba(255,165,0,0.1);color:#ffa500;border:1.5px solid #ffa500;',
-        password: 'ISAWERE2',
+        passwordKey: 'pacman_fase2',
         ytLink: 'https://www.youtube.com/@IsawereSistemas',
         ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — mais fantasmas e velocidade te esperam!',
         ghostSpeed: 0.38,
@@ -343,7 +343,7 @@ const phaseConfig = {
     3: {
         name: '💀 Fase 3 — Expert',
         badgeStyle: 'background:rgba(255,0,0,0.1);color:#ff4444;border:1.5px solid #ff4444;',
-        password: 'GAMES3',
+        passwordKey: 'pacman_fase3',
         ytLink: 'https://www.youtube.com/@IsawereSistemas',
         ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — modo expert com 4 fantasmas rápidos!',
         ghostSpeed: 0.5,
@@ -392,19 +392,28 @@ function tryUnlock(n) {
 
 function checkPassword() {
     const input = document.getElementById('unlockInput').value.trim().toUpperCase();
-    const correct = phaseConfig[pendingPhase].password.toUpperCase();
-    if (input === correct) {
-        if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-        localStorage.setItem('pacman_unlocked', JSON.stringify(unlockedPhases));
-        document.getElementById('unlockBox').classList.remove('show');
-        selectPhase(pendingPhase);
-    } else {
-        const err = document.getElementById('unlockError');
-        err.style.display = 'block';
-        const inp = document.getElementById('unlockInput');
-        inp.style.borderColor = '#dc3545';
-        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
-    }
+    const key   = phaseConfig[pendingPhase].passwordKey;
+    fetch('senhas.json')
+        .then(r => r.json())
+        .then(data => {
+            const correct = (data[key] || '').toUpperCase();
+            if (input === correct) {
+                if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('pacman_unlocked', JSON.stringify(unlockedPhases));
+                document.getElementById('unlockBox').classList.remove('show');
+                selectPhase(pendingPhase);
+            } else {
+                const err = document.getElementById('unlockError');
+                err.style.display = 'block';
+                const inp = document.getElementById('unlockInput');
+                inp.style.borderColor = '#dc3545';
+                setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+            }
+        })
+        .catch(() => {
+            document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+            document.getElementById('unlockError').style.display = 'block';
+        });
 }
 
 function updatePhaseBadge() {

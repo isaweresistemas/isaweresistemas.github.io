@@ -598,12 +598,12 @@
     }
 
     function checkPassword() {
-        const input = document.getElementById('unlockInput').value.trim();
-        fetch('../senhas.json')
+        const input = document.getElementById('unlockInput').value.trim().toUpperCase();
+        fetch('senhas.json')
             .then(r => r.json())
             .then(data => {
-                const correct = (data['cacatesouro_mundo' + pendingWorld] || '');
-                if (input.toUpperCase() === correct.toUpperCase()) {
+                const correct = (data['cacatesouro_mundo' + pendingWorld] || '').toUpperCase();
+                if (input === correct) {
                     if (!unlockedWorlds.includes(pendingWorld)) unlockedWorlds.push(pendingWorld);
                     localStorage.setItem('cacatesouro_unlocked', JSON.stringify(unlockedWorlds));
                     document.getElementById('unlockBox').classList.remove('show');
@@ -614,6 +614,10 @@
                     inp.style.borderColor = '#ff6b6b';
                     setTimeout(() => { inp.style.borderColor = ''; }, 1200);
                 }
+            })
+            .catch(() => {
+                document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+                document.getElementById('unlockError').style.display = 'block';
             });
     }
 

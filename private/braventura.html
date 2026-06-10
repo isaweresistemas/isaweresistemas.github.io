@@ -475,13 +475,11 @@
             1: { startLevel: 0, endLevel: 3, password: null, ytLink: null, desc: '' },
             2: {
                 startLevel: 3, endLevel: 6,
-                password: 'BRASIL2',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'O Mundo 2 leva você ao Sul e Sudeste do Brasil — São Paulo, Minas Gerais, Santa Catarina e mais! Pegue a senha no canal da ISAWERE e continue a aventura!'
             },
             3: {
                 startLevel: 6, endLevel: 10,
-                password: 'NORDESTE3',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'O Mundo 3 é o grande Nordeste e a Amazônia — Bahia, Pernambuco, Ceará, Amazonas! Pegue a senha no canal da ISAWERE e explore o Brasil inteiro!'
             }
@@ -529,12 +527,12 @@
         }
 
         function checkPassword() {
-            const input = document.getElementById('unlockInput').value.trim();
-            fetch('../senhas.json')
+            const input = document.getElementById('unlockInput').value.trim().toUpperCase();
+            fetch('senhas.json')
                 .then(r => r.json())
                 .then(data => {
-                    const correct = (data['braventura_mundo' + pendingWorld] || '');
-                    if (input.toUpperCase() === correct.toUpperCase()) {
+                    const correct = (data['braventura_mundo' + pendingWorld] || '').toUpperCase();
+                    if (input === correct) {
                         if (!unlockedWorlds.includes(pendingWorld)) unlockedWorlds.push(pendingWorld);
                         localStorage.setItem('braventura_worlds', JSON.stringify(unlockedWorlds));
                         document.getElementById('unlockBox').classList.remove('show');
@@ -545,6 +543,10 @@
                         inp.style.borderColor = '#ff6b6b';
                         setTimeout(() => { inp.style.borderColor = ''; }, 1200);
                     }
+                })
+                .catch(() => {
+                    document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+                    document.getElementById('unlockError').style.display = 'block';
                 });
         }
 

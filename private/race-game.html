@@ -279,8 +279,8 @@
 ══════════════════════════════════════ */
 const phaseConfig = {
     1: { name:'🚗 Fase 1 — Estrada Tranquila', badgeStyle:'background:rgba(255,255,0,0.1);color:#ffff00;border:1.5px solid #ffff00;', password:null, ytLink:null, ytDesc:'', obstacleFreq:0.015, fuelDrain:0.04, baseSpeed:60 },
-    2: { name:'🚙 Fase 2 — Rodovia Movimentada', badgeStyle:'background:rgba(255,165,0,0.1);color:#ffa500;border:1.5px solid #ffa500;', password:'ISAWERE2', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — trânsito pesado e combustível rápido!', obstacleFreq:0.025, fuelDrain:0.065, baseSpeed:80 },
-    3: { name:'🏎️ Fase 3 — Pista de Corrida', badgeStyle:'background:rgba(255,0,0,0.1);color:#ff4444;border:1.5px solid #ff4444;', password:'GAMES3', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — velocidade máxima na pista!', obstacleFreq:0.038, fuelDrain:0.09, baseSpeed:100 }
+    2: { name:'🚙 Fase 2 — Rodovia Movimentada', badgeStyle:'background:rgba(255,165,0,0.1);color:#ffa500;border:1.5px solid #ffa500;', passwordKey:'race_fase2', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — trânsito pesado e combustível rápido!', obstacleFreq:0.025, fuelDrain:0.065, baseSpeed:80 },
+    3: { name:'🏎️ Fase 3 — Pista de Corrida', badgeStyle:'background:rgba(255,0,0,0.1);color:#ff4444;border:1.5px solid #ff4444;', passwordKey:'race_fase3', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — velocidade máxima na pista!', obstacleFreq:0.038, fuelDrain:0.09, baseSpeed:100 }
 };
 
 let currentPhase=1, pendingPhase=null;
@@ -313,18 +313,27 @@ function tryUnlock(n){
 }
 function checkPassword(){
     const inp=document.getElementById('unlockInput').value.trim().toUpperCase();
-    const correct=phaseConfig[pendingPhase].password.toUpperCase();
-    if(inp===correct){
-        if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-        localStorage.setItem('race_unlocked',JSON.stringify(unlockedPhases));
-        document.getElementById('unlockBox').classList.remove('show');
-        selectPhase(pendingPhase);
-    } else {
-        document.getElementById('unlockError').style.display='block';
-        const i=document.getElementById('unlockInput');
-        i.style.borderColor='#dc3545';
-        setTimeout(()=>{i.style.borderColor='';},1200);
-    }
+    const key=phaseConfig[pendingPhase].passwordKey;
+    fetch('senhas.json')
+        .then(r=>r.json())
+        .then(data=>{
+            const correct=(data[key]||'').toUpperCase();
+            if(inp===correct){
+                if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('race_unlocked',JSON.stringify(unlockedPhases));
+                document.getElementById('unlockBox').classList.remove('show');
+                selectPhase(pendingPhase);
+            } else {
+                document.getElementById('unlockError').style.display='block';
+                const i=document.getElementById('unlockInput');
+                i.style.borderColor='#dc3545';
+                setTimeout(()=>{i.style.borderColor='';},1200);
+            }
+        })
+        .catch(()=>{
+            document.getElementById('unlockError').textContent='⚠️ Erro ao carregar senhas. Tente novamente.';
+            document.getElementById('unlockError').style.display='block';
+        });
 }
 function updatePhaseBadge(){
     const ph=phaseConfig[currentPhase];

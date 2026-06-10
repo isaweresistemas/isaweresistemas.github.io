@@ -386,7 +386,7 @@ const phaseConfig = {
     2: {
         name: '🏟️ Fase 2 — Estádio Regional',
         badgeStyle: 'background:rgba(52,152,219,0.15);color:#3498db;border:1.5px solid #3498db;',
-        password: 'ISAWERE2',
+        passwordKey: 'futebol_fase2',
         ytLink: 'https://www.youtube.com/@IsawereSistemas',
         ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — goleiro mais difícil e gol menor!',
         goalkeeperSkill: 0.5,
@@ -396,7 +396,7 @@ const phaseConfig = {
     3: {
         name: '🏆 Fase 3 — Copa do Mundo',
         badgeStyle: 'background:rgba(241,196,15,0.15);color:#f1c40f;border:1.5px solid #f1c40f;',
-        password: 'GAMES3',
+        passwordKey: 'futebol_fase3',
         ytLink: 'https://www.youtube.com/@IsawereSistemas',
         ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — Copa do Mundo! Goleiro expert e gol apertado!',
         goalkeeperSkill: 0.7,
@@ -435,18 +435,27 @@ function tryUnlock(n){
 }
 function checkPassword(){
     const inp=document.getElementById('unlockInput').value.trim().toUpperCase();
-    const correct=phaseConfig[pendingPhase].password.toUpperCase();
-    if(inp===correct){
-        if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-        localStorage.setItem('soccer_unlocked',JSON.stringify(unlockedPhases));
-        document.getElementById('unlockBox').classList.remove('show');
-        selectPhase(pendingPhase);
-    } else {
-        document.getElementById('unlockError').style.display='block';
-        const i=document.getElementById('unlockInput');
-        i.style.borderColor='#dc3545';
-        setTimeout(()=>{i.style.borderColor='';},1200);
-    }
+    const key=phaseConfig[pendingPhase].passwordKey;
+    fetch('senhas.json')
+        .then(r=>r.json())
+        .then(data=>{
+            const correct=(data[key]||'').toUpperCase();
+            if(inp===correct){
+                if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('soccer_unlocked',JSON.stringify(unlockedPhases));
+                document.getElementById('unlockBox').classList.remove('show');
+                selectPhase(pendingPhase);
+            } else {
+                document.getElementById('unlockError').style.display='block';
+                const i=document.getElementById('unlockInput');
+                i.style.borderColor='#dc3545';
+                setTimeout(()=>{i.style.borderColor='';},1200);
+            }
+        })
+        .catch(()=>{
+            document.getElementById('unlockError').textContent='⚠️ Erro ao carregar senhas. Tente novamente.';
+            document.getElementById('unlockError').style.display='block';
+        });
 }
 function updatePhaseBadge(){
     const ph=phaseConfig[currentPhase];

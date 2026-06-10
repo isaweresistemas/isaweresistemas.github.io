@@ -299,14 +299,12 @@
             2: {
                 maxBubbles: 18, spawnInterval: 600, minSize: 20, maxSize: 80,
                 minSpeed: 1.0, maxSpeed: 2.5, pointsPerBubble: 20,
-                password: 'BOLHAS2',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'Na Fase 2 as bolhas ficam mais rápidas e você ganha mais pontos! Assista ao nosso vídeo no YouTube, pegue a senha e venha se divertir!'
             },
             3: {
                 maxBubbles: 25, spawnInterval: 350, minSize: 15, maxSize: 90,
                 minSpeed: 1.8, maxSpeed: 3.5, pointsPerBubble: 30,
-                password: 'SUPER3',
                 ytLink: 'https://www.youtube.com/@IsawereSistemas',
                 desc: 'A Fase 3 é o desafio máximo: bolhas minúsculas e gigantes, velocidade turbinada e pontuação triplicada! Pegue a senha no canal da ISAWERE!'
             }
@@ -354,22 +352,26 @@
         }
 function checkPassword() {
     const input = document.getElementById('unlockInput').value.trim().toUpperCase();
-    fetch('../senhas.json')
-      .then(r => r.json())
-      .then(data => {
-        const correct = (data['bolhas_fase' + pendingPhase] || '').toUpperCase();
-        if (input === correct) {
-            if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-            localStorage.setItem('bolhas_unlocked', JSON.stringify(unlockedPhases));
-            document.getElementById('unlockBox').classList.remove('show');
-            selectPhase(pendingPhase);
-        } else {
+    fetch('senhas.json')
+        .then(r => r.json())
+        .then(data => {
+            const correct = (data['bolhas_fase' + pendingPhase] || '').toUpperCase();
+            if (input === correct) {
+                if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('bolhas_unlocked', JSON.stringify(unlockedPhases));
+                document.getElementById('unlockBox').classList.remove('show');
+                selectPhase(pendingPhase);
+            } else {
+                document.getElementById('unlockError').style.display = 'block';
+                const inp = document.getElementById('unlockInput');
+                inp.style.borderColor = '#dc3545';
+                setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+            }
+        })
+        .catch(() => {
+            document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
             document.getElementById('unlockError').style.display = 'block';
-            const inp = document.getElementById('unlockInput');
-            inp.style.borderColor = '#dc3545';
-            setTimeout(() => { inp.style.borderColor = ''; }, 1200);
-        }
-      });  // 👈 este }); estava faltando
+        });
 }
         /* ── JOGO ── */
         function createBubble() {

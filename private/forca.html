@@ -518,7 +518,7 @@ const phases = {
     2: {
         name: '🔬 Fase 2 — Ciências & Natureza',
         badgeStyle: 'background:#e8f5e9;color:#2e7d32;border:1.5px solid #4caf50;',
-        password: 'ISAWERE2',   // ← troque pela senha real do vídeo
+        passwordKey: 'forca_fase2',
         ytLink: 'https://www.youtube.com/@IsawereSistemas', // ← link do vídeo com a senha
         ytDesc: 'Assista ao vídeo no canal da ISAWERE no YouTube, descubra a senha da Fase 2 e desbloqueie novas palavras sobre Ciências & Natureza!',
         words: [
@@ -542,7 +542,7 @@ const phases = {
     3: {
         name: '🚀 Fase 3 — Tecnologia & Inovação',
         badgeStyle: 'background:#e3f2fd;color:#1565c0;border:1.5px solid #2196f3;',
-        password: 'GAMES3',     // ← troque pela senha real do vídeo
+        passwordKey: 'forca_fase3',
         ytLink: 'https://www.youtube.com/@IsawereSistemas', // ← link do vídeo com a senha
         ytDesc: 'Assista ao vídeo no canal da ISAWERE no YouTube, descubra a senha da Fase 3 e desbloqueie palavras sobre Tecnologia & Inovação!',
         words: [
@@ -620,19 +620,28 @@ function tryUnlock(n) {
 
 function checkPassword() {
     const input = document.getElementById('unlockInput').value.trim().toUpperCase();
-    const correct = phases[pendingPhase].password.toUpperCase();
-    if (input === correct) {
-        if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
-        localStorage.setItem('forca_unlocked', JSON.stringify(unlockedPhases));
-        document.getElementById('unlockBox').classList.remove('show');
-        selectPhase(pendingPhase);
-    } else {
-        const err = document.getElementById('unlockError');
-        err.style.display = 'block';
-        const inp = document.getElementById('unlockInput');
-        inp.style.borderColor = '#dc3545';
-        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
-    }
+    const key   = phases[pendingPhase].passwordKey;
+    fetch('senhas.json')
+        .then(r => r.json())
+        .then(data => {
+            const correct = (data[key] || '').toUpperCase();
+            if (input === correct) {
+                if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+                localStorage.setItem('forca_unlocked', JSON.stringify(unlockedPhases));
+                document.getElementById('unlockBox').classList.remove('show');
+                selectPhase(pendingPhase);
+            } else {
+                const err = document.getElementById('unlockError');
+                err.style.display = 'block';
+                const inp = document.getElementById('unlockInput');
+                inp.style.borderColor = '#dc3545';
+                setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+            }
+        })
+        .catch(() => {
+            document.getElementById('unlockError').textContent = '⚠️ Erro ao carregar senhas. Tente novamente.';
+            document.getElementById('unlockError').style.display = 'block';
+        });
 }
 
 function updatePhaseBadge() {

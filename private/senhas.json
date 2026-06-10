@@ -1,5 +1,5 @@
 {
-  "_comentario": "Senhas dos jogos ISAWERE - cada jogo tem chaves próprias",
+  "_comentario": "Senhas dos jogos ISAWERE — todos os jogos buscam este arquivo via fetch('senhas.json')",
 
   "bolhas_fase2":         "BOLHAS2",
   "bolhas_fase3":         "SUPER3",
@@ -7,9 +7,36 @@
   "braventura_mundo2":    "BRASIL2",
   "braventura_mundo3":    "NORDESTE3",
 
+  "breakout_fase2":       "BREAKOUT2",
+  "breakout_fase3":       "MASTER3",
+
   "cacatesouro_mundo2":   "PIRATA",
   "cacatesouro_mundo3":   "LENDARIO",
 
   "carmen_mundo2":        "DETETIVE",
-  "carmen_mundo3":        "MISTERIO"
+  "carmen_mundo3":        "MISTERIO",
+
+  "colorir_fase2":        "COLORIR2",
+  "colorir_fase3":        "ARTISTA3",
+
+  "cruzadinhas_fase2":    "CRUZADA2",
+  "cruzadinhas_fase3":    "MESTRE3",
+
+  "dress_fase2":          "DRESS2",
+  "dress_fase3":          "FASHION3",
+
+  "footgol_fase2":        "FOOTGOL2",
+  "footgol_fase3":        "TECNICO3",
+
+  "forca_fase2":          "FORCA2",
+  "forca_fase3":          "ENFORCADO3",
+
+  "futebol_fase2":        "ISAWERE2",
+  "futebol_fase3":        "GAMES3",
+
+  "pacman_fase2":         "PACMAN2",
+  "pacman_fase3":         "FANTASMA3",
+
+  "race_fase2":           "RACE2",
+  "race_fase3":           "CORRIDA3"
 }
