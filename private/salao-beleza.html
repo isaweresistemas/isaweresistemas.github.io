@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💇‍♀️ Salão de Beleza Virtual - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .character-display {
+            background: linear-gradient(180deg, #fff9e6 0%, #ffe6f0 100%);
+            border-radius: 15px; padding: 20px; text-align: center;
+            position: relative; border: 3px solid #f5576c;
+        }
+
+        .face {
+            width: 200px; height: 240px; background: #ffd4a3;
+            border-radius: 50% 50% 45% 45%; margin: 0 auto 20px;
+            position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .hair {
+            position: absolute; top: -20px; left: 50%;
+            transform: translateX(-50%); width: 220px; height: 140px;
+            border-radius: 50% 50% 0 0; transition: all 0.3s;
+        }
+
+        .eyes {
+            position: absolute; top: 80px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 40px;
+        }
+
+        .eye {
+            width: 30px; height: 30px; background: white;
+            border-radius: 50%; border: 2px solid #333; position: relative;
+        }
+
+        .pupil {
+            width: 15px; height: 15px; background: #8b4513;
+            border-radius: 50%; position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        .eyeshadow {
+            position: absolute; top: -8px; left: -5px;
+            width: 40px; height: 15px;
+            border-radius: 50% 50% 0 0; opacity: 0; transition: opacity 0.3s;
+        }
+
+        .nose {
+            position: absolute; top: 120px; left: 50%;
+            transform: translateX(-50%); width: 15px; height: 20px;
+            background: #ffb380; border-radius: 0 0 50% 50%;
+        }
+
+        .mouth {
+            position: absolute; bottom: 60px; left: 50%;
+            transform: translateX(-50%); width: 60px; height: 25px;
+            border: 3px solid #ff69b4; border-top: none;
+            border-radius: 0 0 50% 50%; transition: all 0.3s;
+        }
+
+        .blush {
+            position: absolute; top: 130px; width: 30px; height: 20px;
+            background: rgba(255,182,193,0); border-radius: 50%; transition: background 0.3s;
+        }
+
+        .blush.left  { left: 20px; }
+        .blush.right { right: 20px; }
+
+        .accessories {
+            position: absolute; bottom: -30px; left: 50%;
+            transform: translateX(-50%); font-size: 40px;
+            opacity: 0; transition: opacity 0.3s;
+        }
+
+        .controls { background: #f9f9f9; border-radius: 15px; padding: 20px; }
+
+        .control-section { margin-bottom: 25px; }
+
+        .control-section h3 {
+            color: #f5576c; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px; border: 3px solid #ddd; border-radius: 10px;
+            cursor: pointer; transition: all 0.3s; background: white;
+            text-align: center; font-size: 14px;
+        }
+
+        .option-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        .option-btn.active {
+            border-color: #f5576c; background: #fff0f5; transform: scale(1.05);
+        }
+
+        .color-picker {
+            width: 50px; height: 50px; border: 3px solid #ddd;
+            border-radius: 10px; cursor: pointer; transition: all 0.3s;
+        }
+
+        .color-picker:hover { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+
+        /* Botões de navegação */
+        .btn-row {
+            display: flex; gap: 15px; justify-content: center;
+            flex-wrap: wrap; margin-top: 24px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 13px 28px; border-radius: 10px;
+            font-size: 0.95em; font-weight: bold; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+        .btn-pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .btn-pink:hover { box-shadow: 0 8px 20px rgba(245,87,108,0.5); }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 36px;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-radius: 16px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .isawere-footer .logo-text {
+            font-weight: 800; font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+
+        .isawere-footer .ceo-badge {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+
+        .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+        }
+
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            .game-area { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8em; }
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>💇‍♀️ Salão de Beleza Virtual</h1>
+        <p class="subtitle">Crie o visual perfeito!</p>
+
+        <div class="game-area">
+            <!-- Personagem -->
+            <div class="character-display">
+                <div class="face">
+                    <div class="hair" id="hair"></div>
+                    <div class="eyes">
+                        <div class="eye">
+                            <div class="eyeshadow" id="eyeshadow1"></div>
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="eye">
+                            <div class="eyeshadow" id="eyeshadow2"></div>
+                            <div class="pupil"></div>
+                        </div>
+                    </div>
+                    <div class="nose"></div>
+                    <div class="mouth" id="mouth"></div>
+                    <div class="blush left"  id="blushLeft"></div>
+                    <div class="blush right" id="blushRight"></div>
+                </div>
+                <div class="accessories" id="accessories"></div>
+            </div>
+
+            <!-- Controles -->
+            <div class="controls">
+                <div class="control-section">
+                    <h3>💇 Cabelo</h3>
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="setHairStyle('long')">Longo</div>
+                        <div class="option-btn" onclick="setHairStyle('short')">Curto</div>
+                        <div class="option-btn" onclick="setHairStyle('wavy')">Ondulado</div>
+                        <div class="option-btn" onclick="setHairStyle('ponytail')">Rabo</div>
+                    </div>
+                    <p style="margin:10px 0 5px;font-weight:bold;">Cor do Cabelo:</p>
+                    <div class="option-grid">
+                        <div class="color-picker" style="background:#000"     onclick="setHairColor('#000')"></div>
+                        <div class="color-picker" style="background:#8b4513" onclick="setHairColor('#8b4513')"></div>
+                        <div class="color-picker" style="background:#daa520" onclick="setHairColor('#daa520')"></div>
+                        <div class="color-picker" style="background:#ff69b4" onclick="setHairColor('#ff69b4')"></div>
+                        <div class="color-picker" style="background:#9370db" onclick="setHairColor('#9370db')"></div>
+                        <div class="color-picker" style="background:#ff1493" onclick="setHairColor('#ff1493')"></div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>💄 Maquiagem</h3>
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="applyMakeup('natural')">Natural</div>
+                        <div class="option-btn" onclick="applyMakeup('glam')">Glamour</div>
+                        <div class="option-btn" onclick="applyMakeup('party')">Festa</div>
+                        <div class="option-btn" onclick="applyMakeup('none')">Sem</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>✨ Acessórios</h3>
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="setAccessory('👑')">Coroa</div>
+                        <div class="option-btn" onclick="setAccessory('🎀')">Laço</div>
+                        <div class="option-btn" onclick="setAccessory('🌸')">Flor</div>
+                        <div class="option-btn" onclick="setAccessory('⭐')">Estrela</div>
+                        <div class="option-btn" onclick="setAccessory('')">Nenhum</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões de navegação -->
+        <div class="btn-row">
+            <a class="btn" href="../jogos.html">🎮 Ver Outros Jogos</a>
+            <a class="btn btn-pink" href="https://www.isawere.com.br" target="_blank">🌐 Site ISAWERE</a>
+        </div>
+    </div>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        let currentHair = 'long';
+        let currentHairColor = '#8b4513';
+
+        function setHairStyle(style) {
+            currentHair = style;
+            const hair = document.getElementById('hair');
+            switch(style) {
+                case 'long':     hair.style.height = '140px'; hair.style.borderRadius = '50% 50% 0 0';   hair.style.top = '-20px'; break;
+                case 'short':    hair.style.height = '80px';  hair.style.borderRadius = '50% 50% 30% 30%'; hair.style.top = '-10px'; break;
+                case 'wavy':     hair.style.height = '120px'; hair.style.borderRadius = '50% 50% 40% 40%'; hair.style.top = '-15px'; break;
+                case 'ponytail': hair.style.height = '100px'; hair.style.borderRadius = '50% 50% 20% 20%'; hair.style.top = '-20px'; break;
+            }
+            hair.style.background = currentHairColor;
+
+            // Highlight botão ativo
+            document.querySelectorAll('.control-section:first-child .option-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function setHairColor(color) {
+            currentHairColor = color;
+            document.getElementById('hair').style.background = color;
+        }
+
+        function applyMakeup(type) {
+            const es1 = document.getElementById('eyeshadow1');
+            const es2 = document.getElementById('eyeshadow2');
+            const mth = document.getElementById('mouth');
+            const bl  = document.getElementById('blushLeft');
+            const br  = document.getElementById('blushRight');
+
+            switch(type) {
+                case 'natural':
+                    es1.style.opacity = es2.style.opacity = '0.3';
+                    es1.style.background = es2.style.background = '#deb887';
+                    mth.style.borderColor = '#ffb6c1';
+                    bl.style.background = br.style.background = 'rgba(255,182,193,0.4)';
+                    break;
+                case 'glam':
+                    es1.style.opacity = es2.style.opacity = '0.7';
+                    es1.style.background = es2.style.background = '#9370db';
+                    mth.style.borderColor = '#ff1493';
+                    bl.style.background = br.style.background = 'rgba(255,105,180,0.6)';
+                    break;
+                case 'party':
+                    es1.style.opacity = es2.style.opacity = '0.9';
+                    es1.style.background = es2.style.background = 'linear-gradient(90deg,#ff69b4,#9370db)';
+                    mth.style.borderColor = '#dc143c';
+                    bl.style.background = br.style.background = 'rgba(220,20,60,0.5)';
+                    break;
+                case 'none':
+                    es1.style.opacity = es2.style.opacity = '0';
+                    mth.style.borderColor = '#ff69b4';
+                    bl.style.background = br.style.background = 'rgba(255,182,193,0)';
+                    break;
+            }
+        }
+
+        function setAccessory(emoji) {
+            const acc = document.getElementById('accessories');
+            acc.textContent = emoji;
+            acc.style.opacity = emoji ? '1' : '0';
+        }
+
+        // Inicializar
+        setHairStyle('long');
+        setHairColor('#8b4513');
+    </script>
+</body>
+</html>

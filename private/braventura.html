@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇧🇷 Aventura pelo Brasil - Isawere Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #009c3b 0%, #002776 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 10px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ffdf00;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+        }
+
+        .level-info {
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid #ffdf00;
+        }
+
+        .level-info h2 {
+            color: #ffdf00;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .level-info p {
+            font-size: 0.9em;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        #gameCanvas {
+            background: #228b22;
+            border: 5px solid #ffdf00;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #009c3b 0%, #00732d 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .btn-games {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .instructions {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #ffdf00;
+        }
+
+        .instructions p {
+            margin: 5px 0;
+            font-size: 0.85em;
+        }
+
+        .mobile-controls {
+            display: none;
+            margin-top: 20px;
+            gap: 10px;
+            justify-content: center;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .arrow-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 70px);
+            gap: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 20px;
+            border: 3px solid #ffdf00;
+        }
+
+        .arrow-btn {
+            background: rgba(255,223,0,0.8);
+            border: 3px solid #ffdf00;
+            color: #000;
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .arrow-btn:active {
+            background: rgba(255,223,0,1);
+            transform: scale(0.95);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #009c3b 0%, #002776 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 5px solid #ffdf00;
+            max-width: 500px;
+        }
+
+        .modal-content h2 {
+            color: #ffdf00;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 1.3em;
+            margin: 15px 0;
+        }
+
+        /* Controles Touch Mobile */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .mobile-controls.active {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        .control-btn {
+            height: 70px;
+            background: rgba(255, 223, 0, 0.9);
+            border: 4px solid #fff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #000;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            transition: all 0.1s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+        }
+
+        .control-btn:active {
+            background: rgba(0, 156, 59, 0.9);
+            color: white;
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .control-btn.pressed {
+            background: rgba(0, 156, 59, 0.9);
+            color: white;
+            transform: scale(0.95);
+        }
+
+        .control-empty {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            pointer-events: none;
+        }
+
+        .mobile-hint {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 223, 0, 0.95);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            font-size: 0.85em;
+        }
+
+        .mobile-hint.active {
+            display: block !important;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ── FASES ── */
+        .phases-bar {
+            display: flex; gap: 10px; justify-content: center;
+            margin-bottom: 12px; flex-wrap: wrap;
+        }
+        .phase-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-size: 0.85em; font-weight: 700; cursor: pointer;
+            font-family: Arial, sans-serif; transition: all 0.3s;
+        }
+        .phase-btn.active {
+            background: linear-gradient(135deg, #009c3b, #ffdf00);
+            color: #002776; box-shadow: 0 4px 15px rgba(0,156,59,0.5);
+            transform: translateY(-2px);
+        }
+        .phase-btn.unlocked:not(.active) {
+            background: rgba(255,255,255,0.15); border-color: #ffdf00; color: #ffdf00;
+        }
+        .phase-btn.soft-locked {
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65);
+            border-color: rgba(255,255,255,0.25); cursor: pointer;
+        }
+        .phase-btn.soft-locked:hover { background: rgba(255,255,255,0.18); }
+        .phase-badge { font-size: 0.68em; padding: 2px 7px; border-radius: 50px; background: rgba(255,255,255,0.2); }
+        /* ── UNLOCK BOX ── */
+        .unlock-box {
+            display: none; max-width: 520px; width: 90%; margin: 0 auto 14px;
+            background: rgba(0,0,0,0.75); border: 2px solid #ffdf00;
+            border-radius: 18px; padding: 20px; text-align: center; color: #fff;
+        }
+        .unlock-box.show { display: block; }
+        .unlock-title { font-size: 1em; font-weight: 800; color: #ffdf00; margin-bottom: 6px; }
+        .unlock-desc { font-size: 0.85em; color: #ccc; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: white; padding: 9px 20px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 14px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #ffdf00;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            outline: none; text-align: center; background: rgba(255,255,255,0.1); color: #fff;
+        }
+        .unlock-submit {
+            background: linear-gradient(135deg, #009c3b, #007a2e);
+            color: white; border: none; padding: 10px 16px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;
+            border: 2px solid #ffdf00;
+        }
+        .unlock-submit:hover { opacity: 0.88; }
+        .unlock-error { color: #ff6b6b; font-size: 0.82em; margin-top: 8px; display: none; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5em; margin-bottom: 8px; }
+            .level-info h2 { font-size: 1em; }
+            .level-info p { font-size: 0.8em; }
+            .stat-box { font-size: 0.8em; padding: 6px 12px; }
+            #gameCanvas { max-width: 95vw; max-height: 95vw; width: auto !important; height: auto !important; }
+            .mobile-controls { display: block; }
+            .btn { padding: 12px 20px; font-size: 0.9em; }
+            .controls { margin-bottom: 180px; }
+            .mobile-controls { bottom: 10px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-hint" id="mobileHint">
+        🕹️ Use os botões abaixo para controlar a nave
+    </div>
+
+    <div class="game-container">
+        <h1>🇧🇷 AVENTURA PELO BRASIL</h1>
+
+        <!-- FASES -->
+        <div class="phases-bar">
+            <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectWorld(1)">
+                🌴 Mundo 1 <span class="phase-badge">GRÁTIS</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn2" onclick="tryUnlock(2)">
+                🏙️ Mundo 2 <span class="phase-badge">SENHA</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn3" onclick="tryUnlock(3)">
+                🌿 Mundo 3 <span class="phase-badge">SENHA</span>
+            </button>
+        </div>
+
+        <!-- UNLOCK BOX -->
+        <div class="unlock-box" id="unlockBox">
+            <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie novos destinos!</div>
+            <div class="unlock-desc" id="unlockDesc"></div>
+            <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a><br>
+            <div class="unlock-input-row">
+                <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+                       onkeydown="if(event.key==='Enter') checkPassword()">
+                <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+            </div>
+            <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+        </div>
+
+        <div class="level-info">
+            <h2 id="levelTitle">Paraíba - João Pessoa</h2>
+            <p id="levelDescription">Explore as praias paradisíacas!</p>
+        </div>
+
+        <div class="game-stats">
+            <div class="stat-box">
+                🎯 Fase: <span id="level">1</span>/10
+            </div>
+            <div class="stat-box">
+                ⭐ Estrelas: <span id="stars">0</span>/5
+            </div>
+            <div class="stat-box">
+                🏆 Pontos: <span id="score">0</span>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+        <div class="controls">
+            <button class="btn" onclick="startGame()">🎮 JOGAR</button>
+            <button class="btn" onclick="location.reload()">🔄 REINICIAR</button>
+            <button class="btn" onclick="toggleMobileControls()">📱 Controles Mobile</button>
+            <button class="btn btn-games" onclick="window.location.href='../jogos.html'">
+                🎮 Ver Outros Jogos
+            </button>
+        </div>
+
+    <!-- Controles Touch Mobile -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="control-empty"></div>
+        <div class="control-btn" id="btnUp">▲</div>
+        <div class="control-empty"></div>
+        <div class="control-btn" id="btnLeft">◄</div>
+        <div class="control-empty"></div>
+        <div class="control-btn" id="btnRight">►</div>
+        <div class="control-empty"></div>
+        <div class="control-btn" id="btnDown">▼</div>
+        <div class="control-empty"></div>
+    </div>
+
+
+        <div class="instructions">
+            <p>⌨️ Use as <strong>SETAS</strong> para andar pelo mapa</p>
+            <p>📱 <strong>MOBILE:</strong> Use os BOTÕES na parte inferior</p>
+            <p>⭐ Colete todas as 5 estrelas!</p>
+            <p>🚩 Chegue na bandeira para passar de fase!</p>
+            <p>🧱 Não atravesse as paredes!</p>
+        </div>
+    </div>
+
+    <div class="modal" id="levelCompleteModal">
+        <div class="modal-content">
+            <h2>🎉 FASE COMPLETA!</h2>
+            <p id="nextLevelText">Próximo destino: Rio de Janeiro</p>
+            <button class="btn" onclick="nextLevel()" style="margin-top: 20px;">
+                ➡️ PRÓXIMA FASE
+            </button>
+        </div>
+    </div>
+
+    <div class="modal" id="victoryModal">
+        <div class="modal-content">
+            <h2>🏆 PARABÉNS!</h2>
+            <p>Você completou a viagem pelo Brasil!</p>
+            <p>Pontuação Final: <span id="victoryScore">0</span></p>
+            <button class="btn" onclick="location.reload()" style="margin-top: 20px;">
+                🔄 JOGAR NOVAMENTE
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        /* ═══════════════════════════════════════════
+           SISTEMA DE MUNDOS (FASES COM SENHA)
+        ═══════════════════════════════════════════ */
+        const worldConfig = {
+            1: { startLevel: 0, endLevel: 3, password: null, ytLink: null, desc: '' },
+            2: {
+                startLevel: 3, endLevel: 6,
+                password: 'BRASIL2',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'O Mundo 2 leva você ao Sul e Sudeste do Brasil — São Paulo, Minas Gerais, Santa Catarina e mais! Pegue a senha no canal da ISAWERE e continue a aventura!'
+            },
+            3: {
+                startLevel: 6, endLevel: 10,
+                password: 'NORDESTE3',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'O Mundo 3 é o grande Nordeste e a Amazônia — Bahia, Pernambuco, Ceará, Amazonas! Pegue a senha no canal da ISAWERE e explore o Brasil inteiro!'
+            }
+        };
+
+        let currentWorld = 1;
+        let pendingWorld = null;
+        let unlockedWorlds = JSON.parse(localStorage.getItem('braventura_worlds') || '[1]');
+
+        function refreshWorldBtns() {
+            [1,2,3].forEach(n => {
+                const btn = document.getElementById('phaseBtn' + n);
+                btn.className = 'phase-btn';
+                if (n === currentWorld) btn.classList.add('active', 'unlocked');
+                else if (unlockedWorlds.includes(n)) btn.classList.add('unlocked');
+                else btn.classList.add('soft-locked');
+            });
+        }
+
+        function selectWorld(n) {
+            if (!unlockedWorlds.includes(n)) { tryUnlock(n); return; }
+            currentWorld = n;
+            pendingWorld = null;
+            document.getElementById('unlockBox').classList.remove('show');
+            refreshWorldBtns();
+            currentLevel = worldConfig[n].startLevel;
+            score = 0; starsCollected = 0; gameRunning = false;
+            generateMap(); updateLevelInfo(); draw();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center';
+            ctx.shadowBlur = 5; ctx.shadowColor = '#000';
+            ctx.fillText('Clique em JOGAR para começar!', canvas.width/2, canvas.height/2);
+            ctx.shadowBlur = 0;
+        }
+
+        function tryUnlock(n) {
+            if (unlockedWorlds.includes(n)) { selectWorld(n); return; }
+            pendingWorld = n;
+            const cfg = worldConfig[n];
+            document.getElementById('unlockDesc').textContent = cfg.desc;
+            document.getElementById('unlockYtBtn').href = cfg.ytLink;
+            document.getElementById('unlockInput').value = '';
+            document.getElementById('unlockError').style.display = 'none';
+            document.getElementById('unlockBox').classList.add('show');
+            document.getElementById('unlockInput').focus();
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('unlockInput').value.trim();
+            fetch('../senhas.json')
+                .then(r => r.json())
+                .then(data => {
+                    const correct = (data['braventura_mundo' + pendingWorld] || '');
+                    if (input.toUpperCase() === correct.toUpperCase()) {
+                        if (!unlockedWorlds.includes(pendingWorld)) unlockedWorlds.push(pendingWorld);
+                        localStorage.setItem('braventura_worlds', JSON.stringify(unlockedWorlds));
+                        document.getElementById('unlockBox').classList.remove('show');
+                        selectWorld(pendingWorld);
+                    } else {
+                        document.getElementById('unlockError').style.display = 'block';
+                        const inp = document.getElementById('unlockInput');
+                        inp.style.borderColor = '#ff6b6b';
+                        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+                    }
+                });
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('unlockBox').classList.contains('show')) {
+                checkPassword(); return;
+            }
+            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d'].includes(e.key)) {
+                keys[e.key] = true; e.preventDefault();
+            }
+        });
+
+        refreshWorldBtns();
+        const GRID_WIDTH = 15;
+        const GRID_HEIGHT = 15;
+
+        const levels = [
+            {
+                state: "Paraíba",
+                city: "João Pessoa",
+                description: "Explore as praias paradisíacas!",
+                groundColor: "#f4a460",
+                wallColor: "#8b4513"
+            },
+            {
+                state: "Rio de Janeiro",
+                city: "São Gonçalo",
+                description: "Vista maravilhosa da Baía!",
+                groundColor: "#87ceeb",
+                wallColor: "#4682b4"
+            },
+            {
+                state: "Minas Gerais",
+                city: "Uberlândia",
+                description: "Terra do pão de queijo!",
+                groundColor: "#daa520",
+                wallColor: "#8b4513"
+            },
+            {
+                state: "São Paulo",
+                city: "Campinas",
+                description: "Tecnologia e inovação!",
+                groundColor: "#c0c0c0",
+                wallColor: "#696969"
+            },
+            {
+                state: "Santa Catarina",
+                city: "Joinville",
+                description: "Cidade das flores!",
+                groundColor: "#98fb98",
+                wallColor: "#228b22"
+            },
+            {
+                state: "Rio Grande do Sul",
+                city: "Caxias do Sul",
+                description: "Terra dos pampas!",
+                groundColor: "#90ee90",
+                wallColor: "#556b2f"
+            },
+            {
+                state: "Bahia",
+                city: "Salvador",
+                description: "Axé e alegria!",
+                groundColor: "#ffd700",
+                wallColor: "#ff8c00"
+            },
+            {
+                state: "Pernambuco",
+                city: "Recife",
+                description: "Veneza brasileira!",
+                groundColor: "#40e0d0",
+                wallColor: "#008b8b"
+            },
+            {
+                state: "Ceará",
+                city: "Fortaleza",
+                description: "Sol o ano inteiro!",
+                groundColor: "#ffb6c1",
+                wallColor: "#ff69b4"
+            },
+            {
+                state: "Amazonas",
+                city: "Manaus",
+                description: "Coração da floresta!",
+                groundColor: "#228b22",
+                wallColor: "#006400"
+            }
+        ];
+
+        let currentLevel = 0;
+        let score = 0;
+        let starsCollected = 0;
+        let gameRunning = false;
+        let keys = {};
+
+        const player = {
+            x: 1,
+            y: 1,
+            size: TILE_SIZE - 8,
+            speed: TILE_SIZE
+        };
+
+        let map = [];
+        let stars = [];
+        let flag = {};
+
+        // Tipos de tiles: 0 = caminho, 1 = parede, 2 = estrela, 3 = bandeira
+        function generateMap() {
+            // Mapa base com bordas
+            map = [];
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                map[y] = [];
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    // Bordas
+                    if (x === 0 || x === GRID_WIDTH - 1 || y === 0 || y === GRID_HEIGHT - 1) {
+                        map[y][x] = 1;
+                    } else {
+                        map[y][x] = 0;
+                    }
+                }
+            }
+
+            // Gera obstáculos aleatórios baseados no nível
+            const seed = currentLevel * 12345; // Seed baseada no nível para ter consistência
+            let rand = seed;
+            
+            // Função random simples baseada em seed
+            function seededRandom() {
+                rand = (rand * 9301 + 49297) % 233280;
+                return rand / 233280;
+            }
+            
+            // Número de obstáculos aumenta com o nível
+            const numObstacles = 3 + currentLevel;
+            
+            // Cria obstáculos aleatórios
+            for (let i = 0; i < numObstacles; i++) {
+                const length = 3 + Math.floor(seededRandom() * 5); // Tamanho de 3 a 7
+                const horizontal = seededRandom() > 0.5;
+                
+                if (horizontal) {
+                    // Parede horizontal
+                    const startX = 2 + Math.floor(seededRandom() * (GRID_WIDTH - length - 3));
+                    const y = 2 + Math.floor(seededRandom() * (GRID_HEIGHT - 4));
+                    const gapPos = Math.floor(seededRandom() * length); // Posição da abertura
+                    
+                    for (let x = 0; x < length; x++) {
+                        if (x !== gapPos && startX + x < GRID_WIDTH - 1) {
+                            map[y][startX + x] = 1;
+                        }
+                    }
+                } else {
+                    // Parede vertical
+                    const x = 2 + Math.floor(seededRandom() * (GRID_WIDTH - 4));
+                    const startY = 2 + Math.floor(seededRandom() * (GRID_HEIGHT - length - 3));
+                    const gapPos = Math.floor(seededRandom() * length); // Posição da abertura
+                    
+                    for (let y = 0; y < length; y++) {
+                        if (y !== gapPos && startY + y < GRID_HEIGHT - 1) {
+                            map[startY + y][x] = 1;
+                        }
+                    }
+                }
+            }
+            
+            // Garante que posição inicial e final estejam livres
+            map[1][1] = 0;
+            map[1][2] = 0;
+            map[2][1] = 0;
+            map[GRID_HEIGHT - 2][GRID_WIDTH - 2] = 0;
+            map[GRID_HEIGHT - 2][GRID_WIDTH - 3] = 0;
+            map[GRID_HEIGHT - 3][GRID_WIDTH - 2] = 0;
+
+            // Posiciona estrelas em posições aleatórias (mas sempre as mesmas para cada nível)
+            stars = [];
+            const starPositions = [];
+            
+            for (let i = 0; i < 5; i++) {
+                let x, y;
+                let attempts = 0;
+                do {
+                    x = 2 + Math.floor(seededRandom() * (GRID_WIDTH - 4));
+                    y = 2 + Math.floor(seededRandom() * (GRID_HEIGHT - 4));
+                    attempts++;
+                } while ((map[y][x] !== 0 || starPositions.some(p => p.x === x && p.y === y)) && attempts < 100);
+                
+                if (attempts < 100) {
+                    stars.push({x: x, y: y, collected: false});
+                    starPositions.push({x, y});
+                }
+            }
+
+            // Posiciona bandeira
+            flag = {x: GRID_WIDTH - 2, y: GRID_HEIGHT - 2};
+
+            // Reseta jogador
+            player.x = 1;
+            player.y = 1;
+            starsCollected = 0;
+            document.getElementById('stars').textContent = '0';
+        }
+
+        function updateLevelInfo() {
+            const level = levels[currentLevel];
+            document.getElementById('levelTitle').textContent = `${level.state} - ${level.city}`;
+            document.getElementById('levelDescription').textContent = level.description;
+            document.getElementById('level').textContent = currentLevel + 1;
+        }
+
+        function drawMap() {
+            const level = levels[currentLevel];
+            
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const posX = x * TILE_SIZE;
+                    const posY = y * TILE_SIZE;
+
+                    if (map[y][x] === 1) {
+                        // Parede
+                        ctx.fillStyle = level.wallColor;
+                        ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+                        
+                        // Borda 3D
+                        ctx.strokeStyle = '#000';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(posX, posY, TILE_SIZE, TILE_SIZE);
+                    } else {
+                        // Chão
+                        ctx.fillStyle = level.groundColor;
+                        ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+                        
+                        // Grade
+                        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(posX, posY, TILE_SIZE, TILE_SIZE);
+                    }
+                }
+            }
+        }
+
+        function drawStars() {
+            stars.forEach(star => {
+                if (!star.collected) {
+                    const centerX = star.x * TILE_SIZE + TILE_SIZE / 2;
+                    const centerY = star.y * TILE_SIZE + TILE_SIZE / 2;
+                    
+                    ctx.fillStyle = '#ffdf00';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ffdf00';
+                    
+                    // Desenha estrela
+                    ctx.beginPath();
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                        const x = centerX + Math.cos(angle) * 12;
+                        const y = centerY + Math.sin(angle) * 12;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                        
+                        const angle2 = angle + Math.PI / 5;
+                        const x2 = centerX + Math.cos(angle2) * 5;
+                        const y2 = centerY + Math.sin(angle2) * 5;
+                        ctx.lineTo(x2, y2);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            });
+        }
+
+        function drawFlag() {
+            const centerX = flag.x * TILE_SIZE + TILE_SIZE / 2;
+            const centerY = flag.y * TILE_SIZE + TILE_SIZE / 2;
+
+            // Mastro
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(centerX - 2, centerY - 15, 4, 30);
+            
+            // Bandeira do Brasil
+            ctx.fillStyle = '#009c3b';
+            ctx.fillRect(centerX + 2, centerY - 12, 20, 14);
+            
+            // Losango amarelo
+            ctx.fillStyle = '#ffdf00';
+            ctx.beginPath();
+            ctx.moveTo(centerX + 12, centerY - 10);
+            ctx.lineTo(centerX + 19, centerY - 5);
+            ctx.lineTo(centerX + 12, centerY);
+            ctx.lineTo(centerX + 5, centerY - 5);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawPlayer() {
+            const centerX = player.x * TILE_SIZE + TILE_SIZE / 2;
+            const centerY = player.y * TILE_SIZE + TILE_SIZE / 2;
+            const size = player.size / 2;
+
+            // Sombra
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY + size + 2, size + 2, size / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Corpo
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(centerX - size, centerY - size, size * 2, size * 2);
+            
+            // Borda do corpo
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(centerX - size, centerY - size, size * 2, size * 2);
+            
+            // Cabeça
+            ctx.fillStyle = '#feca57';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - size - 6, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Olhos
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(centerX - 3, centerY - size - 8, 2, 0, Math.PI * 2);
+            ctx.arc(centerX + 3, centerY - size - 8, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Braços
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(centerX - size, centerY - size / 2);
+            ctx.lineTo(centerX - size - 5, centerY);
+            ctx.moveTo(centerX + size, centerY - size / 2);
+            ctx.lineTo(centerX + size + 5, centerY);
+            ctx.stroke();
+        }
+
+        function canMove(newX, newY) {
+            if (newX < 0 || newX >= GRID_WIDTH || newY < 0 || newY >= GRID_HEIGHT) {
+                return false;
+            }
+            return map[newY][newX] !== 1;
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            let moved = false;
+            let newX = player.x;
+            let newY = player.y;
+
+            if (keys['ArrowUp'] || keys['w']) {
+                newY = player.y - 1;
+                moved = true;
+            } else if (keys['ArrowDown'] || keys['s']) {
+                newY = player.y + 1;
+                moved = true;
+            } else if (keys['ArrowLeft'] || keys['a']) {
+                newX = player.x - 1;
+                moved = true;
+            } else if (keys['ArrowRight'] || keys['d']) {
+                newX = player.x + 1;
+                moved = true;
+            }
+
+            if (moved && canMove(newX, newY)) {
+                player.x = newX;
+                player.y = newY;
+                
+                // Coleta estrelas
+                stars.forEach(star => {
+                    if (!star.collected && star.x === player.x && star.y === player.y) {
+                        star.collected = true;
+                        starsCollected++;
+                        score += 100;
+                        document.getElementById('stars').textContent = starsCollected;
+                        document.getElementById('score').textContent = score;
+                    }
+                });
+
+                // Chega na bandeira
+                if (player.x === flag.x && player.y === flag.y) {
+                    if (starsCollected === 5) {
+                        completeLevel();
+                    }
+                }
+
+                keys = {}; // Limpa teclas para movimento grid-based
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawMap();
+            drawStars();
+            drawFlag();
+            drawPlayer();
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            update();
+            draw();
+            
+            setTimeout(() => {
+                requestAnimationFrame(gameLoop);
+            }, 150); // Controle de velocidade
+        }
+
+        function startGame() {
+            if (gameRunning) return;
+            
+            gameRunning = true;
+            generateMap();
+            updateLevelInfo();
+            gameLoop();
+        }
+
+        function completeLevel() {
+            gameRunning = false;
+            score += 500;
+            document.getElementById('score').textContent = score;
+            
+            const worldEnd = worldConfig[currentWorld].endLevel;
+            if (currentLevel < worldEnd - 1 && currentLevel < levels.length - 1) {
+                const nextLevelData = levels[currentLevel + 1];
+                document.getElementById('nextLevelText').textContent = 
+                    `Próximo destino: ${nextLevelData.state} - ${nextLevelData.city}`;
+                document.getElementById('levelCompleteModal').classList.add('show');
+            } else {
+                document.getElementById('victoryScore').textContent = score;
+                document.getElementById('victoryModal').classList.add('show');
+            }
+        }
+
+        function nextLevel() {
+            document.getElementById('levelCompleteModal').classList.remove('show');
+            currentLevel++;
+            gameRunning = true;
+            generateMap();
+            updateLevelInfo();
+            gameLoop();
+        }
+
+
+        // Detectar dispositivo móvel e mostrar controles
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 768) || 
+                   ('ontouchstart' in window);
+        }
+        
+        const isMobile = isMobileDevice();
+        
+        // Forçar exibição dos controles em telas pequenas
+        if (isMobile || window.innerWidth <= 768) {
+            document.getElementById('mobileControls').classList.add('active');
+            document.getElementById('mobileHint').classList.add('active');
+            
+            // Esconder hint após 5 segundos
+            setTimeout(() => {
+                document.getElementById('mobileHint').classList.remove('active');
+            }, 5000);
+        }
+        
+        // Atualizar controles ao redimensionar janela
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 768) {
+                document.getElementById('mobileControls').classList.add('active');
+            } else {
+                document.getElementById('mobileControls').classList.remove('active');
+            }
+        });
+
+        // Toggle controles mobile (útil para testes)
+        function toggleMobileControls() {
+            const controls = document.getElementById('mobileControls');
+            controls.classList.toggle('active');
+        }
+
+        // Controles Touch Mobile
+        const btnUp = document.getElementById('btnUp');
+        const btnDown = document.getElementById('btnDown');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        function setupButton(btn, keyName) {
+            // Touch events
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (gameRunning) {
+                    keys[keyName] = true;
+                    btn.classList.add('pressed');
+                }
+            });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                keys[keyName] = false;
+                btn.classList.remove('pressed');
+            });
+
+            // Mouse events (fallback)
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                if (gameRunning) {
+                    keys[keyName] = true;
+                    btn.classList.add('pressed');
+                }
+            });
+
+            btn.addEventListener('mouseup', (e) => {
+                e.preventDefault();
+                keys[keyName] = false;
+                btn.classList.remove('pressed');
+            });
+
+            btn.addEventListener('mouseleave', (e) => {
+                keys[keyName] = false;
+                btn.classList.remove('pressed');
+            });
+        }
+
+        setupButton(btnUp, 'ArrowUp');
+        setupButton(btnDown, 'ArrowDown');
+        setupButton(btnLeft, 'ArrowLeft');
+        setupButton(btnRight, 'ArrowRight');
+
+        // Prevenir scroll ao tocar nos botões
+        document.getElementById('mobileControls').addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Desenha tela inicial
+        generateMap();
+        updateLevelInfo();
+        draw();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = '#000';
+        ctx.fillText('Clique em JOGAR para começar!', canvas.width/2, canvas.height/2);
+        ctx.font = '18px Arial';
+        ctx.fillText('🇧🇷 Viaje pelo Brasil! 🇧🇷', canvas.width/2, canvas.height/2 + 35);
+        ctx.shadowBlur = 0;
+    </script>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <style>
+        .isawere-footer {
+            width: 100%; margin-top: 40px;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+        }
+        .isawere-footer .logo-text {
+            font-weight: 800; font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+        .isawere-footer .ceo-badge {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+        .isawere-footer .ceo-role { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+        }
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+    </style>
+</body>
+</html>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏴‍☠️ Treasure Hunt - Caça ao Tesouro - Isawere Games</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .game-title {
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1em;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .game-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .island-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .island-item {
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+
+        .island-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f0f0f0;
+        }
+
+        .island-item.unlocked {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+
+        .island-item.completed {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+        }
+
+        .island-item.active {
+            border-color: #8B4513;
+            box-shadow: 0 4px 15px rgba(139,69,19,0.3);
+            transform: translateX(5px);
+        }
+
+        .island-item:not(.locked):hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .island-stars { color: #ffd700; font-size: 1.2em; }
+
+        .game-area { position: relative; }
+
+        .map-container {
+            background: #87CEEB;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+            min-height: 650px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            cursor: crosshair;
+            background: linear-gradient(180deg, #87CEEB 0%, #4682B4 100%);
+            border: 3px solid #8B4513;
+        }
+
+        .game-controls {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .coordinates-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coord-input {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid #8B4513;
+            border-radius: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            background: white;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary  { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
+        .btn-secondary { background: linear-gradient(135deg, #2196F3, #1976D2); color: white; }
+        .btn-danger   { background: linear-gradient(135deg, #9e9e9e, #757575); color: white; }
+        .btn-games    { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #fff3cd, #ffe69c);
+            border: 3px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .attempts-counter {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* hint toast */
+        .hint-toast {
+            display: none;
+            position: fixed;
+            top: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff;
+            padding: 14px 28px; border-radius: 12px;
+            font-size: 1.1em; font-weight: 600;
+            z-index: 2000; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            animation: fadeInDown 0.4s ease;
+        }
+        .hint-toast.show { display: block; }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: bounceIn 0.6s;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+        }
+
+        @keyframes bounceIn {
+            0%   { transform: scale(0.3); opacity: 0; }
+            50%  { transform: scale(1.05); }
+            70%  { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon { font-size: 6em; margin-bottom: 20px; animation: float 2s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
+        }
+
+        .modal h2 { color: #8B4513; margin-bottom: 15px; font-size: 2em; }
+        .modal p   { color: #666; margin-bottom: 25px; line-height: 1.6; font-size: 1.1em; }
+
+        .stars-display {
+            font-size: 4em; margin: 20px 0;
+            animation: starSpin 1s ease-in-out;
+        }
+
+        @keyframes starSpin {
+            0%   { transform: scale(0) rotate(0deg); }
+            50%  { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .game-content { grid-template-columns: 1fr; }
+            .game-controls { grid-template-columns: 1fr; }
+            .game-title { font-size: 1.5em; }
+            canvas { height: 400px; }
+        }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px;
+            width: 100%;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .isawere-footer .logo-text {
+            font-weight: 800; font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+        .isawere-footer .ceo-badge {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+        .isawere-footer .ceo-role   { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name   { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+        }
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px; justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+
+        /* ── MUNDOS / UNLOCK ── */
+        .worlds-bar {
+            display: flex; gap: 10px; justify-content: center;
+            padding: 14px 20px 4px; flex-wrap: wrap;
+        }
+        .world-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-size: 0.88em; font-weight: 700; cursor: pointer; transition: all 0.3s;
+        }
+        .world-btn.active     { background: linear-gradient(135deg,#8B4513,#D2691E); color:#fff; box-shadow:0 4px 15px rgba(139,69,19,.5); transform:translateY(-2px); }
+        .world-btn.unlocked   { background: rgba(255,255,255,0.9); border-color: #8B4513; color: #8B4513; }
+        .world-btn.soft-locked { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
+        .world-btn.soft-locked:hover { background: rgba(255,255,255,0.28); }
+        .world-badge { font-size: 0.7em; padding: 2px 7px; border-radius: 50px; background: rgba(255,255,255,0.2); }
+        .unlock-box {
+            display: none; max-width: 500px; margin: 10px auto 4px;
+            background: rgba(255,255,255,0.97); border: 2px solid #8B4513;
+            border-radius: 18px; padding: 20px; text-align: center; color: #333;
+        }
+        .unlock-box.show   { display: block; }
+        .unlock-title      { font-size: 1em; font-weight: 800; color: #8B4513; margin-bottom: 6px; }
+        .unlock-desc       { font-size: 0.85em; color: #555; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn     {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: #fff; padding: 10px 22px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 14px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row  { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #8B4513;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; outline: none; text-align: center;
+        }
+        .unlock-input:focus { border-color: #D2691E; }
+        .unlock-submit {
+            background: linear-gradient(135deg,#8B4513,#D2691E);
+            color: #fff; border: none; padding: 10px 16px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;
+        }
+        .unlock-error { color: #dc3545; font-size: 0.82em; margin-top: 8px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="hint-toast" id="hintToast"></div>
+
+<div class="game-container">
+
+    <!-- MUNDOS -->
+    <div class="worlds-bar">
+        <button class="world-btn active unlocked" id="worldBtn1" onclick="selectWorld(1)">
+            🏝️ Mundo 1 <span class="world-badge">GRÁTIS</span>
+        </button>
+        <button class="world-btn soft-locked" id="worldBtn2" onclick="tryUnlockWorld(2)">
+            🌊 Mundo 2 <span class="world-badge">SENHA</span>
+        </button>
+        <button class="world-btn soft-locked" id="worldBtn3" onclick="tryUnlockWorld(3)">
+            💀 Mundo 3 <span class="world-badge">SENHA</span>
+        </button>
+    </div>
+    <!-- UNLOCK BOX -->
+    <div class="unlock-box" id="unlockBox">
+        <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie!</div>
+        <div class="unlock-desc" id="unlockDesc"></div>
+        <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a><br>
+        <div class="unlock-input-row">
+            <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+                   onkeydown="if(event.key==='Enter') checkPassword()">
+            <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+        </div>
+        <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+    </div>
+
+    <div class="game-header">
+        <div class="game-title">
+            <i class="fas fa-skull-crossbones"></i>
+            TREASURE HUNT
+        </div>
+
+        <div class="player-stats">
+            <div class="stat-item">
+                <i class="fas fa-coins"></i>
+                Créditos: <span class="stat-value" id="creditsDisplay">30</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-star"></i>
+                Estrelas: <span class="stat-value" id="starsDisplay">0</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-gem"></i>
+                Tesouros: <span class="stat-value" id="treasuresDisplay">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-content">
+        <div class="sidebar">
+            <div class="card">
+                <h3><i class="fas fa-map-marked-alt"></i> Ilhas</h3>
+                <div class="island-list" id="islandList"></div>
+            </div>
+
+            <div class="card" style="background:linear-gradient(135deg,#ffd700,#ffed4e);border:3px solid #f7971e;">
+                <h3 style="color:#8B4513;"><i class="fas fa-info-circle"></i> Como Jogar</h3>
+                <p style="color:#8B4513;font-weight:600;margin-bottom:10px;line-height:1.7;">
+                    🗺️ Digite as coordenadas (letra + número)<br>
+                    🔍 Clique em <strong>Buscar</strong> para tentar<br>
+                    🔥 Quanto mais quente, mais perto!<br>
+                    💡 Use créditos para obter dicas<br>
+                    ⭐ Menos tentativas = mais estrelas!
+                </p>
+                <button class="btn btn-danger" onclick="clearProgress()" style="width:100%;font-size:0.85em;">
+                    🗑️ Zerar Progresso
+                </button>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="info-panel">
+                <strong>🗺️ Ilha Atual:</strong> <span id="currentIslandName">Carregando...</span><br>
+                <strong>📍 Dificuldade:</strong> <span id="islandDifficulty">-</span><br>
+                <strong>🎯 Objetivo:</strong> Encontre o tesouro nas coordenadas corretas!
+            </div>
+
+            <div class="attempts-counter" id="attemptsCounter">
+                ⚡ Tentativas restantes: <span id="attemptsLeft">5</span>
+            </div>
+
+            <div class="map-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <div class="game-controls">
+                <div class="coordinates-input">
+                    <input type="text"   class="coord-input" id="coordX" placeholder="A" maxlength="1">
+                    <input type="number" class="coord-input" id="coordY" placeholder="1" min="1" max="15">
+                </div>
+                <button class="btn btn-primary"   onclick="game.makeGuess()">   <i class="fas fa-search"></i> Buscar    </button>
+                <button class="btn btn-secondary" onclick="game.getHint()">     <i class="fas fa-lightbulb"></i> Dica   </button>
+                <button class="btn btn-danger"    onclick="game.resetIsland()"> <i class="fas fa-redo"></i> Recomeçar   </button>
+            </div>
+
+            <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-games" onclick="window.location.href='../jogos.html'">
+                    🏠 Ver Outros Jogos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Vitória -->
+<div class="modal" id="victoryModal">
+    <div class="modal-content">
+        <div class="modal-icon">🏆</div>
+        <h2>Tesouro Encontrado!</h2>
+        <div class="stars-display" id="starsEarned">⭐⭐⭐</div>
+        <p id="victoryMessage"></p>
+        <button class="btn btn-primary" onclick="game.nextIsland()" style="margin:10px auto;min-width:200px;">
+            <i class="fas fa-arrow-right"></i> Próxima Ilha
+        </button>
+    </div>
+</div>
+
+<!-- Modal Game Over -->
+<div class="modal" id="gameOverModal">
+    <div class="modal-content">
+        <div class="modal-icon">💀</div>
+        <h2 style="color:#e74c3c;">Tentativas Esgotadas!</h2>
+        <p>O tesouro estava escondido... Tente novamente!</p>
+        <button class="btn btn-primary" onclick="game.resetIsland();closeModal('gameOverModal')" style="margin:10px auto;min-width:200px;">
+            <i class="fas fa-redo"></i> Tentar Novamente
+        </button>
+    </div>
+</div>
+
+<!-- ISAWERE FOOTER -->
+<footer class="isawere-footer">
+    <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+    <div class="footer-copy">
+        © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+        <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+    </div>
+    <div class="ceo-badge">
+        <div>
+            <div class="ceo-role">Fundador & CEO</div>
+            <div class="ceo-name">Ivan Rosas</div>
+            <div class="ceo-company">ISAWERE Sistemas</div>
+        </div>
+    </div>
+    <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+</footer>
+
+<script>
+    /* ═══════════════════════════════════════
+       SISTEMA DE MUNDOS
+    ════════════════════════════════════════ */
+    const worldConfig = {
+        1: { islandIds: [1,2,3,4,5],      ytLink: null, desc: '' },
+        2: { islandIds: [6,7,8,9,10],     ytLink: 'https://www.youtube.com/@IsawereSistemas',
+             desc: 'No Mundo 2 as ilhas ficam muito mais difíceis! Assista ao nosso vídeo no YouTube, pegue a senha e continue a aventura!' },
+        3: { islandIds: [11,12,13,14,15], ytLink: 'https://www.youtube.com/@IsawereSistemas',
+             desc: 'O Mundo 3 é o desafio lendário: grids gigantes e pouquíssimas tentativas! Pegue a senha no canal da ISAWERE!' }
+    };
+
+    let currentWorld   = parseInt(localStorage.getItem('cacatesouro_world') || '1');
+    let pendingWorld   = null;
+    let unlockedWorlds = JSON.parse(localStorage.getItem('cacatesouro_unlocked') || '[1]');
+
+    function refreshWorldBtns() {
+        [1,2,3].forEach(n => {
+            const btn = document.getElementById('worldBtn' + n);
+            btn.className = 'world-btn';
+            if (n === currentWorld)              btn.classList.add('active', 'unlocked');
+            else if (unlockedWorlds.includes(n)) btn.classList.add('unlocked');
+            else                                 btn.classList.add('soft-locked');
+        });
+    }
+
+    function selectWorld(n) {
+        if (!unlockedWorlds.includes(n)) { tryUnlockWorld(n); return; }
+        currentWorld = n;
+        pendingWorld = null;
+        localStorage.setItem('cacatesouro_world', n);
+        document.getElementById('unlockBox').classList.remove('show');
+        refreshWorldBtns();
+        window.game.loadIsland(worldConfig[n].islandIds[0]);
+    }
+
+    function tryUnlockWorld(n) {
+        if (unlockedWorlds.includes(n)) { selectWorld(n); return; }
+        pendingWorld = n;
+        const cfg = worldConfig[n];
+        document.getElementById('unlockDesc').textContent = cfg.desc;
+        document.getElementById('unlockYtBtn').href = cfg.ytLink;
+        document.getElementById('unlockInput').value = '';
+        document.getElementById('unlockError').style.display = 'none';
+        document.getElementById('unlockBox').classList.add('show');
+        document.getElementById('unlockInput').focus();
+    }
+
+    function checkPassword() {
+        const input = document.getElementById('unlockInput').value.trim();
+        fetch('../senhas.json')
+            .then(r => r.json())
+            .then(data => {
+                const correct = (data['cacatesouro_mundo' + pendingWorld] || '');
+                if (input.toUpperCase() === correct.toUpperCase()) {
+                    if (!unlockedWorlds.includes(pendingWorld)) unlockedWorlds.push(pendingWorld);
+                    localStorage.setItem('cacatesouro_unlocked', JSON.stringify(unlockedWorlds));
+                    document.getElementById('unlockBox').classList.remove('show');
+                    selectWorld(pendingWorld);
+                } else {
+                    document.getElementById('unlockError').style.display = 'block';
+                    const inp = document.getElementById('unlockInput');
+                    inp.style.borderColor = '#ff6b6b';
+                    setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+                }
+            });
+    }
+
+    /* ═══════════════════════════════════════
+       PROGRESSO: localStorage (substitui PHP session)
+    ════════════════════════════════════════ */
+    const STORAGE_KEY = 'isawere_treasure_progress';
+
+    function loadProgress() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+                islands_completed: [],
+                current_island: 1,
+                total_stars: 0,
+                total_treasures: 0,
+                credits: 30
+            };
+        } catch(e) {
+            return { islands_completed: [], current_island: 1, total_stars: 0, total_treasures: 0, credits: 30 };
+        }
+    }
+
+    function saveProgress(p) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+    }
+
+    function clearProgress() {
+        if (confirm('Tem certeza? Todo seu progresso será apagado!')) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    let userProgress = loadProgress();
+    let userCredits  = userProgress.credits ?? 30;
+
+    /* ═══════════════════════════════════════
+       ILHAS
+    ════════════════════════════════════════ */
+    const islands = [
+        { id:1,  name:'Ilha do Coco',          difficulty:'Fácil',       gridSize:5,  treasure:{x:2,y:3},  maxAttempts:5 },
+        { id:2,  name:'Baía das Tartarugas',   difficulty:'Fácil',       gridSize:6,  treasure:{x:4,y:2},  maxAttempts:5 },
+        { id:3,  name:'Rochedo Solitário',     difficulty:'Médio',       gridSize:7,  treasure:{x:5,y:4},  maxAttempts:5 },
+        { id:4,  name:'Gruta do Corsário',     difficulty:'Médio',       gridSize:8,  treasure:{x:6,y:5},  maxAttempts:5 },
+        { id:5,  name:'Arquipélago Perdido',   difficulty:'Médio',       gridSize:8,  treasure:{x:3,y:7},  maxAttempts:5 },
+        { id:6,  name:'Fortaleza Fantasma',    difficulty:'Difícil',     gridSize:9,  treasure:{x:7,y:4},  maxAttempts:4 },
+        { id:7,  name:'Recife das Sereias',    difficulty:'Difícil',     gridSize:9,  treasure:{x:5,y:8},  maxAttempts:4 },
+        { id:8,  name:'Vulcão Adormecido',     difficulty:'Difícil',     gridSize:10, treasure:{x:8,y:6},  maxAttempts:4 },
+        { id:9,  name:'Pântano do Kraken',     difficulty:'Muito Difícil',gridSize:10,treasure:{x:4,y:9},  maxAttempts:3 },
+        { id:10, name:'Montanha do Trovão',    difficulty:'Muito Difícil',gridSize:10,treasure:{x:9,y:7},  maxAttempts:3 },
+        { id:11, name:'Deserto das Dunas',     difficulty:'Extremo',     gridSize:12, treasure:{x:10,y:5}, maxAttempts:3 },
+        { id:12, name:'Floresta Sombria',      difficulty:'Extremo',     gridSize:12, treasure:{x:7,y:11}, maxAttempts:3 },
+        { id:13, name:'Caverna do Dragão',     difficulty:'Extremo',     gridSize:12, treasure:{x:11,y:8}, maxAttempts:2 },
+        { id:14, name:'Templo Ancestral',      difficulty:'Lendário',    gridSize:15, treasure:{x:13,y:9}, maxAttempts:2 },
+        { id:15, name:'Ilha do Fim do Mundo',  difficulty:'Lendário',    gridSize:15, treasure:{x:8,y:14}, maxAttempts:2 }
+    ];
+
+    /* ═══════════════════════════════════════
+       TOAST HELPER
+    ════════════════════════════════════════ */
+    function showToast(msg, duration = 3000) {
+        const t = document.getElementById('hintToast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    /* ═══════════════════════════════════════
+       GAME CLASS
+    ════════════════════════════════════════ */
+    class TreasureHuntGame {
+        constructor() {
+            this.canvas = document.getElementById('gameCanvas');
+            this.ctx    = this.canvas.getContext('2d');
+            this.currentIsland = null;
+            this.attempts = 0;
+            this.maxAttempts = 5;
+            this.guesses  = [];
+            this.gameOver = false;
+
+            this.initCanvas();
+            this.loadIsland(userProgress.current_island || 1);
+            this.renderIslandList();
+            this.updateStatsUI();
+        }
+
+        initCanvas() {
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width  = rect.width  || 800;
+            this.canvas.height = 600;
+        }
+
+        updateStatsUI() {
+            document.getElementById('creditsDisplay').textContent  = userCredits;
+            document.getElementById('starsDisplay').textContent    = userProgress.total_stars;
+            document.getElementById('treasuresDisplay').textContent = userProgress.total_treasures;
+        }
+
+        renderIslandList() {
+            const completedIds = userProgress.islands_completed.map(i => i.id);
+
+            const html = islands.map(island => {
+                const isCompleted   = completedIds.includes(island.id);
+                const completedData = isCompleted ? userProgress.islands_completed.find(i => i.id === island.id) : null;
+
+                let cls = 'island-item ' + (isCompleted ? 'completed' : 'unlocked');
+                if (this.currentIsland && this.currentIsland.id === island.id) cls += ' active';
+
+                const stars = (isCompleted && completedData) ? '⭐'.repeat(completedData.stars) : '';
+
+                return `
+                    <div class="${cls}" onclick="game.loadIsland(${island.id})">
+                        <div>
+                            🏝️ <strong>${island.name}</strong>
+                            <br><small style="color:#666;">${island.difficulty}</small>
+                        </div>
+                        <div class="island-stars">${stars}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('islandList').innerHTML = html;
+        }
+
+        loadIsland(islandId) {
+            const island = islands.find(i => i.id === islandId);
+            if (!island) return;
+
+            this.currentIsland = island;
+            this.attempts      = 0;
+            this.maxAttempts   = island.maxAttempts;
+            this.guesses       = [];
+            this.gameOver      = false;
+
+            document.getElementById('currentIslandName').textContent = island.name;
+            document.getElementById('islandDifficulty').textContent  = island.difficulty;
+            document.getElementById('attemptsLeft').textContent       = this.maxAttempts;
+
+            // Save current island
+            userProgress.current_island = islandId;
+            saveProgress(userProgress);
+
+            this.renderIslandList();
+            this.drawMap();
+
+            document.getElementById('coordX').value = '';
+            document.getElementById('coordY').value = '';
+            document.getElementById('coordX').focus();
+        }
+
+        drawMap() {
+            const island = this.currentIsland;
+            if (!island) return;
+
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Oceano
+            const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.5, '#5F9EA0');
+            gradient.addColorStop(1, '#4682B4');
+            this.ctx.fillStyle = gradient;
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            const gridSize = island.gridSize;
+            const cellSize = Math.min(
+                (this.canvas.width  - 120) / gridSize,
+                (this.canvas.height - 120) / gridSize
+            );
+            const startX = (this.canvas.width  - cellSize * gridSize) / 2;
+            const startY = (this.canvas.height - cellSize * gridSize) / 2;
+
+            // Areia
+            this.ctx.fillStyle = '#f4e7c3';
+            this.ctx.fillRect(startX, startY, cellSize * gridSize, cellSize * gridSize);
+
+            // Grid
+            this.ctx.strokeStyle = '#8B4513';
+            this.ctx.lineWidth = 3;
+
+            for (let i = 0; i <= gridSize; i++) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(startX + i * cellSize, startY);
+                this.ctx.lineTo(startX + i * cellSize, startY + gridSize * cellSize);
+                this.ctx.stroke();
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(startX, startY + i * cellSize);
+                this.ctx.lineTo(startX + gridSize * cellSize, startY + i * cellSize);
+                this.ctx.stroke();
+            }
+
+            // Labels
+            this.ctx.fillStyle = '#8B4513';
+            this.ctx.font = 'bold 20px Arial';
+            this.ctx.textAlign = 'center';
+
+            for (let i = 0; i < gridSize; i++) {
+                const letter = String.fromCharCode(65 + i);
+                this.ctx.fillText(letter, startX + i * cellSize + cellSize / 2, startY - 15);
+                this.ctx.fillText(i + 1, startX - 25, startY + i * cellSize + cellSize / 2 + 7);
+            }
+
+            // Tentativas
+            this.guesses.forEach(guess => {
+                const x = startX + guess.x * cellSize + cellSize / 2;
+                const y = startY + guess.y * cellSize + cellSize / 2;
+
+                this.ctx.fillStyle = guess.hit ? 'rgba(76,175,80,0.7)' : 'rgba(244,67,54,0.7)';
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, cellSize / 2.5, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                this.ctx.strokeStyle = guess.hit ? '#2e7d32' : '#c62828';
+                this.ctx.lineWidth = 4;
+                this.ctx.stroke();
+
+                this.ctx.font = 'bold 30px Arial';
+                this.ctx.fillText(guess.hit ? '💎' : '❌', x, y + 10);
+            });
+
+            // Mostra tesouro se ganhou
+            if (this.gameOver) {
+                const x = startX + island.treasure.x * cellSize + cellSize / 2;
+                const y = startY + island.treasure.y * cellSize + cellSize / 2;
+                this.ctx.font = 'bold 60px Arial';
+                this.ctx.fillText('🏆', x, y + 20);
+            }
+        }
+
+        makeGuess() {
+            if (this.gameOver) {
+                showToast('Ilha completada! Vá para a próxima. 🏝️');
+                return;
+            }
+
+            const coordX = document.getElementById('coordX').value.toUpperCase();
+            const coordY = parseInt(document.getElementById('coordY').value);
+
+            if (!coordX || !coordY) { showToast('⚠️ Digite as coordenadas!'); return; }
+
+            const x = coordX.charCodeAt(0) - 65;
+            const y = coordY - 1;
+
+            if (x < 0 || x >= this.currentIsland.gridSize || y < 0 || y >= this.currentIsland.gridSize) {
+                showToast('⚠️ Coordenadas inválidas!'); return;
+            }
+
+            if (this.guesses.some(g => g.x === x && g.y === y)) {
+                showToast('⚠️ Você já tentou essas coordenadas!'); return;
+            }
+
+            this.attempts++;
+            const hit = (x === this.currentIsland.treasure.x && y === this.currentIsland.treasure.y);
+            this.guesses.push({x, y, hit});
+
+            if (hit) {
+                this.gameOver = true;
+                this.drawMap();
+                this.onVictory();
+            } else {
+                const remaining = this.maxAttempts - this.attempts;
+                document.getElementById('attemptsLeft').textContent = remaining;
+
+                if (remaining <= 0) {
+                    this.gameOver = true;
+                    this.drawMap();
+                    setTimeout(() => document.getElementById('gameOverModal').classList.add('active'), 400);
+                    return;
+                }
+
+                // Dica de proximidade
+                const distance = Math.abs(x - this.currentIsland.treasure.x) + Math.abs(y - this.currentIsland.treasure.y);
+                let hint = '';
+                if      (distance <= 1) hint = '🔥 MUITO QUENTE! Você está bem perto!';
+                else if (distance <= 2) hint = '🌡️ Quente! Continue procurando por perto!';
+                else if (distance <= 4) hint = '😊 Morno... Você está na direção certa!';
+                else                    hint = '❄️ Frio! O tesouro está longe...';
+
+                showToast(hint);
+            }
+
+            this.drawMap();
+            document.getElementById('coordX').value = '';
+            document.getElementById('coordY').value = '';
+            document.getElementById('coordX').focus();
+        }
+
+        getHint() {
+            if (this.gameOver) return;
+
+            if (userCredits < 1) {
+                showToast('💸 Créditos insuficientes!'); return;
+            }
+
+            if (!confirm('Usar 1 crédito para obter uma dica?')) return;
+
+            userCredits--;
+            userProgress.credits = userCredits;
+            saveProgress(userProgress);
+            this.updateStatsUI();
+
+            const tx = this.currentIsland.treasure.x;
+            const ty = this.currentIsland.treasure.y;
+            const gs = this.currentIsland.gridSize;
+
+            const hints = [
+                `💡 A letra está entre ${String.fromCharCode(65 + Math.max(0, tx-1))} e ${String.fromCharCode(65 + Math.min(gs-1, tx+1))}`,
+                `💡 O número está entre ${Math.max(1, ty)} e ${Math.min(gs, ty+2)}`,
+                tx < 3 ? '💡 O tesouro está no lado ESQUERDO do mapa' : tx > gs-3 ? '💡 O tesouro está no lado DIREITO do mapa' : '💡 O tesouro está no CENTRO do mapa',
+                ty < 3 ? '💡 O tesouro está na parte SUPERIOR'         : ty > gs-3 ? '💡 O tesouro está na parte INFERIOR' : '💡 O tesouro está no MEIO vertical'
+            ];
+
+            showToast(hints[Math.floor(Math.random() * hints.length)], 5000);
+        }
+
+        onVictory() {
+            const stars = this.attempts <= 2 ? 3 : this.attempts <= 4 ? 2 : 1;
+
+            document.getElementById('starsEarned').textContent  = '⭐'.repeat(stars);
+            document.getElementById('victoryMessage').textContent =
+                `Parabéns! Você encontrou o tesouro em ${this.attempts} tentativa${this.attempts !== 1 ? 's' : ''}!`;
+
+            const completedIds = userProgress.islands_completed.map(i => i.id);
+            if (!completedIds.includes(this.currentIsland.id)) {
+                userProgress.islands_completed.push({
+                    id:       this.currentIsland.id,
+                    stars:    stars,
+                    attempts: this.attempts
+                });
+                userProgress.total_stars    += stars;
+                userProgress.total_treasures++;
+                saveProgress(userProgress);
+                this.updateStatsUI();
+            }
+
+            document.getElementById('victoryModal').classList.add('active');
+        }
+
+        nextIsland() {
+            document.getElementById('victoryModal').classList.remove('active');
+            const next = this.currentIsland.id + 1;
+            if (next <= islands.length) {
+                this.loadIsland(next);
+            } else {
+                showToast('🎉 PARABÉNS! Você completou TODAS as ilhas! 🏴‍☠️', 6000);
+            }
+        }
+
+        resetIsland() {
+            if (confirm('Deseja recomeçar esta ilha?')) {
+                this.loadIsland(this.currentIsland.id);
+            }
+        }
+    }
+
+    // Tecla Enter para buscar ou desbloquear mundo
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('unlockBox').classList.contains('show')) {
+            checkPassword(); return;
+        }
+        if (e.key === 'Enter') game.makeGuess();
+    });
+
+    // Redimensiona canvas ao carregar
+    window.addEventListener('load', () => {
+        const game = new TreasureHuntGame();
+        window.game = game;
+    });
+
+    // Fallback se load já disparou
+    if (document.readyState === 'complete') {
+        if (!window.game) window.game = new TreasureHuntGame();
+    }
+
+    refreshWorldBtns();
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Colorir - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 { text-align: center; color: #ff6b9d; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .tools-container { background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .tool-section { margin-bottom: 20px; }
+        .tool-section h3 { color: #ff6b9d; margin-bottom: 10px; }
+
+        .color-palette { display: grid; grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); gap: 10px; }
+
+        .color-btn {
+            width: 50px; height: 50px;
+            border: 3px solid #ddd; border-radius: 10px; cursor: pointer; transition: all 0.3s;
+        }
+
+        .color-btn:hover { transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .color-btn.active { border-color: #ff6b9d; transform: scale(1.15); box-shadow: 0 5px 20px rgba(255,107,157,0.5); }
+
+        .brush-sizes { display: flex; gap: 15px; flex-wrap: wrap; }
+
+        .brush-btn {
+            background: white; border: 3px solid #ddd; padding: 10px 20px;
+            border-radius: 10px; cursor: pointer; transition: all 0.3s; font-weight: bold;
+        }
+
+        .brush-btn:hover  { border-color: #ff6b9d; }
+        .brush-btn.active { border-color: #ff6b9d; background: #fff0f5; }
+
+        .canvas-container {
+            background: white; border: 5px solid #ff6b9d;
+            border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px;
+        }
+
+        canvas { border: 2px solid #ddd; cursor: crosshair; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+        .btn-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white; border: none; padding: 15px 30px;
+            border-radius: 10px; font-size: 1.1em; font-weight: bold;
+            cursor: pointer; transition: all 0.3s; text-decoration: none;
+            display: inline-flex; align-items: center;
+        }
+
+        .btn:hover       { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,107,157,0.5); }
+        .btn-secondary   { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-secondary:hover { box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+
+        .image-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin-bottom: 20px;
+        }
+
+        .image-option {
+            border: 3px solid #ddd; border-radius: 10px; padding: 10px;
+            cursor: pointer; transition: all 0.3s; text-align: center;
+        }
+
+        .image-option:hover  { border-color: #ff6b9d; transform: scale(1.05); }
+        .image-option.active { border-color: #ff6b9d; background: #fff0f5; }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px;
+            width: 100%; margin-top: 40px;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .isawere-footer .logo-text {
+            font-weight: 800; font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+
+        .isawere-footer .ceo-badge {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+
+        .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+        }
+
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .color-palette { grid-template-columns: repeat(6, 1fr); }
+            .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px; justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎨 Jogo de Colorir</h1>
+        <p class="subtitle">Solte sua criatividade e pinte como quiser!</p>
+
+        <div class="tools-container">
+            <div class="tool-section">
+                <h3>🖌️ Escolha a Imagem:</h3>
+                <div class="image-selector" id="imageSelector"></div>
+            </div>
+            <div class="tool-section">
+                <h3>🎨 Escolha a Cor:</h3>
+                <div class="color-palette" id="colorPalette"></div>
+            </div>
+            <div class="tool-section">
+                <h3>📏 Tamanho do Pincel:</h3>
+                <div class="brush-sizes">
+                    <button class="brush-btn" onclick="setBrushSize(5, this)">Pequeno</button>
+                    <button class="brush-btn active" onclick="setBrushSize(10, this)">Médio</button>
+                    <button class="brush-btn" onclick="setBrushSize(20, this)">Grande</button>
+                    <button class="brush-btn" onclick="setBrushSize(30, this)">Muito Grande</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn" onclick="clearCanvas()">🗑️ Limpar Tudo</button>
+            <button class="btn" onclick="saveImage()">💾 Salvar Desenho</button>
+            <a class="btn btn-secondary" href="../jogos.html">🎮 Ver Outros Jogos</a>
+        </div>
+    </div>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        const coloringImages = [
+            {
+                name: "Borboleta",
+                svg: `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M200,200 Q180,150 160,120 Q140,90 120,100 Q100,110 110,130 Q120,150 140,160 Q160,170 180,180 Z" stroke="black" stroke-width="3" fill="white"/>
+                    <path d="M200,200 Q220,150 240,120 Q260,90 280,100 Q300,110 290,130 Q280,150 260,160 Q240,170 220,180 Z" stroke="black" stroke-width="3" fill="white"/>
+                    <path d="M200,200 Q180,250 160,280 Q140,310 120,300 Q100,290 110,270 Q120,250 140,240 Q160,230 180,220 Z" stroke="black" stroke-width="3" fill="white"/>
+                    <path d="M200,200 Q220,250 240,280 Q260,310 280,300 Q300,290 290,270 Q280,250 260,240 Q240,230 220,220 Z" stroke="black" stroke-width="3" fill="white"/>
+                    <ellipse cx="200" cy="200" rx="15" ry="40" fill="white" stroke="black" stroke-width="3"/>
+                    <circle cx="200" cy="180" r="8" fill="white" stroke="black" stroke-width="2"/>
+                    <line x1="200" y1="180" x2="195" y2="160" stroke="black" stroke-width="2"/>
+                    <line x1="200" y1="180" x2="205" y2="160" stroke="black" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                name: "Flor",
+                svg: `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="200" cy="200" r="30" fill="yellow" stroke="black" stroke-width="3"/>
+                    <ellipse cx="200" cy="140" rx="30" ry="50" fill="white" stroke="black" stroke-width="3"/>
+                    <ellipse cx="260" cy="200" rx="50" ry="30" fill="white" stroke="black" stroke-width="3"/>
+                    <ellipse cx="200" cy="260" rx="30" ry="50" fill="white" stroke="black" stroke-width="3"/>
+                    <ellipse cx="140" cy="200" rx="50" ry="30" fill="white" stroke="black" stroke-width="3"/>
+                    <line x1="200" y1="230" x2="200" y2="350" stroke="green" stroke-width="5"/>
+                    <path d="M200,280 Q160,290 140,310" stroke="green" stroke-width="3" fill="none"/>
+                    <path d="M200,300 Q240,310 260,330" stroke="green" stroke-width="3" fill="none"/>
+                </svg>`
+            },
+            {
+                name: "Casa",
+                svg: `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="200,100 100,200 300,200" fill="white" stroke="black" stroke-width="3"/>
+                    <rect x="120" y="200" width="160" height="150" fill="white" stroke="black" stroke-width="3"/>
+                    <rect x="150" y="250" width="40" height="50" fill="white" stroke="black" stroke-width="3"/>
+                    <rect x="210" y="230" width="40" height="40" fill="white" stroke="black" stroke-width="3"/>
+                    <line x1="230" y1="230" x2="230" y2="270" stroke="black" stroke-width="2"/>
+                    <line x1="210" y1="250" x2="250" y2="250" stroke="black" stroke-width="2"/>
+                    <rect x="170" y="320" width="30" height="30" fill="white" stroke="black" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                name: "Sol",
+                svg: `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="200" cy="200" r="60" fill="white" stroke="black" stroke-width="3"/>
+                    <line x1="200" y1="100" x2="200" y2="60" stroke="black" stroke-width="4"/>
+                    <line x1="200" y1="300" x2="200" y2="340" stroke="black" stroke-width="4"/>
+                    <line x1="100" y1="200" x2="60" y2="200" stroke="black" stroke-width="4"/>
+                    <line x1="300" y1="200" x2="340" y2="200" stroke="black" stroke-width="4"/>
+                    <line x1="140" y1="140" x2="110" y2="110" stroke="black" stroke-width="4"/>
+                    <line x1="260" y1="140" x2="290" y2="110" stroke="black" stroke-width="4"/>
+                    <line x1="140" y1="260" x2="110" y2="290" stroke="black" stroke-width="4"/>
+                    <line x1="260" y1="260" x2="290" y2="290" stroke="black" stroke-width="4"/>
+                    <circle cx="185" cy="185" r="8" fill="white" stroke="black" stroke-width="2"/>
+                    <circle cx="215" cy="185" r="8" fill="white" stroke="black" stroke-width="2"/>
+                    <path d="M180,220 Q200,230 220,220" stroke="black" stroke-width="3" fill="none"/>
+                </svg>`
+            }
+        ];
+
+        const colors = [
+            '#ff0000','#ff69b4','#ff1493','#ffa500','#ffff00','#9acd32',
+            '#00ff00','#00ced1','#0000ff','#9370db','#8b4513','#000000',
+            '#ffffff','#ff6347','#ff69b4','#ffd700','#adff2f','#00ffff',
+            '#4169e1','#da70d6','#a0522d','#808080'
+        ];
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let currentColor = '#ff0000';
+        let brushSize = 10;
+        let isDrawing = false;
+        let currentImageIndex = 0;
+
+        function initializeColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+            colors.forEach((color, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'color-btn' + (index === 0 ? ' active' : '');
+                btn.style.background = color;
+                btn.onclick = () => {
+                    currentColor = color;
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                palette.appendChild(btn);
+            });
+        }
+
+        function setBrushSize(size, btn) {
+            brushSize = size;
+            document.querySelectorAll('.brush-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initializeImageSelector() {
+            const selector = document.getElementById('imageSelector');
+            selector.innerHTML = '';
+            coloringImages.forEach((img, index) => {
+                const option = document.createElement('div');
+                option.className = 'image-option' + (index === 0 ? ' active' : '');
+                option.innerHTML = `
+                    <div style="height:100px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        ${img.svg.replace('width="400" height="400"', 'width="90" height="90"')}
+                    </div>
+                    <p style="margin-top:10px;font-weight:bold;">${img.name}</p>`;
+                option.onclick = () => loadImage(index, option);
+                selector.appendChild(option);
+            });
+        }
+
+        function loadImage(index, element) {
+            currentImageIndex = index;
+            document.querySelectorAll('.image-option').forEach(o => o.classList.remove('active'));
+            element.classList.add('active');
+            const img = new Image();
+            const svgBlob = new Blob([coloringImages[index].svg], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            img.onload = function() {
+                canvas.width = 600; canvas.height = 600;
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 100, 100, 400, 400);
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+
+        function clearCanvas() {
+            if (confirm('Deseja realmente limpar todo o desenho?')) {
+                loadImage(currentImageIndex, document.querySelectorAll('.image-option')[currentImageIndex]);
+            }
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = `desenho-${coloringImages[currentImageIndex].name}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) * (canvas.width / rect.width),
+                y: (e.clientY - rect.top)  * (canvas.height / rect.height)
+            };
+        }
+
+        function paintAt(pos) {
+            ctx.fillStyle = currentColor;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, brushSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', e => { isDrawing = true; paintAt(getPos(e)); });
+        canvas.addEventListener('mousemove', e => { if (isDrawing) paintAt(getPos(e)); });
+        canvas.addEventListener('mouseup',   () => isDrawing = false);
+        canvas.addEventListener('mouseout',  () => isDrawing = false);
+
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); isDrawing = true; paintAt(getPos(e.touches[0])); }, {passive: false});
+        canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (isDrawing) paintAt(getPos(e.touches[0])); }, {passive: false});
+        canvas.addEventListener('touchend',   e => { e.preventDefault(); isDrawing = false; }, {passive: false});
+
+        initializeColorPalette();
+        initializeImageSelector();
+        loadImage(0, document.querySelector('.image-option'));
+    </script>
+</body>
+</html>

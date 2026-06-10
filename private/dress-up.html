@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👗 Estilista de Moda - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333;
+        }
+        .game-container { background: white; border-radius: 20px; padding: 30px; max-width: 1000px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        h1 { text-align: center; color: #fc6c85; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .game-area { display: grid; grid-template-columns: 350px 1fr; gap: 30px; margin-bottom: 30px; }
+        .character-display { background: linear-gradient(180deg, #fff 0%, #ffe6f0 100%); border-radius: 15px; padding: 30px; text-align: center; position: relative; border: 3px solid #fc6c85; height: 600px; }
+        .model { width: 200px; height: 500px; margin: 0 auto; position: relative; }
+        .head { width: 80px; height: 100px; background: #ffd4a3; border-radius: 50% 50% 45% 45%; margin: 0 auto; position: relative; }
+        .hair-model { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 90px; height: 70px; background: #8b4513; border-radius: 50% 50% 0 0; }
+        .eyes { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; }
+        .eye { width: 15px; height: 15px; background: #000; border-radius: 50%; }
+        .smile { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); width: 30px; height: 15px; border: 2px solid #ff69b4; border-top: none; border-radius: 0 0 50% 50%; }
+        .body { width: 100px; height: 180px; margin: 10px auto 0; position: relative; }
+        .top    { width: 100%; height: 100px; position: relative; transition: all 0.3s; }
+        .bottom { width: 100%; height: 120px; position: relative; top: -20px; transition: all 0.3s; }
+        .shoes  { width: 100%; height: 40px; position: relative; display: flex; justify-content: space-around; align-items: flex-end; transition: all 0.3s; }
+        .shoe   { width: 40px; height: 30px; border-radius: 50% 50% 20% 20%; transition: all 0.3s; }
+        .accessory-display { position: absolute; top: 120px; left: 50%; transform: translateX(-50%); font-size: 50px; transition: all 0.3s; }
+        .controls { background: #f9f9f9; border-radius: 15px; padding: 20px; max-height: 600px; overflow-y: auto; }
+        .control-section { margin-bottom: 25px; }
+        .control-section h3 { color: #fc6c85; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 18px; }
+        .clothes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .clothes-item { padding: 15px; border: 3px solid #ddd; border-radius: 10px; cursor: pointer; transition: all 0.3s; background: white; text-align: center; font-size: 30px; }
+        .clothes-item:hover  { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .clothes-item.active { border-color: #fc6c85; background: #fff0f5; transform: scale(1.05); }
+        .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+        .color-btn { width: 50px; height: 50px; border: 3px solid #ddd; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        .color-btn:hover  { transform: scale(1.15); box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+        .color-btn.active { border-color: #fc6c85; transform: scale(1.2); }
+        .btn-row { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        .btn-menu { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-menu:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+
+        /* ISAWERE FOOTER */
+        .isawere-footer {
+            width: 100%; max-width: 1000px; margin-top: 10px;
+            background: rgba(5,13,46,0.97); border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            border-radius: 16px; font-family: 'Segoe UI', sans-serif;
+        }
+        .isawere-footer .logo-text { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, #00d4ff, #2d8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+        .isawere-footer .ceo-badge { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.5rem 1rem; border-radius: 50px; }
+        .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+        .isawere-footer .btn-custom { background: linear-gradient(135deg, #1a5fff, #00d4ff); color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 600; font-size: 0.78rem; text-decoration: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; }
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            .game-area { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8em; }
+            .character-display { height: auto; }
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>👗 Estilista de Moda</h1>
+        <p class="subtitle">Monte o look perfeito!</p>
+        <div class="game-area">
+            <div class="character-display">
+                <div class="model">
+                    <div class="head">
+                        <div class="hair-model"></div>
+                        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+                        <div class="smile"></div>
+                    </div>
+                    <div class="body">
+                        <div class="top" id="top"></div>
+                        <div class="bottom" id="bottom"></div>
+                        <div class="shoes">
+                            <div class="shoe" id="shoe1"></div>
+                            <div class="shoe" id="shoe2"></div>
+                        </div>
+                    </div>
+                    <div class="accessory-display" id="accessory"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="control-section">
+                    <h3>👚 Blusa/Camiseta</h3>
+                    <div class="clothes-grid">
+                        <div class="clothes-item" onclick="setTop('tshirt',this)">👕</div>
+                        <div class="clothes-item" onclick="setTop('blouse',this)">👔</div>
+                        <div class="clothes-item" onclick="setTop('sweater',this)">🧥</div>
+                    </div>
+                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Blusa:</p>
+                    <div class="color-grid">
+                        <div class="color-btn" style="background:#ff6b9d" onclick="setTopColor('#ff6b9d',this)"></div>
+                        <div class="color-btn" style="background:#4ecdc4" onclick="setTopColor('#4ecdc4',this)"></div>
+                        <div class="color-btn" style="background:#ffe66d" onclick="setTopColor('#ffe66d',this)"></div>
+                        <div class="color-btn" style="background:#a8e6cf" onclick="setTopColor('#a8e6cf',this)"></div>
+                        <div class="color-btn" style="background:#c7ceea" onclick="setTopColor('#c7ceea',this)"></div>
+                        <div class="color-btn" style="background:#ffd3b6" onclick="setTopColor('#ffd3b6',this)"></div>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <h3>👖 Calça/Saia</h3>
+                    <div class="clothes-grid">
+                        <div class="clothes-item" onclick="setBottom('pants',this)">👖</div>
+                        <div class="clothes-item" onclick="setBottom('skirt',this)">🩱</div>
+                        <div class="clothes-item" onclick="setBottom('shorts',this)">🩳</div>
+                    </div>
+                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor da Roupa de Baixo:</p>
+                    <div class="color-grid">
+                        <div class="color-btn" style="background:#2c3e50" onclick="setBottomColor('#2c3e50',this)"></div>
+                        <div class="color-btn" style="background:#3498db" onclick="setBottomColor('#3498db',this)"></div>
+                        <div class="color-btn" style="background:#e74c3c" onclick="setBottomColor('#e74c3c',this)"></div>
+                        <div class="color-btn" style="background:#9b59b6" onclick="setBottomColor('#9b59b6',this)"></div>
+                        <div class="color-btn" style="background:#1abc9c" onclick="setBottomColor('#1abc9c',this)"></div>
+                        <div class="color-btn" style="background:#f39c12" onclick="setBottomColor('#f39c12',this)"></div>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <h3>👠 Sapatos</h3>
+                    <div class="clothes-grid">
+                        <div class="clothes-item" onclick="setShoes('sneakers',this)">👟</div>
+                        <div class="clothes-item" onclick="setShoes('heels',this)">👠</div>
+                        <div class="clothes-item" onclick="setShoes('boots',this)">👢</div>
+                    </div>
+                    <p style="margin:10px 0 5px 0;font-weight:bold;">Cor dos Sapatos:</p>
+                    <div class="color-grid">
+                        <div class="color-btn" style="background:#000"                   onclick="setShoesColor('#000',this)"></div>
+                        <div class="color-btn" style="background:#fff;border:3px solid #ccc" onclick="setShoesColor('#fff',this)"></div>
+                        <div class="color-btn" style="background:#8b4513"                onclick="setShoesColor('#8b4513',this)"></div>
+                        <div class="color-btn" style="background:#ff1493"                onclick="setShoesColor('#ff1493',this)"></div>
+                        <div class="color-btn" style="background:#00ced1"                onclick="setShoesColor('#00ced1',this)"></div>
+                        <div class="color-btn" style="background:#ffd700"                onclick="setShoesColor('#ffd700',this)"></div>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <h3>✨ Acessórios</h3>
+                    <div class="clothes-grid">
+                        <div class="clothes-item" onclick="setAccessory('👜')">👜</div>
+                        <div class="clothes-item" onclick="setAccessory('👓')">👓</div>
+                        <div class="clothes-item" onclick="setAccessory('🎀')">🎀</div>
+                        <div class="clothes-item" onclick="setAccessory('💎')">💎</div>
+                        <div class="clothes-item" onclick="setAccessory('👑')">👑</div>
+                        <div class="clothes-item" onclick="setAccessory('')">❌</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <a class="btn-menu" href="../jogos.html">🎲 Ver Outros Jogos</a>
+        </div>
+    </div>
+
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        var currentTopColor    = '#ff6b9d';
+        var currentBottomColor = '#3498db';
+        var currentShoesColor  = '#000';
+
+        function setTop(type, el) {
+            document.querySelectorAll('.control-section')[0].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            el.classList.add('active');
+            var top = document.getElementById('top');
+            top.style.background = currentTopColor;
+            if      (type === 'tshirt')  { top.style.borderRadius = '20% 20% 0 0'; top.style.clipPath = 'none'; top.style.boxShadow = ''; }
+            else if (type === 'blouse')  { top.style.borderRadius = '30% 30% 0 0'; top.style.clipPath = 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)'; }
+            else if (type === 'sweater') { top.style.borderRadius = '25% 25% 0 0'; top.style.clipPath = 'none'; top.style.boxShadow = 'inset 0 10px 20px rgba(0,0,0,0.1)'; }
+        }
+
+        function setTopColor(color, el) {
+            currentTopColor = color;
+            document.getElementById('top').style.background = color;
+            document.querySelectorAll('.control-section')[0].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            el.classList.add('active');
+        }
+
+        function setBottom(type, el) {
+            document.querySelectorAll('.control-section')[1].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            el.classList.add('active');
+            var bottom = document.getElementById('bottom');
+            bottom.style.background = currentBottomColor;
+            if      (type === 'pants')  { bottom.style.borderRadius = '0 0 10px 10px'; bottom.style.clipPath = 'polygon(10% 0%, 45% 0%, 45% 100%, 40% 100%, 35% 0%, 65% 0%, 60% 100%, 55% 100%, 55% 0%, 90% 0%, 85% 100%, 15% 100%)'; bottom.style.height = '120px'; }
+            else if (type === 'skirt')  { bottom.style.borderRadius = '0 0 50% 50%'; bottom.style.clipPath = 'none'; bottom.style.height = '80px'; }
+            else if (type === 'shorts') { bottom.style.borderRadius = '0 0 15px 15px'; bottom.style.clipPath = 'polygon(15% 0%, 45% 0%, 45% 80%, 40% 80%, 35% 0%, 65% 0%, 60% 80%, 55% 80%, 55% 0%, 85% 0%, 85% 80%, 15% 80%)'; bottom.style.height = '70px'; }
+        }
+
+        function setBottomColor(color, el) {
+            currentBottomColor = color;
+            document.getElementById('bottom').style.background = color;
+            document.querySelectorAll('.control-section')[1].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            el.classList.add('active');
+        }
+
+        function setShoes(type, el) {
+            document.querySelectorAll('.control-section')[2].querySelectorAll('.clothes-item').forEach(function(i){ i.classList.remove('active'); });
+            el.classList.add('active');
+            var s1 = document.getElementById('shoe1'), s2 = document.getElementById('shoe2');
+            s1.style.background = currentShoesColor; s2.style.background = currentShoesColor;
+            if      (type === 'sneakers') { s1.style.borderRadius = s2.style.borderRadius = '50% 50% 20% 20%'; s1.style.height = s2.style.height = '30px'; }
+            else if (type === 'heels')    { s1.style.borderRadius = '40% 40% 10% 50%'; s2.style.borderRadius = '40% 40% 50% 10%'; s1.style.height = s2.style.height = '35px'; }
+            else if (type === 'boots')    { s1.style.borderRadius = s2.style.borderRadius = '30% 30% 5% 5%'; s1.style.height = s2.style.height = '40px'; }
+        }
+
+        function setShoesColor(color, el) {
+            currentShoesColor = color;
+            document.getElementById('shoe1').style.background = color;
+            document.getElementById('shoe2').style.background = color;
+            document.querySelectorAll('.control-section')[2].querySelectorAll('.color-btn').forEach(function(b){ b.classList.remove('active'); });
+            el.classList.add('active');
+        }
+
+        function setAccessory(emoji) {
+            var acc = document.getElementById('accessory');
+            acc.textContent = emoji; acc.style.opacity = emoji ? '1' : '0';
+        }
+
+        // Inicializar
+        setTop('tshirt',    document.querySelectorAll('.control-section')[0].querySelectorAll('.clothes-item')[0]);
+        setBottom('pants',  document.querySelectorAll('.control-section')[1].querySelectorAll('.clothes-item')[0]);
+        setShoes('sneakers',document.querySelectorAll('.control-section')[2].querySelectorAll('.clothes-item')[0]);
+    </script>
+</body>
+</html>

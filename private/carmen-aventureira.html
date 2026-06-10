@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Carmen Aventureira - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            font-size: 2.5em;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px #ffd700; }
+            50%       { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 40px #ffd700, 0 0 60px #ffd700; }
+        }
+
+        .screen {
+            display: none;
+            background: rgba(0,0,0,0.8);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px 0;
+            border: 3px solid #ffd700;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .case-file {
+            background: #8b0000;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 3px solid #ff0;
+        }
+
+        .case-file h2 { color: #ff0; margin-bottom: 15px; font-size: 1.8em; }
+        .case-file p  { font-size: 1.2em; line-height: 1.8; margin: 10px 0; }
+
+        .witnesses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .witness-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .witness-card:hover      { transform: translateY(-10px); border-color: #ffd700; box-shadow: 0 10px 30px rgba(255,215,0,0.4); }
+        .witness-card.revealed   { border-color: #27ae60; }
+
+        .witness-icon  { font-size: 4em; margin-bottom: 15px; }
+        .witness-name  { font-size: 1.3em; color: #ffd700; margin-bottom: 10px; font-weight: bold; }
+
+        .clue-text {
+            background: rgba(255,255,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #ffd700;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .clue-text.show {
+            display: block;
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to   { opacity: 1; max-height: 200px; }
+        }
+
+        .world-map {
+            position: relative;
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            min-height: 500px;
+        }
+
+        .map-title { text-align: center; color: #ffd700; font-size: 2em; margin-bottom: 30px; }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .location-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .location-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 25px rgba(231,76,60,0.5); }
+        .location-btn.visited { background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); cursor: not-allowed; }
+        .location-btn.correct { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); }
+
+        .criminal {
+            position: fixed;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10em;
+            transition: bottom 2s ease-out;
+            z-index: 1000;
+            text-shadow: 0 0 20px rgba(255,255,0,0.8);
+        }
+
+        .criminal.appear { bottom: 50px; }
+        .criminal.escape { bottom: -200px; }
+
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn:hover           { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(39,174,96,0.5); }
+        .btn:disabled        { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-back            { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        .btn-games           { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .btn-games:hover     { box-shadow: 0 8px 20px rgba(240,147,251,0.5); }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            height: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            width: 0%;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .alert-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .alert-overlay.show { display: flex; animation: fadeIn 0.3s; }
+
+        .alert-box {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 5px solid #ffd700;
+            text-align: center;
+            max-width: 600px;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            0%   { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .alert-box h3 { color: #ffd700; font-size: 2em; margin-bottom: 20px; }
+        .alert-box p  { font-size: 1.3em; margin: 15px 0; }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px;
+            width: 100%;
+            margin-top: 40px;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .isawere-footer .logo-text {
+            font-weight: 800; font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+
+        .isawere-footer .ceo-badge {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+
+        .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+        }
+
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .screen { padding: 20px; }
+            .witnesses-grid { grid-template-columns: 1fr; }
+            .criminal { font-size: 6em; }
+            .btn { padding: 12px 30px; font-size: 1em; }
+            .isawere-footer {
+            max-width: 800px;
+            border-radius: 16px; justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+
+        /* ── MUNDOS / UNLOCK ── */
+        .worlds-bar {
+            display: flex; gap: 10px; justify-content: center;
+            padding: 10px 20px 4px; flex-wrap: wrap;
+        }
+        .world-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-size: 0.88em; font-weight: 700; cursor: pointer; transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        .world-btn.active     { background: linear-gradient(135deg,#c0392b,#e74c3c); color:#fff; box-shadow:0 4px 15px rgba(192,57,43,.5); transform:translateY(-2px); }
+        .world-btn.unlocked   { background: rgba(255,255,255,0.15); border-color: #ffd700; color: #ffd700; }
+        .world-btn.soft-locked { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.15); }
+        .world-btn.soft-locked:hover { background: rgba(255,255,255,0.12); }
+        .world-badge { font-size: 0.7em; padding: 2px 7px; border-radius: 50px; background: rgba(255,255,255,0.2); }
+
+        .unlock-box {
+            display: none; max-width: 500px; margin: 10px auto 4px;
+            background: rgba(10,10,30,0.97); border: 2px solid #ffd700;
+            border-radius: 18px; padding: 20px; text-align: center; color: #fff;
+        }
+        .unlock-box.show   { display: block; animation: fadeIn 0.4s; }
+        .unlock-title      { font-size: 1em; font-weight: 800; color: #ffd700; margin-bottom: 6px; }
+        .unlock-desc       { font-size: 0.85em; color: #ccc; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn     {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: #fff; padding: 10px 22px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 14px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row  { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #ffd700;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; outline: none;
+            text-align: center; background: #1a1a2e; color: #fff;
+        }
+        .unlock-input:focus { border-color: #f39c12; }
+        .unlock-submit {
+            background: linear-gradient(135deg,#c0392b,#e74c3c);
+            color: #fff; border: none; padding: 10px 16px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;
+        }
+        .unlock-error { color: #ff6b6b; font-size: 0.82em; margin-top: 8px; display: none; }
+
+        /* hint toast */
+        .hint-toast {
+            display: none;
+            position: fixed;
+            top: 30px; left: 50%; transform: translateX(-50%);
+            background: #222; color: #fff;
+            padding: 14px 28px; border-radius: 12px;
+            font-size: 1.1em; font-weight: 600;
+            z-index: 3000; box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            animation: fadeInDown 0.4s ease;
+            font-family: 'Courier New', monospace;
+        }
+        .hint-toast.show { display: block; }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="hint-toast" id="hintToast"></div>
+
+<!-- MUNDOS -->
+<div class="worlds-bar">
+    <button class="world-btn active unlocked" id="worldBtn1" onclick="selectWorld(1)">
+        🕵️ Mundo 1 <span class="world-badge">GRÁTIS</span>
+    </button>
+    <button class="world-btn soft-locked" id="worldBtn2" onclick="tryUnlockWorld(2)">
+        🌍 Mundo 2 <span class="world-badge">SENHA</span>
+    </button>
+    <button class="world-btn soft-locked" id="worldBtn3" onclick="tryUnlockWorld(3)">
+        🔍 Mundo 3 <span class="world-badge">SENHA</span>
+    </button>
+</div>
+<!-- UNLOCK BOX -->
+<div class="unlock-box" id="unlockBox">
+    <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie!</div>
+    <div class="unlock-desc" id="unlockDesc"></div>
+    <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a><br>
+    <div class="unlock-input-row">
+        <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+               onkeydown="if(event.key==='Enter') checkPassword()">
+        <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+    </div>
+    <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+</div>
+
+    <div class="game-container">
+        <h1>🕵️‍♀️ CARMEN AVENTUREIRA 🌍</h1>
+
+        <!-- Tela Inicial -->
+        <div class="screen active" id="intro-screen">
+            <p id="current-world-label" style="text-align:center;color:#ffd700;font-size:1em;font-weight:700;margin-bottom:10px;letter-spacing:2px;">🌐 Mundo 1</p>
+            <div class="case-file">
+                <h2>🚨 NOVO CASO!</h2>
+                <p>Detetive, precisamos da sua ajuda!</p>
+                <p id="crime-description"></p>
+                <p style="color:#ff0;font-size:1.4em;margin-top:20px;">
+                    🎯 Sua missão: Interrogar testemunhas e seguir as pistas para capturar o criminoso!
+                </p>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn" onclick="startInvestigation()">🔍 INICIAR INVESTIGAÇÃO</button>
+            </div>
+        </div>
+
+        <!-- Tela de Testemunhas -->
+        <div class="screen" id="witnesses-screen">
+            <h2 style="text-align:center;color:#ffd700;font-size:2em;margin-bottom:20px;">🗣️ INTERROGUE AS TESTEMUNHAS</h2>
+            <p style="text-align:center;font-size:1.2em;margin-bottom:10px;">Clique nas testemunhas para obter pistas sobre o paradeiro do criminoso!</p>
+            <p id="witness-hint" style="text-align:center;font-size:1.1em;margin-bottom:20px;color:#0ff;"></p>
+
+            <div class="progress-bar"><div class="progress-fill" id="progress-witnesses"></div></div>
+            <p style="text-align:center;margin-top:-10px;margin-bottom:20px;font-size:1.1em;">
+                <span id="progress-text-witnesses">💡 Pistas: 0/3</span>
+            </p>
+
+            <div class="witnesses-grid" id="witnesses-container"></div>
+
+            <div style="text-align:center;margin-top:30px;">
+                <button class="btn" onclick="goToMap()">🗺️ IR PARA O MAPA</button>
+            </div>
+        </div>
+
+        <!-- Tela do Mapa -->
+        <div class="screen" id="map-screen">
+            <div class="world-map">
+                <h2 class="map-title">🌍 MAPA MUNDIAL - ESCOLHA SEU DESTINO</h2>
+                <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+                <p style="text-align:center;margin-top:-10px;margin-bottom:20px;font-size:1.1em;">
+                    <span id="progress-text">🎯 Etapa: 0/3</span>
+                </p>
+                <div class="locations-grid" id="locations-container"></div>
+            </div>
+            <div style="text-align:center;margin-top:20px;">
+                <button class="btn btn-back" onclick="backToWitnesses()">↩️ VOLTAR ÀS TESTEMUNHAS</button>
+                <a class="btn btn-games" href="../jogos.html">🎮 Ver Outros Jogos</a>
+            </div>
+        </div>
+
+        <!-- Tela de Vitória -->
+        <div class="screen" id="victory-screen">
+            <div class="case-file" style="background:linear-gradient(135deg,#27ae60 0%,#229954 100%);">
+                <h2 style="color:#fff;text-align:center;font-size:2.5em;">🎉 CASO RESOLVIDO! 🎉</h2>
+                <p style="text-align:center;font-size:1.5em;margin:30px 0;">Parabéns, Detetive! Você capturou o criminoso!</p>
+                <p style="text-align:center;font-size:1.3em;" id="victory-message"></p>
+            </div>
+            <div style="text-align:center;margin-top:30px;">
+                <button class="btn" onclick="startGame();showScreen('intro-screen')">🔄 NOVO CASO</button>
+                <a class="btn btn-games" href="../jogos.html">🎮 Ver Outros Jogos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Criminoso Animado -->
+    <div class="criminal" id="criminal"></div>
+
+    <!-- Alert Overlay -->
+    <div class="alert-overlay" id="alert-overlay">
+        <div class="alert-box" id="alert-box"></div>
+    </div>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        /* ═══════════════════════════════════════
+           SISTEMA DE MUNDOS
+        ════════════════════════════════════════ */
+        const worldConfig = {
+            1: { caseIndexes: [0, 1],  ytLink: null, desc: '' },
+            2: { caseIndexes: [2, 3],  ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                 desc: 'No Mundo 2 os casos ficam mais difíceis e os criminosos mais espertos! Assista ao nosso vídeo no YouTube, pegue a senha e continue a investigação!' },
+            3: { caseIndexes: [4],     ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                 desc: 'O Mundo 3 é o desafio final: o caso mais complexo de todos! Pegue a senha no canal da ISAWERE e prove que é um detetive lendário!' }
+        };
+
+        let currentWorld   = parseInt(localStorage.getItem('carmen_world') || '1');
+        let pendingWorld   = null;
+        let unlockedWorlds = JSON.parse(localStorage.getItem('carmen_unlocked') || '[1]');
+
+        function refreshWorldBtns() {
+            [1,2,3].forEach(n => {
+                const btn = document.getElementById('worldBtn' + n);
+                btn.className = 'world-btn';
+                if (n === currentWorld)              btn.classList.add('active', 'unlocked');
+                else if (unlockedWorlds.includes(n)) btn.classList.add('unlocked');
+                else                                 btn.classList.add('soft-locked');
+            });
+        }
+
+        function selectWorld(n) {
+            if (!unlockedWorlds.includes(n)) { tryUnlockWorld(n); return; }
+            currentWorld = n;
+            pendingWorld = null;
+            localStorage.setItem('carmen_world', n);
+            document.getElementById('unlockBox').classList.remove('show');
+            refreshWorldBtns();
+            startGame(); // começa um caso do mundo selecionado
+        }
+
+        function tryUnlockWorld(n) {
+            if (unlockedWorlds.includes(n)) { selectWorld(n); return; }
+            pendingWorld = n;
+            const cfg = worldConfig[n];
+            document.getElementById('unlockDesc').textContent = cfg.desc;
+            document.getElementById('unlockYtBtn').href = cfg.ytLink;
+            document.getElementById('unlockInput').value = '';
+            document.getElementById('unlockError').style.display = 'none';
+            document.getElementById('unlockBox').classList.add('show');
+            document.getElementById('unlockInput').focus();
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('unlockInput').value.trim();
+            fetch('../senhas.json')
+                .then(r => r.json())
+                .then(data => {
+                    const correct = (data['carmen_mundo' + pendingWorld] || '');
+                    if (input.toUpperCase() === correct.toUpperCase()) {
+                        if (!unlockedWorlds.includes(pendingWorld)) unlockedWorlds.push(pendingWorld);
+                        localStorage.setItem('carmen_unlocked', JSON.stringify(unlockedWorlds));
+                        document.getElementById('unlockBox').classList.remove('show');
+                        selectWorld(pendingWorld);
+                    } else {
+                        document.getElementById('unlockError').style.display = 'block';
+                        const inp = document.getElementById('unlockInput');
+                        inp.style.borderColor = '#ff6b6b';
+                        setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+                    }
+                })
+                .catch(() => {
+                    showToast('⚠️ Não foi possível verificar a senha. Tente novamente.');
+                });
+        }
+
+        function showToast(msg, duration = 3000) {
+            const t = document.getElementById('hintToast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), duration);
+        }
+
+        refreshWorldBtns();
+
+        /* ═══════════════════════════════════════
+           CASOS
+        ════════════════════════════════════════ */
+        const cases = [
+            {
+                crime: "Alguém rabiscou o quadro da Monalisa no Museu do Louvre em Paris!",
+                criminal: "🎨",
+                correctPath: ["Paris", "Cairo", "Rio de Janeiro"],
+                witnesses: [
+                    {name:"Guarda do Museu", icon:"👮", clue:"Vi alguém suspeito comprando passagem para o Egito!"},
+                    {name:"Turista", icon:"👨‍🦱", clue:"Ouvi falar que o suspeito adora pirâmides antigas..."},
+                    {name:"Vendedor", icon:"👨‍💼", clue:"Alguém me perguntou sobre as Pirâmides de Gizé no Cairo!"}
+                ],
+                secondWitnesses: [
+                    {name:"Comerciante Egípcio", icon:"🧔", clue:"Vi alguém com tinta nas mãos indo para o Brasil!"},
+                    {name:"Guia Turístico", icon:"👨‍🎓", clue:"Ele disse que queria ver o Cristo Redentor..."},
+                    {name:"Piloto", icon:"👨‍✈️", clue:"Vendi passagem para o Rio de Janeiro!"}
+                ]
+            },
+            {
+                crime: "Roubaram a coroa da Rainha da Torre de Londres!",
+                criminal: "👑",
+                correctPath: ["Londres", "Nova York", "Tóquio"],
+                witnesses: [
+                    {name:"Segurança", icon:"💂", clue:"O ladrão disse algo sobre a Estátua da Liberdade..."},
+                    {name:"Motorista de Táxi", icon:"🚕", clue:"Levei alguém para o aeroporto, rumo aos Estados Unidos!"},
+                    {name:"Detetive Local", icon:"🕵️", clue:"Achei um bilhete que dizia 'destino: Big Apple (Nova York)'!"}
+                ],
+                secondWitnesses: [
+                    {name:"Vendedor de Hot Dog", icon:"🌭", clue:"Vi alguém com uma coroa brilhante indo para o Japão!"},
+                    {name:"Policial de NY", icon:"👮‍♂️", clue:"Ele perguntou sobre o Monte Fuji em Tóquio..."},
+                    {name:"Atendente de Hotel", icon:"🏨", clue:"Reservou voo para Tóquio ontem à noite!"}
+                ]
+            },
+            {
+                crime: "Sumiram com o relógio do Big Ben em Londres!",
+                criminal: "⏰",
+                correctPath: ["Londres", "Sydney", "Pequim"],
+                witnesses: [
+                    {name:"Engenheiro", icon:"👷", clue:"Vi alguém com mapas da Ópera de Sydney na Austrália!"},
+                    {name:"Professora", icon:"👩‍🏫", clue:"O suspeito perguntou sobre cangurus e coalas..."},
+                    {name:"Jornalista", icon:"📰", clue:"Recebi uma dica: ele vai para o país dos cangurus!"}
+                ],
+                secondWitnesses: [
+                    {name:"Surfista Australiano", icon:"🏄", clue:"Vi um cara com um relógio enorme indo para a China!"},
+                    {name:"Guia Turístico", icon:"👨‍🦰", clue:"Ele falou sobre visitar a Muralha da China..."},
+                    {name:"Funcionário de Aeroporto", icon:"👨‍💼", clue:"Comprou passagem de última hora para Pequim!"}
+                ]
+            },
+            {
+                crime: "Roubaram a receita secreta da pizza napolitana em Roma!",
+                criminal: "🍕",
+                correctPath: ["Roma", "Moscou", "Dubai"],
+                witnesses: [
+                    {name:"Chef Italiano", icon:"👨‍🍳", clue:"O ladrão disse que ia visitar a Praça Vermelha em Moscou!"},
+                    {name:"Garçom", icon:"🧑‍💼", clue:"Ele comprou um casaco grosso... deve estar indo para um lugar frio!"},
+                    {name:"Turista", icon:"👨‍🦳", clue:"Ouvi ele falando sobre o Kremlin na Rússia!"}
+                ],
+                secondWitnesses: [
+                    {name:"Vendedor Russo", icon:"🧔‍♂️", clue:"Vi alguém com uma pasta de receitas indo para os Emirados!"},
+                    {name:"Taxista", icon:"🚖", clue:"Ele perguntou sobre o Burj Khalifa em Dubai!"},
+                    {name:"Atendente", icon:"👩", clue:"Comprou passagem para Dubai esta manhã!"}
+                ]
+            },
+            {
+                crime: "Furtaram o diamante Hope do museu em Nova York!",
+                criminal: "💎",
+                correctPath: ["Nova York", "Paris", "Sydney"],
+                witnesses: [
+                    {name:"Curador", icon:"👨‍💼", clue:"O suspeito falou sobre visitar a Torre Eiffel!"},
+                    {name:"Segurança", icon:"👮‍♀️", clue:"Vi ele com um mapa de Paris no bolso!"},
+                    {name:"Visitante", icon:"👩‍🦰", clue:"Ele disse que ia comer croissants na França!"}
+                ],
+                secondWitnesses: [
+                    {name:"Joalheiro Francês", icon:"💍", clue:"Alguém com um diamante brilhante foi para a Austrália!"},
+                    {name:"Policial", icon:"👮", clue:"Ele mencionou a Ópera de Sydney..."},
+                    {name:"Repórter", icon:"📰", clue:"Recebi dica que ele foi ver cangurus em Sydney!"}
+                ]
+            }
+        ];
+
+        const allLocations = [
+            {name:"Paris", icon:"🗼", landmark:"Torre Eiffel"},
+            {name:"Cairo", icon:"🏜️", landmark:"Pirâmides de Gizé"},
+            {name:"Rio de Janeiro", icon:"🏖️", landmark:"Cristo Redentor"},
+            {name:"Londres", icon:"🏰", landmark:"Big Ben"},
+            {name:"Nova York", icon:"🗽", landmark:"Estátua da Liberdade"},
+            {name:"Tóquio", icon:"🗾", landmark:"Monte Fuji"},
+            {name:"Sydney", icon:"🎭", landmark:"Ópera de Sydney"},
+            {name:"Pequim", icon:"🏯", landmark:"Muralha da China"},
+            {name:"Moscou", icon:"🏛️", landmark:"Kremlin"},
+            {name:"Dubai", icon:"🕌", landmark:"Burj Khalifa"},
+            {name:"Roma", icon:"🏛️", landmark:"Coliseu"}
+        ];
+
+        let currentCase, currentStep = 0, visitedLocations = [], witnessesRevealed = [], currentWitnessSet = 'first';
+
+        function startGame() {
+            const worldCaseIndexes = worldConfig[currentWorld].caseIndexes;
+            const idx = worldCaseIndexes[Math.floor(Math.random() * worldCaseIndexes.length)];
+            currentCase = cases[idx];
+            document.getElementById('crime-description').textContent = currentCase.crime;
+            document.getElementById('current-world-label').textContent = `🌐 Mundo ${currentWorld}`;
+            currentStep = 1; visitedLocations = []; witnessesRevealed = []; currentWitnessSet = 'first';
+            showScreen('intro-screen');
+        }
+
+        function startInvestigation() { currentStep = 1; setupWitnesses(); showScreen('witnesses-screen'); }
+
+        function setupWitnesses() {
+            const container = document.getElementById('witnesses-container');
+            container.innerHTML = '';
+            const hintEl = document.getElementById('witness-hint');
+            hintEl.textContent = currentWitnessSet === 'first'
+                ? `💡 Local do crime: ${currentCase.correctPath[0]}. Interrogue as testemunhas para descobrir para onde o criminoso fugiu!`
+                : `💡 Você está em ${currentCase.correctPath[currentStep - 1]}. Interrogue novas testemunhas para descobrir o próximo destino!`;
+
+            const activeWitnesses = currentWitnessSet === 'first' ? currentCase.witnesses : currentCase.secondWitnesses;
+            activeWitnesses.forEach((witness, index) => {
+                const card = document.createElement('div');
+                card.className = 'witness-card' + (witnessesRevealed.includes(index) ? ' revealed' : '');
+                card.innerHTML = `
+                    <div class="witness-icon">${witness.icon}</div>
+                    <div class="witness-name">${witness.name}</div>
+                    <button class="btn" onclick="showClue(${index})" ${witnessesRevealed.includes(index) ? 'disabled' : ''}>
+                        ${witnessesRevealed.includes(index) ? '✅ INTERROGADO' : '🗨️ INTERROGAR'}
+                    </button>
+                    <div class="clue-text ${witnessesRevealed.includes(index) ? 'show' : ''}" id="clue-${index}">
+                        💡 "${witness.clue}"
+                    </div>`;
+                container.appendChild(card);
+            });
+            updateWitnessProgress();
+        }
+
+        function showClue(index) {
+            if (witnessesRevealed.includes(index)) return;
+            witnessesRevealed.push(index);
+            setupWitnesses();
+        }
+
+        function updateWitnessProgress() {
+            const active = currentWitnessSet === 'first' ? currentCase.witnesses : currentCase.secondWitnesses;
+            const pct = (witnessesRevealed.length / active.length) * 100;
+            document.getElementById('progress-witnesses').style.width = pct + '%';
+            document.getElementById('progress-text-witnesses').textContent = `💡 Pistas: ${witnessesRevealed.length}/${active.length}`;
+        }
+
+        function goToMap()       { setupMap(); showScreen('map-screen'); updateProgress(); }
+        function backToWitnesses(){ setupWitnesses(); showScreen('witnesses-screen'); }
+
+        function setupMap() {
+            const container = document.getElementById('locations-container');
+            container.innerHTML = '';
+            allLocations.forEach(loc => {
+                const btn = document.createElement('button');
+                btn.className = 'location-btn' + (visitedLocations.includes(loc.name) ? ' visited' : '');
+                btn.disabled = visitedLocations.includes(loc.name);
+                btn.innerHTML = `${loc.icon}<br>${loc.name}<br><small>${loc.landmark}</small>`;
+                btn.onclick = () => visitLocation(loc.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function visitLocation(locationName) {
+            if (visitedLocations.includes(locationName)) return;
+            const correct = currentCase.correctPath[currentStep];
+            if (locationName === correct) {
+                visitedLocations.push(locationName);
+                showCriminal();
+                currentStep++;
+                if (currentStep >= currentCase.correctPath.length) {
+                    setTimeout(capturedCriminal, 3500);
+                } else {
+                    showAlert("🎯 RASTRO QUENTE!", `✅ O criminoso ${currentCase.criminal} esteve aqui em ${locationName}! Mas ele escapou... Interrogue novas testemunhas!`, true);
+                    setTimeout(() => {
+                        hideCriminal(); hideAlert();
+                        currentWitnessSet = 'second'; witnessesRevealed = [];
+                        setupMap(); updateProgress(); backToWitnesses();
+                    }, 4000);
+                }
+            } else {
+                visitedLocations.push(locationName);
+                showAlert("❌ PISTA FRIA", `Ninguém viu o suspeito em ${locationName}... Você deveria ir para ${correct}. Volte às testemunhas!`, false);
+                setTimeout(() => { hideAlert(); setupMap(); }, 3000);
+            }
+        }
+
+        function showCriminal() {
+            const c = document.getElementById('criminal');
+            c.textContent = currentCase.criminal;
+            c.classList.remove('escape');
+            setTimeout(() => c.classList.add('appear'), 100);
+        }
+
+        function hideCriminal() {
+            const c = document.getElementById('criminal');
+            c.classList.remove('appear'); c.classList.add('escape');
+        }
+
+        function capturedCriminal() {
+            const path = currentCase.correctPath.slice(1).join(' → ');
+            document.getElementById('victory-message').textContent =
+                `Você seguiu o rastro através de ${path} e capturou o criminoso ${currentCase.criminal}!`;
+            showScreen('victory-screen'); hideCriminal();
+        }
+
+        function showAlert(title, msg, isSuccess) {
+            document.getElementById('alert-box').innerHTML =
+                `<h3 style="color:${isSuccess ? '#2ecc71' : '#ff6b6b'}">${title}</h3><p>${msg}</p>`;
+            document.getElementById('alert-overlay').classList.add('show');
+        }
+
+        function hideAlert() { document.getElementById('alert-overlay').classList.remove('show'); }
+
+        function updateProgress() {
+            const adj = currentStep - 1, total = currentCase.correctPath.length - 1;
+            document.getElementById('progress').style.width = (adj / total * 100) + '%';
+            document.getElementById('progress-text').textContent = `🎯 Etapa: ${adj}/${total}`;
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        document.getElementById('alert-overlay').addEventListener('click', function(e) {
+            if (e.target === this) hideAlert();
+        });
+
+        startGame();
+    </script>
+</body>
+</html>

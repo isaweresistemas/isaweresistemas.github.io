@@ -1,0 +1,15 @@
+{
+  "_comentario": "Senhas dos jogos ISAWERE - cada jogo tem chaves próprias",
+
+  "bolhas_fase2":         "BOLHAS2",
+  "bolhas_fase3":         "SUPER3",
+
+  "braventura_mundo2":    "BRASIL2",
+  "braventura_mundo3":    "NORDESTE3",
+
+  "cacatesouro_mundo2":   "PIRATA",
+  "cacatesouro_mundo3":   "LENDARIO",
+
+  "carmen_mundo2":        "DETETIVE",
+  "carmen_mundo3":        "MISTERIO"
+}

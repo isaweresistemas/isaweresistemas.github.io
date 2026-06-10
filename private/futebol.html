@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ Chute a Gol - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d6a4f 50%, #1a472a 100%);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; padding: 20px; color: #fff;
+        }
+
+        .game-container {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px; padding: 28px;
+            max-width: 780px; width: 100%;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+        }
+
+        h1 { text-align: center; color: #fff; font-size: 2.2em; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #aed6f1; margin-bottom: 20px; font-size: 0.88em; }
+
+        /* ── FASES ── */
+        .phases-bar { display:flex; gap:10px; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
+        .phase-btn {
+            display:flex; align-items:center; gap:7px; padding:9px 18px; border-radius:50px;
+            border:2px solid transparent; font-size:0.85em; font-weight:700; cursor:pointer;
+            transition:all 0.3s; background:rgba(255,255,255,0.07); color:#666;
+        }
+        .phase-btn.active { background:linear-gradient(135deg,#27ae60,#2ecc71); color:#fff; box-shadow:0 4px 15px rgba(39,174,96,0.5); transform:translateY(-2px); }
+        .phase-btn.unlocked:not(.active) { background:rgba(46,204,113,0.12); border-color:#2ecc71; color:#2ecc71; }
+        .phase-btn.locked { background:rgba(255,255,255,0.04); color:#444; cursor:not-allowed; }
+        .phase-badge { font-size:0.7em; padding:2px 7px; border-radius:50px; background:rgba(0,0,0,0.25); font-weight:600; }
+
+        /* UNLOCK BOX */
+        .unlock-box {
+            display:none; background:rgba(255,255,0,0.06); border:2px solid #ffc107;
+            border-radius:16px; padding:20px; margin-bottom:18px; text-align:center;
+        }
+        .unlock-box.show { display:block; }
+        .unlock-title { font-size:1.05em; font-weight:800; color:#ffc107; margin-bottom:6px; }
+        .unlock-desc { font-size:0.86em; color:#ccc; margin-bottom:14px; line-height:1.6; }
+        .unlock-yt-btn { display:inline-flex; align-items:center; gap:7px; background:#ff0000; color:white; padding:9px 20px; border-radius:50px; font-weight:700; font-size:0.86em; text-decoration:none; transition:all 0.3s; margin-bottom:14px; }
+        .unlock-yt-btn:hover { background:#cc0000; transform:translateY(-2px); }
+        .unlock-input-row { display:flex; gap:8px; max-width:320px; margin:0 auto; }
+        .unlock-input { flex:1; padding:9px 12px; border:2px solid #ffc107; border-radius:10px; font-size:0.95em; font-weight:700; text-transform:uppercase; letter-spacing:2px; outline:none; text-align:center; background:rgba(255,255,255,0.06); color:#fff; }
+        .unlock-input:focus { border-color:#2ecc71; }
+        .unlock-submit { background:linear-gradient(135deg,#27ae60,#2ecc71); color:#fff; border:none; padding:9px 18px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9em; transition:all 0.3s; white-space:nowrap; }
+        .unlock-submit:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(39,174,96,0.4); }
+        .unlock-error { color:#ff6b6b; font-size:0.8em; margin-top:8px; display:none; }
+
+        /* PHASE BADGE */
+        .phase-theme-badge { text-align:center; margin-bottom:14px; }
+        .phase-theme-badge span { display:inline-block; padding:5px 16px; border-radius:50px; font-size:0.8em; font-weight:700; }
+
+        /* ── SETUP SCREEN ── */
+        .setup-screen { text-align: center; }
+        .setup-title { font-size: 1.3em; font-weight: 800; color: #2ecc71; margin-bottom: 20px; }
+
+        .mode-select { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+        .mode-card {
+            background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 16px; padding: 20px 28px; cursor: pointer; transition: all 0.3s; text-align: center;
+        }
+        .mode-card:hover { border-color: #2ecc71; transform: translateY(-3px); background: rgba(46,204,113,0.1); }
+        .mode-card.selected { border-color: #2ecc71; background: rgba(46,204,113,0.15); box-shadow: 0 0 20px rgba(46,204,113,0.3); }
+        .mode-card .mode-icon { font-size: 2.5em; margin-bottom: 8px; }
+        .mode-card .mode-name { font-weight: 800; font-size: 1.1em; color: #2ecc71; }
+        .mode-card .mode-desc { font-size: 0.78em; color: #aaa; margin-top: 4px; }
+
+        .players-setup { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .player-setup-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 20px; min-width: 200px; text-align: center;
+        }
+        .player-setup-card.p1 { border-color: rgba(52,152,219,0.4); }
+        .player-setup-card.p2 { border-color: rgba(231,76,60,0.4); }
+        .player-label { font-weight: 800; font-size: 1em; margin-bottom: 12px; }
+        .player-label.p1 { color: #3498db; }
+        .player-label.p2 { color: #e74c3c; }
+        .player-select {
+            width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08); color: #fff; font-size: 0.88em; font-weight: 600;
+            outline: none; cursor: pointer;
+        }
+        .player-select option { background: #1a472a; color: #fff; }
+
+        .btn-start {
+            background: linear-gradient(135deg, #27ae60, #2ecc71); color: #fff;
+            border: none; padding: 14px 40px; border-radius: 50px; font-size: 1.1em;
+            font-weight: 800; cursor: pointer; transition: all 0.3s; letter-spacing: 0.05em;
+        }
+        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(39,174,96,0.5); }
+
+        /* ── GAME SCREEN ── */
+        .game-screen { display: none; }
+        .scoreboard {
+            display: flex; justify-content: space-around; align-items: center;
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 16px; margin-bottom: 16px;
+        }
+        .score-team { text-align: center; }
+        .score-player-name { font-size: 0.8em; color: #aaa; font-weight: 600; margin-bottom: 4px; }
+        .score-goals { font-size: 2.8em; font-weight: 900; }
+        .score-goals.p1 { color: #3498db; }
+        .score-goals.p2 { color: #e74c3c; }
+        .score-vs { font-size: 1.5em; color: #555; font-weight: 900; }
+        .score-info { text-align: center; }
+        .score-round { font-size: 0.8em; color: #aaa; }
+        .score-round-val { font-size: 1.4em; font-weight: 800; color: #fff; }
+
+        /* ── CAMPO ── */
+        #gameCanvas {
+            display: block; margin: 0 auto 16px;
+            border-radius: 12px; cursor: crosshair;
+            border: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        /* ── TURNO / STATUS ── */
+        .turn-bar {
+            text-align: center; padding: 10px; margin-bottom: 14px;
+            background: rgba(0,0,0,0.3); border-radius: 12px;
+        }
+        .turn-label { font-size: 0.8em; color: #aaa; }
+        .turn-player { font-size: 1.2em; font-weight: 800; }
+        .turn-player.p1 { color: #3498db; }
+        .turn-player.p2 { color: #e74c3c; }
+        .turn-instruction { font-size: 0.82em; color: #ccc; margin-top: 3px; }
+
+        /* ── POWER / ANGLE CONTROLS ── */
+        .shoot-controls {
+            display: flex; gap: 14px; align-items: center; justify-content: center;
+            margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .ctrl-group { text-align: center; }
+        .ctrl-label { font-size: 0.72em; color: #aaa; font-weight: 700; margin-bottom: 5px; }
+        .slider-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
+        input[type="range"] {
+            -webkit-appearance: none; width: 160px; height: 8px;
+            border-radius: 4px; outline: none; cursor: pointer;
+        }
+        #powerSlider { background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c); }
+        #angleSlider { background: linear-gradient(90deg, #3498db, #9b59b6); }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            border-radius: 50%; background: #fff; cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+        .ctrl-val { font-size: 0.9em; font-weight: 800; color: #2ecc71; min-width: 45px; }
+
+        .btn-shoot {
+            background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff;
+            border: none; padding: 12px 30px; border-radius: 50px; font-size: 1em;
+            font-weight: 800; cursor: pointer; transition: all 0.3s; letter-spacing: 0.05em;
+        }
+        .btn-shoot:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(231,76,60,0.5); }
+        .btn-shoot:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── BUTTONS ── */
+        .btn-container { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+        .btn {
+            background:linear-gradient(135deg,#27ae60,#2ecc71); color:#fff; border:none;
+            padding:11px 24px; border-radius:10px; font-size:0.9em; font-weight:bold;
+            cursor:pointer; transition:all 0.3s; text-decoration:none;
+            display:inline-flex; align-items:center; gap:6px;
+        }
+        .btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(39,174,96,0.4); }
+        .btn-secondary { background:linear-gradient(135deg,#f093fb,#f5576c); }
+        .btn-secondary:hover { box-shadow:0 8px 20px rgba(245,87,108,0.5); }
+
+        /* ── RESULT OVERLAY ── */
+        .result-overlay {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.85); align-items:center; justify-content:center; z-index:1000;
+        }
+        .result-overlay.show { display:flex; }
+        .result-content {
+            background:linear-gradient(135deg,#1a472a,#0d2818); padding:40px 50px;
+            border-radius:24px; text-align:center; border:3px solid #2ecc71;
+            box-shadow:0 0 40px rgba(46,204,113,0.4); max-width:440px; width:90%;
+            animation:popIn 0.4s;
+        }
+        @keyframes popIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+        .result-content h2 { font-size:2.2em; margin-bottom:12px; }
+        .result-content p { color:#ccc; font-size:1.1em; margin:6px 0; }
+        .result-emoji { font-size:4em; margin-bottom:10px; }
+
+        /* FOOTER */
+        .isawere-footer {
+            width:100%; max-width:780px; margin-top:10px;
+            background:rgba(5,13,46,0.97); border-top:1px solid rgba(45,140,255,0.25);
+            padding:1.5rem 5%; display:flex; align-items:center; justify-content:space-between;
+            flex-wrap:wrap; gap:1rem; border-radius:16px;
+        }
+        .isawere-footer .logo-text { font-weight:800; font-size:1.2rem; background:linear-gradient(135deg,#00d4ff,#2d8cff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .isawere-footer .footer-copy { font-size:0.78rem; color:#b0bcd4; text-align:center; flex:1; }
+        .isawere-footer .footer-copy span { color:#00d4ff; font-weight:600; }
+        .isawere-footer .ceo-badge { display:flex; align-items:center; gap:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(45,140,255,0.2); padding:0.5rem 1rem; border-radius:50px; }
+        .isawere-footer .ceo-role { font-size:0.65rem; color:#b0bcd4; }
+        .isawere-footer .ceo-name { font-weight:700; font-size:0.82rem; color:#fff; }
+        .isawere-footer .ceo-company { font-size:0.62rem; color:#00d4ff; }
+        .isawere-footer .btn-custom { background:linear-gradient(135deg,#1a5fff,#00d4ff); color:#fff; padding:0.5rem 1.2rem; border-radius:50px; font-weight:600; font-size:0.78rem; text-decoration:none; transition:opacity 0.2s,transform 0.2s; white-space:nowrap; }
+        .isawere-footer .btn-custom:hover { opacity:0.88; transform:translateY(-1px); }
+
+        @media(max-width:680px){
+            .game-container{padding:16px;}
+            h1{font-size:1.6em;}
+            #gameCanvas{width:95vw !important; height:auto !important;}
+            .shoot-controls{flex-direction:column;}
+            input[type="range"]{width:200px;}
+            .mode-select{flex-direction:column;align-items:center;}
+            .isawere-footer{justify-content:center;text-align:center;}
+            .isawere-footer .footer-copy{flex:unset;width:100%;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>⚽ CHUTE A GOL</h1>
+    <p class="subtitle">Escolha o jogador, calcule o ângulo e chute!</p>
+
+    <!-- FASES -->
+    <div class="phases-bar">
+        <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectPhase(1)">⚽ Fase 1 <span class="phase-badge">GRÁTIS</span></button>
+        <button class="phase-btn locked" id="phaseBtn2" onclick="tryUnlock(2)">🔒 Fase 2 <span class="phase-badge">SENHA</span></button>
+        <button class="phase-btn locked" id="phaseBtn3" onclick="tryUnlock(3)">🔒 Fase 3 <span class="phase-badge">SENHA</span></button>
+    </div>
+
+    <!-- UNLOCK BOX -->
+    <div class="unlock-box" id="unlockBox">
+        <div class="unlock-title">🔐 Fase bloqueada — desbloqueie com a senha!</div>
+        <div class="unlock-desc" id="unlockDesc"></div>
+        <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a>
+        <div class="unlock-input-row">
+            <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20" onkeydown="if(event.key==='Enter') checkPassword()">
+            <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+        </div>
+        <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+    </div>
+
+    <!-- PHASE BADGE -->
+    <div class="phase-theme-badge" id="phaseBadge">
+        <span style="background:rgba(46,204,113,0.15);color:#2ecc71;border:1.5px solid #2ecc71;">⚽ Fase 1 — Campo Aberto</span>
+    </div>
+
+    <!-- SETUP SCREEN -->
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-title">⚙️ Configure a Partida</div>
+
+        <!-- MODO -->
+        <div class="mode-select">
+            <div class="mode-card selected" id="mode1p" onclick="setMode(1)">
+                <div class="mode-icon">🧑</div>
+                <div class="mode-name">1 Jogador</div>
+                <div class="mode-desc">Tente bater o goleiro CPU</div>
+            </div>
+            <div class="mode-card" id="mode2p" onclick="setMode(2)">
+                <div class="mode-icon">👥</div>
+                <div class="mode-name">2 Jogadores</div>
+                <div class="mode-desc">Se revezam chutando e defendendo</div>
+            </div>
+        </div>
+
+        <!-- JOGADORES -->
+        <div class="players-setup" id="playersSetup">
+            <div class="player-setup-card p1">
+                <div class="player-label p1">🔵 Jogador 1</div>
+                <select class="player-select" id="p1Select"></select>
+            </div>
+            <div class="player-setup-card p2" id="p2Card">
+                <div class="player-label p2" id="p2Label">🔴 Jogador 2</div>
+                <select class="player-select" id="p2Select"></select>
+            </div>
+        </div>
+
+        <button class="btn-start" onclick="startMatch()">🏁 Iniciar Partida</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div class="game-screen" id="gameScreen">
+        <!-- PLACAR -->
+        <div class="scoreboard">
+            <div class="score-team">
+                <div class="score-player-name" id="p1Name">—</div>
+                <div class="score-goals p1" id="p1Goals">0</div>
+            </div>
+            <div class="score-info">
+                <div class="score-vs">×</div>
+                <div class="score-round"><span id="roundLabel">Rodada</span></div>
+                <div class="score-round-val"><span id="roundVal">1</span> / <span id="roundMax">5</span></div>
+            </div>
+            <div class="score-team">
+                <div class="score-player-name" id="p2Name">—</div>
+                <div class="score-goals p2" id="p2Goals">0</div>
+            </div>
+        </div>
+
+        <!-- CANVAS -->
+        <canvas id="gameCanvas" width="720" height="420"></canvas>
+
+        <!-- TURNO -->
+        <div class="turn-bar">
+            <div class="turn-label">VEZ DE:</div>
+            <div class="turn-player" id="turnPlayer">—</div>
+            <div class="turn-instruction" id="turnInstruction">Ajuste o ângulo e a força, depois chute!</div>
+        </div>
+
+        <!-- CONTROLES DE CHUTE -->
+        <div class="shoot-controls">
+            <div class="ctrl-group">
+                <div class="ctrl-label">⚡ FORÇA</div>
+                <div class="slider-wrap">
+                    <input type="range" id="powerSlider" min="20" max="100" value="65">
+                    <div class="ctrl-val" id="powerVal">65%</div>
+                </div>
+            </div>
+            <div class="ctrl-group">
+                <div class="ctrl-label">📐 ÂNGULO</div>
+                <div class="slider-wrap">
+                    <input type="range" id="angleSlider" min="-60" max="60" value="0">
+                    <div class="ctrl-val" id="angleVal">0°</div>
+                </div>
+            </div>
+            <button class="btn-shoot" id="shootBtn" onclick="shoot()">⚽ CHUTAR</button>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="btn-container">
+            <button class="btn" onclick="showSetup()">🔄 Nova Partida</button>
+            <a class="btn btn-secondary" href="jogos.html">🎲 Ver Outros Jogos</a>
+        </div>
+    </div>
+</div>
+
+<footer class="isawere-footer">
+    <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+    <div class="footer-copy">
+        © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+        <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+    </div>
+    <div class="ceo-badge">
+        <div>
+            <div class="ceo-role">Fundador & CEO</div>
+            <div class="ceo-name">Ivan Rosas</div>
+            <div class="ceo-company">ISAWERE Sistemas</div>
+        </div>
+    </div>
+    <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+</footer>
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="resultOverlay">
+    <div class="result-content">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <h2 id="resultTitle">Gol!</h2>
+        <p id="resultMsg"></p>
+        <div class="btn-container" style="margin-top:20px;">
+            <button class="btn" id="resultBtn" onclick="nextTurn()">Próximo ▶</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIGURAÇÃO DAS FASES
+═══════════════════════════════════════ */
+const phaseConfig = {
+    1: {
+        name: '⚽ Fase 1 — Campo Aberto',
+        badgeStyle: 'background:rgba(46,204,113,0.15);color:#2ecc71;border:1.5px solid #2ecc71;',
+        password: null, ytLink: null, ytDesc: '',
+        goalkeeperSkill: 0.3, // probabilidade de defesa
+        goalWidth: 200,       // largura do gol (px no canvas)
+        rounds: 5
+    },
+    2: {
+        name: '🏟️ Fase 2 — Estádio Regional',
+        badgeStyle: 'background:rgba(52,152,219,0.15);color:#3498db;border:1.5px solid #3498db;',
+        password: 'ISAWERE2',
+        ytLink: 'https://www.youtube.com/@IsawereSistemas',
+        ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — goleiro mais difícil e gol menor!',
+        goalkeeperSkill: 0.5,
+        goalWidth: 170,
+        rounds: 7
+    },
+    3: {
+        name: '🏆 Fase 3 — Copa do Mundo',
+        badgeStyle: 'background:rgba(241,196,15,0.15);color:#f1c40f;border:1.5px solid #f1c40f;',
+        password: 'GAMES3',
+        ytLink: 'https://www.youtube.com/@IsawereSistemas',
+        ytDesc: 'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — Copa do Mundo! Goleiro expert e gol apertado!',
+        goalkeeperSkill: 0.7,
+        goalWidth: 150,
+        rounds: 10
+    }
+};
+
+let currentPhase = 1, pendingPhase = null;
+let unlockedPhases = JSON.parse(localStorage.getItem('soccer_unlocked') || '[1]');
+
+function refreshPhaseBtns(){
+    [1,2,3].forEach(n=>{
+        const btn=document.getElementById('phaseBtn'+n);
+        btn.className='phase-btn';
+        if(n===currentPhase) btn.classList.add('active','unlocked');
+        else if(unlockedPhases.includes(n)) btn.classList.add('unlocked');
+        else btn.classList.add('locked');
+    });
+}
+function selectPhase(n){
+    if(!unlockedPhases.includes(n)){tryUnlock(n);return;}
+    currentPhase=n; pendingPhase=null;
+    document.getElementById('unlockBox').classList.remove('show');
+    refreshPhaseBtns(); updatePhaseBadge(); showSetup();
+}
+function tryUnlock(n){
+    if(unlockedPhases.includes(n)){selectPhase(n);return;}
+    pendingPhase=n; const ph=phaseConfig[n];
+    document.getElementById('unlockDesc').textContent=ph.ytDesc;
+    document.getElementById('unlockYtBtn').href=ph.ytLink;
+    document.getElementById('unlockInput').value='';
+    document.getElementById('unlockError').style.display='none';
+    document.getElementById('unlockBox').classList.add('show');
+    document.getElementById('unlockInput').focus();
+}
+function checkPassword(){
+    const inp=document.getElementById('unlockInput').value.trim().toUpperCase();
+    const correct=phaseConfig[pendingPhase].password.toUpperCase();
+    if(inp===correct){
+        if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+        localStorage.setItem('soccer_unlocked',JSON.stringify(unlockedPhases));
+        document.getElementById('unlockBox').classList.remove('show');
+        selectPhase(pendingPhase);
+    } else {
+        document.getElementById('unlockError').style.display='block';
+        const i=document.getElementById('unlockInput');
+        i.style.borderColor='#dc3545';
+        setTimeout(()=>{i.style.borderColor='';},1200);
+    }
+}
+function updatePhaseBadge(){
+    const ph=phaseConfig[currentPhase];
+    document.getElementById('phaseBadge').innerHTML=`<span style="${ph.badgeStyle}">${ph.name}</span>`;
+}
+
+/* ═══════════════════════════════════════
+   LISTA DE JOGADORES
+═══════════════════════════════════════ */
+const players = [
+    { name:'Cristiano Ronaldo', flag:'🇵🇹', power:95, accuracy:90, emoji:'⚡' },
+    { name:'Lionel Messi',      flag:'🇦🇷', power:88, accuracy:97, emoji:'🌟' },
+    { name:'Neymar Jr.',        flag:'🇧🇷', power:85, accuracy:88, emoji:'🎩' },
+    { name:'Kylian Mbappé',     flag:'🇫🇷', power:92, accuracy:87, emoji:'💨' },
+    { name:'Vinicius Jr.',      flag:'🇧🇷', power:87, accuracy:85, emoji:'🔥' },
+    { name:'Erling Haaland',    flag:'🇳🇴', power:97, accuracy:82, emoji:'💪' },
+    { name:'Pedri',             flag:'🇪🇸', power:80, accuracy:92, emoji:'🧠' },
+    { name:'Rodri',             flag:'🇪🇸', power:83, accuracy:88, emoji:'🛡️' },
+    { name:'Jude Bellingham',   flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', power:85, accuracy:87, emoji:'✨' },
+    { name:'Lamine Yamal',      flag:'🇪🇸', power:82, accuracy:90, emoji:'🌈' },
+    { name:'Raphinha',          flag:'🇧🇷', power:84, accuracy:86, emoji:'🦁' },
+    { name:'Rodrygo',           flag:'🇧🇷', power:82, accuracy:85, emoji:'🌟' },
+];
+
+/* ═══════════════════════════════════════
+   ESTADO DA PARTIDA
+═══════════════════════════════════════ */
+let gameMode = 1;        // 1 ou 2 jogadores
+let p1 = null, p2 = null;
+let goals1 = 0, goals2 = 0;
+let round = 1, maxRounds = 5;
+let currentTurn = 1;    // 1=J1 chuta, 2=J2 chuta
+let shooting = false;
+let animState = null;
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+/* ═══════════════════════════════════════
+   POPULATE SELECTS
+═══════════════════════════════════════ */
+function populateSelects(){
+    ['p1Select','p2Select'].forEach((id,idx)=>{
+        const sel=document.getElementById(id);
+        sel.innerHTML='';
+        players.forEach((p,i)=>{
+            const opt=document.createElement('option');
+            opt.value=i;
+            opt.textContent=`${p.flag} ${p.name} ${p.emoji}`;
+            if(i===idx) opt.selected=true;
+            sel.appendChild(opt);
+        });
+    });
+}
+
+/* ═══════════════════════════════════════
+   MODO
+═══════════════════════════════════════ */
+function setMode(m){
+    gameMode=m;
+    document.getElementById('mode1p').classList.toggle('selected',m===1);
+    document.getElementById('mode2p').classList.toggle('selected',m===2);
+    const p2Card=document.getElementById('p2Card');
+    const p2Label=document.getElementById('p2Label');
+    if(m===1){
+        p2Card.style.opacity='0.5';
+        p2Label.innerHTML='🤖 CPU (Goleiro)';
+    } else {
+        p2Card.style.opacity='1';
+        p2Label.innerHTML='🔴 Jogador 2';
+    }
+}
+
+function showSetup(){
+    document.getElementById('setupScreen').style.display='block';
+    document.getElementById('gameScreen').style.display='none';
+    document.getElementById('resultOverlay').classList.remove('show');
+    populateSelects(); setMode(gameMode);
+}
+
+function startMatch(){
+    p1 = players[+document.getElementById('p1Select').value];
+    p2 = gameMode===2 ? players[+document.getElementById('p2Select').value] : { name:'Goleiro CPU', flag:'🤖', power:80, accuracy:80, emoji:'🥊' };
+    goals1=0; goals2=0; round=1; currentTurn=1;
+    maxRounds=phaseConfig[currentPhase].rounds;
+
+    document.getElementById('p1Name').textContent=`${p1.flag} ${p1.name}`;
+    document.getElementById('p2Name').textContent=`${p2.flag} ${p2.name}`;
+    document.getElementById('p1Goals').textContent='0';
+    document.getElementById('p2Goals').textContent='0';
+    document.getElementById('roundMax').textContent=maxRounds;
+
+    document.getElementById('setupScreen').style.display='none';
+    document.getElementById('gameScreen').style.display='block';
+
+    updateTurnUI();
+    drawField(null);
+}
+
+/* ═══════════════════════════════════════
+   SLIDERS
+═══════════════════════════════════════ */
+document.getElementById('powerSlider').oninput=function(){
+    document.getElementById('powerVal').textContent=this.value+'%';
+};
+document.getElementById('angleSlider').oninput=function(){
+    document.getElementById('angleVal').textContent=this.value+'°';
+    drawField(null);
+};
+
+/* ═══════════════════════════════════════
+   DESENHO DO CAMPO
+═══════════════════════════════════════ */
+function drawField(shotData){
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Gramado
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#1e7a3a'); grad.addColorStop(0.5,'#27ae60'); grad.addColorStop(1,'#1e7a3a');
+    ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+    // Faixas
+    for(let i=0;i<8;i++){
+        if(i%2===0){ ctx.fillStyle='rgba(0,0,0,0.07)'; ctx.fillRect(i*(W/8),0,W/8,H); }
+    }
+
+    // Linha central
+    ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=2; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+    ctx.beginPath(); ctx.arc(W/2,H/2,60,0,Math.PI*2); ctx.stroke();
+
+    const cfg=phaseConfig[currentPhase];
+    const goalW=cfg.goalWidth;
+    const goalX=(W-goalW)/2;
+    const goalH=90;
+    const postTop=30;
+
+    // Área grande
+    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2;
+    ctx.strokeRect(goalX-40, postTop, goalW+80, 140);
+
+    // GOL — poste
+    ctx.strokeStyle='#fff'; ctx.lineWidth=5; ctx.setLineDash([]);
+    ctx.strokeRect(goalX, postTop, goalW, goalH);
+
+    // Rede
+    ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
+    for(let x=goalX;x<=goalX+goalW;x+=20){
+        ctx.beginPath(); ctx.moveTo(x,postTop); ctx.lineTo(x,postTop+goalH); ctx.stroke();
+    }
+    for(let y=postTop;y<=postTop+goalH;y+=15){
+        ctx.beginPath(); ctx.moveTo(goalX,y); ctx.lineTo(goalX+goalW,y); ctx.stroke();
+    }
+
+    // Goleiro
+    const gkX = shotData ? shotData.gkX : goalX+goalW/2-18;
+    drawGoalkeeper(gkX, postTop+20, shotData?.gkSaved);
+
+    // Bola — posição inicial ou animada
+    if(shotData && shotData.ballX !== undefined){
+        drawBall(shotData.ballX, shotData.ballY, shotData.spin||0);
+    } else {
+        drawBall(W/2, H-70, 0);
+    }
+
+    // Jogador
+    const shooter = currentTurn===1 ? p1 : (gameMode===2?p2:p1);
+    if(shooter) drawPlayer2D(W/2, H-50, shooter, currentTurn===1?'#3498db':'#e74c3c');
+
+    // Linha de trajetória (mira)
+    const angle = +document.getElementById('angleSlider').value;
+    const rad = (angle * Math.PI)/180;
+    const dirX = Math.sin(rad), dirY = -Math.cos(rad);
+    ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([8,6]);
+    ctx.beginPath(); ctx.moveTo(W/2, H-70);
+    ctx.lineTo(W/2 + dirX*300, H-70 + dirY*300);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Placar no campo
+    ctx.font='bold 14px Segoe UI'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    ctx.fillText(`Rodada ${round}/${maxRounds}`, W/2, H-10);
+}
+
+function drawBall(x,y,spin){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(spin);
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,12,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#222'; ctx.lineWidth=1;
+    [[0,-8],[6,5],[-6,5]].forEach(([px,py])=>{
+        ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
+}
+
+function drawGoalkeeper(x,y,saved){
+    ctx.save(); ctx.translate(x,y);
+    // Corpo
+    ctx.fillStyle=saved?'#e74c3c':'#f39c12';
+    ctx.fillRect(-18,0,36,40);
+    // Cabeça
+    ctx.fillStyle='#f5cba7'; ctx.beginPath(); ctx.arc(0,-12,14,0,Math.PI*2); ctx.fill();
+    // Braços estendidos
+    ctx.fillStyle=saved?'#c0392b':'#d68910';
+    ctx.fillRect(-38,5,20,10); // braço esquerdo
+    ctx.fillRect(18,5,20,10);  // braço direito
+    if(saved){
+        ctx.fillStyle='#fff'; ctx.font='bold 14px Arial'; ctx.textAlign='center';
+        ctx.fillText('DEFESA!',0,-35);
+    }
+    ctx.restore();
+}
+
+function drawPlayer2D(x,y,player,color){
+    ctx.save(); ctx.translate(x,y-30);
+    ctx.fillStyle=color; ctx.fillRect(-14,-30,28,38);
+    ctx.fillStyle='#f5cba7'; ctx.beginPath(); ctx.arc(0,-38,13,0,Math.PI*2); ctx.fill();
+    ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
+    ctx.fillStyle='#fff';
+    ctx.fillText(player.emoji, 0, -34);
+    ctx.restore();
+}
+
+/* ═══════════════════════════════════════
+   CHUTE
+═══════════════════════════════════════ */
+function shoot(){
+    if(shooting) return;
+    shooting=true;
+    document.getElementById('shootBtn').disabled=true;
+
+    const power  = +document.getElementById('powerSlider').value;
+    const angle  = +document.getElementById('angleSlider').value;
+    const shooter= currentTurn===1 ? p1 : (gameMode===2?p2:p1);
+    const cfg    = phaseConfig[currentPhase];
+
+    // Calcular destino da bola
+    const W=canvas.width, H=canvas.height;
+    const goalW=cfg.goalWidth, goalX=(W-goalW)/2;
+    const postTop=30, goalH=90;
+    const rad=(angle*Math.PI)/180;
+    const dirX=Math.sin(rad), dirY=-Math.cos(rad);
+
+    // Onde a bola chega na altura do gol
+    const dist=H-70-postTop;
+    const targetX = W/2 + dirX*(dist/Math.abs(dirY||0.01));
+    const targetY = postTop + goalH/2;
+
+    // Dentro do gol?
+    const inGoal = targetX > goalX+10 && targetX < goalX+goalW-10;
+
+    // Bonus de precisão do jogador
+    const accBonus = (shooter.accuracy - 80) / 100; // -0.2 a +0.17
+    const adjusted_inGoal = inGoal || (Math.random() < accBonus*0.3 && Math.abs(angle)<15);
+
+    // Goleiro
+    const gkBase = goalX + goalW/2 - 18;
+    let gkTarget = gkBase;
+    // Goleiro reage na direção do chute
+    if(angle < -15) gkTarget = goalX + 5;
+    else if(angle > 15) gkTarget = goalX + goalW - 42;
+    else gkTarget = goalX + goalW/2 - 18 + (Math.random()-0.5)*40;
+
+    const gkSaved = adjusted_inGoal && Math.random() < cfg.goalkeeperSkill*(power/100<0.5?1.2:0.8);
+    const scored  = adjusted_inGoal && !gkSaved;
+
+    // Animate
+    let t=0, frames=40;
+    let spin=0;
+    const tick=()=>{
+        t++;
+        const progress=t/frames;
+        const ease=1-Math.pow(1-progress,2);
+        const bx=W/2 + (targetX-(W/2))*ease;
+        const by=H-70 + (targetY-(H-70))*ease - Math.sin(progress*Math.PI)*80;
+        spin += (power/100)*0.3;
+        const gkX = gkBase + (gkTarget-gkBase)*Math.min(progress*1.5,1);
+        drawField({ballX:bx, ballY:by, spin, gkX, gkSaved:false});
+        if(t<frames){ requestAnimationFrame(tick); }
+        else { showResult(scored, gkSaved, shooter, gkTarget, targetX, targetY); }
+    };
+    requestAnimationFrame(tick);
+}
+
+function showResult(scored, gkSaved, shooter, gkX, bX, bY){
+    const cfg=phaseConfig[currentPhase];
+    const W=canvas.width, gw=cfg.goalWidth, gX=(W-gw)/2;
+    drawField({ballX:bX, ballY:bY, spin:0, gkX, gkSaved});
+
+    const over=document.getElementById('resultOverlay');
+    if(scored){
+        if(currentTurn===1){ goals1++; document.getElementById('p1Goals').textContent=goals1; }
+        else { goals2++; document.getElementById('p2Goals').textContent=goals2; }
+        document.getElementById('resultEmoji').textContent='⚽';
+        document.getElementById('resultTitle').textContent='GOL! 🎉';
+        document.getElementById('resultMsg').textContent=`${shooter.flag} ${shooter.name} marcou! Força ${document.getElementById('powerSlider').value}% — Ângulo ${document.getElementById('angleSlider').value}°`;
+        document.getElementById('resultTitle').style.color='#2ecc71';
+    } else if(gkSaved){
+        document.getElementById('resultEmoji').textContent='🧤';
+        document.getElementById('resultTitle').textContent='DEFENDIDO!';
+        document.getElementById('resultMsg').textContent='O goleiro voou e fez a defesa!';
+        document.getElementById('resultTitle').style.color='#e74c3c';
+    } else {
+        document.getElementById('resultEmoji').textContent='😬';
+        document.getElementById('resultTitle').textContent='FO-RA!';
+        document.getElementById('resultMsg').textContent='A bola passou longe do gol... tente ajustar o ângulo!';
+        document.getElementById('resultTitle').style.color='#f39c12';
+    }
+
+    // Botão
+    const isLast = round>=maxRounds && (gameMode===1 || currentTurn===2);
+    document.getElementById('resultBtn').textContent=isLast?'Ver Resultado 🏆':'Próximo ▶';
+    document.getElementById('resultBtn').onclick=isLast?showFinalResult:nextTurn;
+    over.classList.add('show');
+}
+
+function nextTurn(){
+    document.getElementById('resultOverlay').classList.remove('show');
+    shooting=false;
+    document.getElementById('shootBtn').disabled=false;
+    document.getElementById('angleSlider').value='0';
+    document.getElementById('angleVal').textContent='0°';
+    document.getElementById('powerSlider').value='65';
+    document.getElementById('powerVal').textContent='65%';
+
+    if(gameMode===2){
+        if(currentTurn===1){ currentTurn=2; }
+        else { currentTurn=1; round++; }
+    } else {
+        round++;
+    }
+    if(round>maxRounds){ showFinalResult(); return; }
+    updateTurnUI(); drawField(null);
+}
+
+function updateTurnUI(){
+    const shooter= currentTurn===1 ? p1 : (gameMode===2?p2:p1);
+    const cls=currentTurn===1?'p1':'p2';
+    const el=document.getElementById('turnPlayer');
+    el.textContent=`${shooter.flag} ${shooter.name} ${shooter.emoji}`;
+    el.className='turn-player '+cls;
+    document.getElementById('roundVal').textContent=round;
+
+    if(gameMode===2){
+        document.getElementById('turnInstruction').textContent=
+            currentTurn===1?'🔵 Jogador 1: ajuste força e ângulo, depois chute!':
+                             '🔴 Jogador 2: sua vez — mostre o que sabe!';
+    } else {
+        document.getElementById('turnInstruction').textContent='Ajuste a força e o ângulo, depois chute!';
+    }
+}
+
+function showFinalResult(){
+    document.getElementById('resultOverlay').classList.remove('show');
+    const over=document.getElementById('resultOverlay');
+    let title, emoji, msg;
+    if(gameMode===1){
+        const total=maxRounds;
+        if(goals1>=Math.ceil(total/2)){
+            emoji='🏆'; title=`PARABÉNS!`;
+            msg=`Você marcou ${goals1} de ${total} gols! Excelente performance!`;
+        } else {
+            emoji='😢'; title='Fim de Jogo';
+            msg=`Você marcou ${goals1} de ${total} gols. Tente novamente!`;
+        }
+    } else {
+        if(goals1>goals2){ emoji='🏆'; title=`${p1.flag} ${p1.name} VENCE!`; msg=`Placar: ${goals1} × ${goals2}`; }
+        else if(goals2>goals1){ emoji='🏆'; title=`${p2.flag} ${p2.name} VENCE!`; msg=`Placar: ${goals2} × ${goals1}`; }
+        else { emoji='🤝'; title='EMPATE!'; msg=`${goals1} × ${goals2} — Que partida equilibrada!`; }
+    }
+    document.getElementById('resultEmoji').textContent=emoji;
+    document.getElementById('resultTitle').textContent=title;
+    document.getElementById('resultTitle').style.color='#f1c40f';
+    document.getElementById('resultMsg').textContent=msg;
+    document.getElementById('resultBtn').textContent='🔄 Nova Partida';
+    document.getElementById('resultBtn').onclick=showSetup;
+    over.classList.add('show');
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&document.getElementById('unlockBox').classList.contains('show')) checkPassword();
+});
+
+refreshPhaseBtns(); updatePhaseBadge(); showSetup();
+</script>
+</body>
+</html>

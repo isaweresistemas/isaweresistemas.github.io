@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐍 Snake - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #fff;
+        }
+        .game-container { text-align: center; padding: 20px; }
+        h1 { color: #4ecca3; font-size: 3em; margin-bottom: 20px; text-shadow: 0 0 10px #4ecca3; }
+        .game-info { display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; }
+        .info-box { background: rgba(78,204,163,0.1); padding: 15px 30px; border-radius: 10px; border: 2px solid #4ecca3; }
+        .info-box h3 { color: #4ecca3; font-size: 0.9em; margin-bottom: 5px; }
+        .info-box p { font-size: 2em; font-weight: bold; }
+        #gameCanvas { background: #1a1a2e; border: 3px solid #4ecca3; border-radius: 10px; box-shadow: 0 0 20px rgba(78,204,163,0.5); display: block; margin: 0 auto; }
+        .controls { margin-top: 20px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { background: linear-gradient(135deg, #4ecca3 0%, #36b37e 100%); color: #fff; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(78,204,163,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(78,204,163,0.5); }
+        .btn-secondary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-secondary:hover { box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+        .mobile-controls { display: none; margin-top: 20px; gap: 10px; }
+        .arrow-btn { background: rgba(78,204,163,0.2); border: 2px solid #4ecca3; color: #4ecca3; width: 60px; height: 60px; border-radius: 10px; font-size: 1.5em; cursor: pointer; transition: all 0.3s ease; }
+        .arrow-btn:active { background: rgba(78,204,163,0.5); }
+        .arrow-grid { display: grid; grid-template-columns: repeat(3, 60px); gap: 10px; }
+        .instructions { margin-top: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .instructions p { margin: 5px 0; font-size: 0.9em; }
+        .game-over { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .game-over.show { display: flex; }
+        .game-over-content { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 40px; border-radius: 20px; text-align: center; border: 3px solid #4ecca3; box-shadow: 0 0 30px rgba(78,204,163,0.5); }
+        .game-over-content h2 { color: #4ecca3; font-size: 2.5em; margin-bottom: 20px; }
+        .game-over-content p { font-size: 1.5em; margin: 10px 0; }
+
+        /* ISAWERE FOOTER */
+        .isawere-footer {
+            width: 100%; max-width: 900px; margin-top: 30px;
+            background: rgba(5,13,46,0.97); border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            border-radius: 16px; font-family: 'Segoe UI', sans-serif;
+        }
+        .isawere-footer .logo-text { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, #00d4ff, #2d8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+        .isawere-footer .ceo-badge { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.5rem 1rem; border-radius: 50px; }
+        .isawere-footer .ceo-role { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+        .isawere-footer .btn-custom { background: linear-gradient(135deg, #1a5fff, #00d4ff); color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 600; font-size: 0.78rem; text-decoration: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; }
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            #gameCanvas { width: 90vw !important; height: 90vw !important; }
+            .mobile-controls { display: block; }
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🐍 SNAKE</h1>
+        <div class="game-info">
+            <div class="info-box">
+                <h3>🎯 PONTOS</h3>
+                <p id="score">0</p>
+            </div>
+            <div class="info-box">
+                <h3>📏 TAMANHO</h3>
+                <p id="length">1</p>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="controls">
+            <button class="btn" onclick="startGame()">🎮 JOGAR</button>
+            <button class="btn" onclick="location.reload()">🔄 REINICIAR</button>
+            <a class="btn btn-secondary" href="../jogos.html">🎲 Ver Outros Jogos</a>
+        </div>
+        <div class="mobile-controls">
+            <div class="arrow-grid">
+                <div></div>
+                <button class="arrow-btn" onclick="changeDirection('UP')">▲</button>
+                <div></div>
+                <button class="arrow-btn" onclick="changeDirection('LEFT')">◄</button>
+                <div></div>
+                <button class="arrow-btn" onclick="changeDirection('RIGHT')">►</button>
+                <div></div>
+                <button class="arrow-btn" onclick="changeDirection('DOWN')">▼</button>
+                <div></div>
+            </div>
+        </div>
+        <div class="instructions">
+            <p>⌨️ Use as <strong>SETAS</strong> do teclado para mover</p>
+            <p>📱 Em mobile, use os botões de direção</p>
+            <p>🍎 Coma as maçãs para crescer e ganhar pontos!</p>
+            <p>⚠️ Não bata nas paredes nem no próprio corpo!</p>
+        </div>
+    </div>
+
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <div class="game-over" id="gameOver">
+        <div class="game-over-content">
+            <h2>GAME OVER!</h2>
+            <p>Pontuação: <span id="finalScore">0</span></p>
+            <p>Tamanho Final: <span id="finalLength">0</span></p>
+            <p id="performanceMsg"></p>
+            <button class="btn" onclick="location.reload()" style="margin-top: 20px;">🔄 JOGAR NOVAMENTE</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const GRID_SIZE = 20;
+        const CELL_COUNT = canvas.width / GRID_SIZE;
+        let snake = [], direction = 'RIGHT', nextDirection = 'RIGHT', food = {}, score = 0, gameRunning = false, gameSpeed = 150;
+
+        function initGame() {
+            snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+            direction = nextDirection = 'RIGHT';
+            score = 0; gameSpeed = 150;
+            document.getElementById('score').textContent = 0;
+            document.getElementById('length').textContent = snake.length;
+            spawnFood();
+        }
+
+        function spawnFood() {
+            food = { x: Math.floor(Math.random() * CELL_COUNT), y: Math.floor(Math.random() * CELL_COUNT) };
+            for (let s of snake) if (s.x === food.x && s.y === food.y) { spawnFood(); return; }
+        }
+
+        function startGame() {
+            if (gameRunning) return;
+            gameRunning = true; initGame(); gameLoop();
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+            setTimeout(() => { update(); draw(); gameLoop(); }, gameSpeed);
+        }
+
+        function update() {
+            direction = nextDirection;
+            const head = {...snake[0]};
+            if (direction === 'UP') head.y--;
+            if (direction === 'DOWN') head.y++;
+            if (direction === 'LEFT') head.x--;
+            if (direction === 'RIGHT') head.x++;
+            if (head.x < 0 || head.x >= CELL_COUNT || head.y < 0 || head.y >= CELL_COUNT) { endGame(); return; }
+            for (let s of snake) if (s.x === head.x && s.y === head.y) { endGame(); return; }
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('length').textContent = snake.length;
+                if (gameSpeed > 70) gameSpeed -= 2;
+                spawnFood();
+            } else { snake.pop(); }
+        }
+
+        function draw() {
+            ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#2a2a3e'; ctx.lineWidth = 0.5;
+            for (let i = 0; i <= CELL_COUNT; i++) {
+                ctx.beginPath(); ctx.moveTo(i*GRID_SIZE,0); ctx.lineTo(i*GRID_SIZE,canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0,i*GRID_SIZE); ctx.lineTo(canvas.width,i*GRID_SIZE); ctx.stroke();
+            }
+            snake.forEach((seg, i) => {
+                if (i === 0) {
+                    ctx.fillStyle = '#4ecca3';
+                    ctx.fillRect(seg.x*GRID_SIZE+1, seg.y*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
+                    ctx.fillStyle = '#fff';
+                    const eo = 6, es = 3;
+                    if (direction==='RIGHT') { ctx.fillRect(seg.x*GRID_SIZE+GRID_SIZE-eo,seg.y*GRID_SIZE+5,es,es); ctx.fillRect(seg.x*GRID_SIZE+GRID_SIZE-eo,seg.y*GRID_SIZE+GRID_SIZE-8,es,es); }
+                    else if (direction==='LEFT') { ctx.fillRect(seg.x*GRID_SIZE+3,seg.y*GRID_SIZE+5,es,es); ctx.fillRect(seg.x*GRID_SIZE+3,seg.y*GRID_SIZE+GRID_SIZE-8,es,es); }
+                    else if (direction==='UP') { ctx.fillRect(seg.x*GRID_SIZE+5,seg.y*GRID_SIZE+3,es,es); ctx.fillRect(seg.x*GRID_SIZE+GRID_SIZE-8,seg.y*GRID_SIZE+3,es,es); }
+                    else { ctx.fillRect(seg.x*GRID_SIZE+5,seg.y*GRID_SIZE+GRID_SIZE-eo,es,es); ctx.fillRect(seg.x*GRID_SIZE+GRID_SIZE-8,seg.y*GRID_SIZE+GRID_SIZE-eo,es,es); }
+                } else {
+                    const g = ctx.createLinearGradient(seg.x*GRID_SIZE,seg.y*GRID_SIZE,seg.x*GRID_SIZE+GRID_SIZE,seg.y*GRID_SIZE+GRID_SIZE);
+                    g.addColorStop(0,'#36b37e'); g.addColorStop(1,'#2a8d63');
+                    ctx.fillStyle = g;
+                    ctx.fillRect(seg.x*GRID_SIZE+2, seg.y*GRID_SIZE+2, GRID_SIZE-4, GRID_SIZE-4);
+                }
+            });
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.arc(food.x*GRID_SIZE+GRID_SIZE/2, food.y*GRID_SIZE+GRID_SIZE/2, GRID_SIZE/2-2, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#27ae60';
+            ctx.beginPath(); ctx.ellipse(food.x*GRID_SIZE+GRID_SIZE/2+3, food.y*GRID_SIZE+GRID_SIZE/2-6, 3, 5, Math.PI/4, 0, Math.PI*2); ctx.fill();
+        }
+
+        function endGame() {
+            gameRunning = false;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLength').textContent = snake.length;
+            const msgs = ['💪 Continue tentando! Você consegue!','👍 BOM TRABALHO! Você está melhorando!','🎉 MUITO BOM! Continue praticando!','🏆 INCRÍVEL! Você é um mestre do Snake!'];
+            document.getElementById('performanceMsg').textContent = snake.length >= 50 ? msgs[3] : snake.length >= 30 ? msgs[2] : snake.length >= 15 ? msgs[1] : msgs[0];
+            document.getElementById('gameOver').classList.add('show');
+        }
+
+        function changeDirection(dir) {
+            if (!gameRunning) return;
+            if (dir==='UP'&&direction!=='DOWN') nextDirection='UP';
+            if (dir==='DOWN'&&direction!=='UP') nextDirection='DOWN';
+            if (dir==='LEFT'&&direction!=='RIGHT') nextDirection='LEFT';
+            if (dir==='RIGHT'&&direction!=='LEFT') nextDirection='RIGHT';
+        }
+
+        document.addEventListener('keydown', e => {
+            if (!gameRunning) return;
+            const map = { ArrowUp:'UP', ArrowDown:'DOWN', ArrowLeft:'LEFT', ArrowRight:'RIGHT' };
+            if (map[e.key]) { changeDirection(map[e.key]); e.preventDefault(); }
+        });
+
+        draw();
+        ctx.fillStyle = '#4ecca3'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+        ctx.fillText('Clique em JOGAR para começar!', canvas.width/2, canvas.height/2);
+    </script>
+</body>
+</html>

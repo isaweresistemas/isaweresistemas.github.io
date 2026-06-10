@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏎️ Corrida Retrô - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; padding: 20px; color: #fff;
+        }
+
+        .game-container {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,0,0.15);
+            border-radius: 20px; padding: 30px;
+            max-width: 720px; width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center; color: #ff0; font-size: 2em; margin-bottom: 6px;
+            text-shadow: 3px 3px 0 #f00;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink { 0%,50%{opacity:1}51%,100%{opacity:0.65} }
+        .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.88em; }
+
+        /* FASES */
+        .phases-bar { display:flex; gap:10px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+        .phase-btn {
+            display:flex; align-items:center; gap:7px;
+            padding:10px 20px; border-radius:50px; border:2px solid transparent;
+            font-size:0.88em; font-weight:700; cursor:pointer; transition:all 0.3s;
+            background:rgba(255,255,255,0.05); color:#666;
+        }
+        .phase-btn.active { background:linear-gradient(135deg,#ffff00,#ffa500); color:#000; box-shadow:0 4px 15px rgba(255,255,0,0.4); transform:translateY(-2px); }
+        .phase-btn.unlocked:not(.active) { background:rgba(255,255,0,0.08); border-color:#ffff00; color:#ffff00; }
+        .phase-btn.locked { background:rgba(255,255,255,0.03); color:#444; cursor:not-allowed; }
+        .phase-badge { font-size:0.72em; padding:2px 8px; border-radius:50px; background:rgba(0,0,0,0.2); font-weight:600; }
+
+        /* UNLOCK BOX */
+        .unlock-box {
+            display:none; background:linear-gradient(135deg,rgba(255,255,0,0.06),rgba(255,165,0,0.06));
+            border:2px solid #ffc107; border-radius:16px; padding:22px; margin-bottom:20px; text-align:center;
+        }
+        .unlock-box.show { display:block; }
+        .unlock-title { font-size:1.1em; font-weight:800; color:#ffc107; margin-bottom:6px; }
+        .unlock-desc { font-size:0.88em; color:#ccc; margin-bottom:14px; line-height:1.6; }
+        .unlock-yt-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            background:#ff0000; color:white; padding:10px 22px;
+            border-radius:50px; font-weight:700; font-size:0.88em;
+            text-decoration:none; transition:all 0.3s; margin-bottom:16px;
+        }
+        .unlock-yt-btn:hover { background:#cc0000; transform:translateY(-2px); box-shadow:0 5px 15px rgba(255,0,0,0.4); }
+        .unlock-input-row { display:flex; gap:8px; max-width:340px; margin:0 auto; }
+        .unlock-input {
+            flex:1; padding:10px 14px; border:2px solid #ffc107; border-radius:10px;
+            font-size:1em; font-weight:700; text-transform:uppercase; letter-spacing:2px;
+            outline:none; text-align:center; background:rgba(255,255,255,0.05); color:#fff;
+        }
+        .unlock-input:focus { border-color:#ffff00; }
+        .unlock-submit {
+            background:linear-gradient(135deg,#ffff00,#ffa500); color:#000; border:none;
+            padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;
+            font-size:0.95em; transition:all 0.3s; white-space:nowrap;
+        }
+        .unlock-submit:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(255,255,0,0.4); }
+        .unlock-error { color:#ff6b6b; font-size:0.82em; margin-top:8px; display:none; }
+
+        /* PHASE BADGE */
+        .phase-theme-badge { text-align:center; margin-bottom:14px; }
+        .phase-theme-badge span { display:inline-block; padding:5px 16px; border-radius:50px; font-size:0.8em; font-weight:700; }
+
+        /* HUD */
+        .hud {
+            display:flex; justify-content:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;
+        }
+        .hud-item {
+            background:rgba(255,255,0,0.07); border:1px solid rgba(255,255,0,0.2);
+            padding:10px 20px; border-radius:12px; text-align:center;
+        }
+        .hud-label { color:#0ff; font-size:0.72em; margin-bottom:4px; font-weight:700; }
+        .hud-value { color:#fff; font-size:1.2em; font-weight:bold; }
+        .fuel-bar { width:120px; height:16px; background:#333; border:1px solid #fff; border-radius:4px; overflow:hidden; margin:4px auto; }
+        .fuel-fill { height:100%; background:linear-gradient(90deg,#0f0 0%,#ff0 50%,#f00 100%); transition:width 0.3s; }
+
+        /* CANVAS WRAPPER */
+        .canvas-wrapper { position:relative; margin-bottom:16px; }
+        canvas {
+            border:3px solid rgba(255,255,0,0.5); border-radius:10px;
+            display:block; margin:0 auto; background:#222;
+            box-shadow:0 0 30px rgba(255,255,0,0.2);
+        }
+        .refueling-msg {
+            display:none; position:absolute; top:50%; left:50%;
+            transform:translate(-50%,-50%);
+            background:rgba(0,255,0,0.9); color:#000; padding:16px 32px;
+            border-radius:12px; font-size:1em; font-weight:bold;
+            border:3px solid #ff0; z-index:10; animation:pulse 0.5s infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
+
+        /* BUTTONS */
+        .btn-container { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+        .btn {
+            background:linear-gradient(135deg,#ffff00,#ffa500); color:#000;
+            border:none; padding:12px 26px; border-radius:10px;
+            font-size:0.95em; font-weight:bold; cursor:pointer; transition:all 0.3s;
+            text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+        }
+        .btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(255,255,0,0.4); }
+        .btn-secondary { background:linear-gradient(135deg,#f093fb,#f5576c); color:#fff; }
+        .btn-secondary:hover { box-shadow:0 8px 20px rgba(245,87,108,0.5); }
+
+        /* CONTROLES INFO */
+        .controls-info { background:rgba(0,255,255,0.05); border:1px solid rgba(0,255,255,0.2); border-radius:10px; padding:12px; margin-bottom:16px; text-align:center; }
+        .controls-info p { color:#0ff; font-size:0.8em; margin:3px 0; }
+
+        /* MOBILE CONTROLS */
+        .mobile-controls { display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); gap:20px; z-index:1000; }
+        .mobile-controls.active { display:flex; }
+        .control-btn {
+            width:75px; height:75px; background:rgba(255,255,0,0.8);
+            border:4px solid #fff; border-radius:50%; display:flex;
+            align-items:center; justify-content:center; font-size:28px; color:#000;
+            cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation;
+            transition:all 0.1s; box-shadow:0 4px 15px rgba(0,0,0,0.5);
+        }
+        .control-btn:active,.control-btn.pressed { background:rgba(0,255,255,0.9); transform:scale(0.95); }
+
+        /* GAME OVER */
+        .modal-overlay {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.92); align-items:center; justify-content:center; z-index:1000;
+        }
+        .modal-overlay.show { display:flex; }
+        .modal-content {
+            background:linear-gradient(135deg,#1a1a2e,#16213e); padding:40px; border-radius:20px;
+            text-align:center; border:3px solid #f00; box-shadow:0 0 30px rgba(255,0,0,0.4);
+            max-width:420px; width:90%; animation:popIn 0.4s;
+        }
+        @keyframes popIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+        .modal-content h2 { color:#f00; font-size:2em; margin-bottom:12px; }
+        .modal-content p { color:#ccc; font-size:1.1em; margin:8px 0; }
+
+        /* FOOTER */
+        .isawere-footer {
+            width:100%; max-width:720px; margin-top:10px;
+            background:rgba(5,13,46,0.97); border-top:1px solid rgba(45,140,255,0.25);
+            padding:1.5rem 5%; display:flex; align-items:center; justify-content:space-between;
+            flex-wrap:wrap; gap:1rem; border-radius:16px;
+        }
+        .isawere-footer .logo-text { font-weight:800; font-size:1.2rem; background:linear-gradient(135deg,#00d4ff,#2d8cff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .isawere-footer .footer-copy { font-size:0.78rem; color:#b0bcd4; text-align:center; flex:1; }
+        .isawere-footer .footer-copy span { color:#00d4ff; font-weight:600; }
+        .isawere-footer .ceo-badge { display:flex; align-items:center; gap:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(45,140,255,0.2); padding:0.5rem 1rem; border-radius:50px; }
+        .isawere-footer .ceo-role { font-size:0.65rem; color:#b0bcd4; }
+        .isawere-footer .ceo-name { font-weight:700; font-size:0.82rem; color:#fff; }
+        .isawere-footer .ceo-company { font-size:0.62rem; color:#00d4ff; }
+        .isawere-footer .btn-custom { background:linear-gradient(135deg,#1a5fff,#00d4ff); color:#fff; padding:0.5rem 1.2rem; border-radius:50px; font-weight:600; font-size:0.78rem; text-decoration:none; transition:opacity 0.2s,transform 0.2s; white-space:nowrap; }
+        .isawere-footer .btn-custom:hover { opacity:0.88; transform:translateY(-1px); }
+
+        @media (max-width:768px) {
+            h1 { font-size:1.4em; }
+            .hud { flex-direction:column; align-items:center; gap:10px; }
+            canvas { width:95vw !important; height:auto !important; }
+            .isawere-footer { justify-content:center; text-align:center; }
+            .isawere-footer .footer-copy { flex:unset; width:100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>🏎️ CORRIDA RETRÔ 🏎️</h1>
+    <p class="subtitle">Dirija, desvie e abasteça — sem parar!</p>
+
+    <!-- FASES -->
+    <div class="phases-bar">
+        <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectPhase(1)">🟢 Fase 1 <span class="phase-badge">GRÁTIS</span></button>
+        <button class="phase-btn locked" id="phaseBtn2" onclick="tryUnlock(2)">🔒 Fase 2 <span class="phase-badge">SENHA</span></button>
+        <button class="phase-btn locked" id="phaseBtn3" onclick="tryUnlock(3)">🔒 Fase 3 <span class="phase-badge">SENHA</span></button>
+    </div>
+
+    <!-- UNLOCK BOX -->
+    <div class="unlock-box" id="unlockBox">
+        <div class="unlock-title">🔐 Fase bloqueada — desbloqueie com a senha!</div>
+        <div class="unlock-desc" id="unlockDesc"></div>
+        <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">▶ Assistir no YouTube e pegar a senha</a>
+        <div class="unlock-input-row">
+            <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20" onkeydown="if(event.key==='Enter') checkPassword()">
+            <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+        </div>
+        <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+    </div>
+
+    <!-- PHASE BADGE -->
+    <div class="phase-theme-badge" id="phaseBadge">
+        <span style="background:rgba(255,255,0,0.1);color:#ffff00;border:1.5px solid #ffff00;">🚗 Fase 1 — Estrada Tranquila</span>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <div class="hud-item"><div class="hud-label">VELOCIDADE</div><div class="hud-value" id="speed">0 KM/H</div></div>
+        <div class="hud-item"><div class="hud-label">DISTÂNCIA</div><div class="hud-value" id="distance">0 M</div></div>
+        <div class="hud-item">
+            <div class="hud-label">GASOLINA</div>
+            <div class="fuel-bar"><div class="fuel-fill" id="fuelBar" style="width:100%"></div></div>
+            <div class="hud-value" id="fuel">100%</div>
+        </div>
+    </div>
+
+    <!-- CANVAS -->
+    <div class="canvas-wrapper">
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="refueling-msg" id="refuelingMsg">⛽ ABASTECENDO... <span id="refuelPct">0%</span></div>
+    </div>
+
+    <!-- CONTROLES INFO -->
+    <div class="controls-info">
+        <p>⬅️ Seta Esquerda — mover esquerda &nbsp;|&nbsp; ➡️ Seta Direita — mover direita</p>
+        <p>⬇️ Seta Baixo — frear &nbsp;|&nbsp; ⛽ Pare no POSTO para abastecer!</p>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btn-container">
+        <button class="btn" onclick="restartGame()">🎮 Jogar</button>
+        <button class="btn" onclick="toggleMobile()">📱 Controles</button>
+        <a class="btn btn-secondary" href="jogos.html">🎲 Ver Outros Jogos</a>
+    </div>
+</div>
+
+<footer class="isawere-footer">
+    <div class="logo-text">ISAWERE</div>
+    <div class="footer-copy">
+        © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+        <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+    </div>
+    <div class="ceo-badge">
+        <div>
+            <div class="ceo-role">Fundador & CEO</div>
+            <div class="ceo-name">Ivan Rosas</div>
+            <div class="ceo-company">ISAWERE Sistemas</div>
+        </div>
+    </div>
+    <a class="btn-custom" href="https://wa.me/5583996750560" target="_blank">🎯 Personalizar Jogo</a>
+</footer>
+
+<!-- GAME OVER MODAL -->
+<div class="modal-overlay" id="gameOverModal">
+    <div class="modal-content">
+        <h2>GAME OVER! ⛽</h2>
+        <p>Você ficou sem gasolina!</p>
+        <p>Distância: <strong id="finalDistance" style="color:#ff0;font-size:1.3em;">0</strong> M</p>
+        <div class="btn-container" style="margin-top:20px;">
+            <button class="btn" onclick="closeModal();restartGame();">🔄 Jogar Novamente</button>
+        </div>
+    </div>
+</div>
+
+<!-- MOBILE CONTROLS -->
+<div class="mobile-controls" id="mobileControls">
+    <div class="control-btn" id="btnLeft">◄</div>
+    <div class="control-btn" id="btnRight">►</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CONFIGURAÇÃO DAS FASES
+══════════════════════════════════════ */
+const phaseConfig = {
+    1: { name:'🚗 Fase 1 — Estrada Tranquila', badgeStyle:'background:rgba(255,255,0,0.1);color:#ffff00;border:1.5px solid #ffff00;', password:null, ytLink:null, ytDesc:'', obstacleFreq:0.015, fuelDrain:0.04, baseSpeed:60 },
+    2: { name:'🚙 Fase 2 — Rodovia Movimentada', badgeStyle:'background:rgba(255,165,0,0.1);color:#ffa500;border:1.5px solid #ffa500;', password:'ISAWERE2', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — trânsito pesado e combustível rápido!', obstacleFreq:0.025, fuelDrain:0.065, baseSpeed:80 },
+    3: { name:'🏎️ Fase 3 — Pista de Corrida', badgeStyle:'background:rgba(255,0,0,0.1);color:#ff4444;border:1.5px solid #ff4444;', password:'GAMES3', ytLink:'https://www.youtube.com/@IsawereSistemas', ytDesc:'Pegue agora as senhas no canal da Isawere e desbloqueie as outras fases — velocidade máxima na pista!', obstacleFreq:0.038, fuelDrain:0.09, baseSpeed:100 }
+};
+
+let currentPhase=1, pendingPhase=null;
+let unlockedPhases=JSON.parse(localStorage.getItem('race_unlocked')||'[1]');
+
+function refreshPhaseBtns(){
+    [1,2,3].forEach(n=>{
+        const btn=document.getElementById('phaseBtn'+n);
+        btn.className='phase-btn';
+        if(n===currentPhase) btn.classList.add('active','unlocked');
+        else if(unlockedPhases.includes(n)) btn.classList.add('unlocked');
+        else btn.classList.add('locked');
+    });
+}
+function selectPhase(n){
+    if(!unlockedPhases.includes(n)){tryUnlock(n);return;}
+    currentPhase=n; pendingPhase=null;
+    document.getElementById('unlockBox').classList.remove('show');
+    refreshPhaseBtns(); updatePhaseBadge(); restartGame();
+}
+function tryUnlock(n){
+    if(unlockedPhases.includes(n)){selectPhase(n);return;}
+    pendingPhase=n; const ph=phaseConfig[n];
+    document.getElementById('unlockDesc').textContent=ph.ytDesc;
+    document.getElementById('unlockYtBtn').href=ph.ytLink;
+    document.getElementById('unlockInput').value='';
+    document.getElementById('unlockError').style.display='none';
+    document.getElementById('unlockBox').classList.add('show');
+    document.getElementById('unlockInput').focus();
+}
+function checkPassword(){
+    const inp=document.getElementById('unlockInput').value.trim().toUpperCase();
+    const correct=phaseConfig[pendingPhase].password.toUpperCase();
+    if(inp===correct){
+        if(!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+        localStorage.setItem('race_unlocked',JSON.stringify(unlockedPhases));
+        document.getElementById('unlockBox').classList.remove('show');
+        selectPhase(pendingPhase);
+    } else {
+        document.getElementById('unlockError').style.display='block';
+        const i=document.getElementById('unlockInput');
+        i.style.borderColor='#dc3545';
+        setTimeout(()=>{i.style.borderColor='';},1200);
+    }
+}
+function updatePhaseBadge(){
+    const ph=phaseConfig[currentPhase];
+    document.getElementById('phaseBadge').innerHTML=`<span style="${ph.badgeStyle}">${ph.name}</span>`;
+}
+
+/* ══════════════════════════════════════
+   JOGO DE CORRIDA
+══════════════════════════════════════ */
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+
+let player={x:canvas.width/2-20,y:canvas.height-80,width:40,height:60,speed:5,leftBlinker:false,rightBlinker:false,braking:false};
+let fuel=100,distance=0,speed=60,roadOffset=0;
+let obstacles=[],gasStations=[];
+let gameRunning=true,refueling=false,refuelAmount=0;
+let keys={},touchLeft=false,touchRight=false;
+
+document.addEventListener('keydown',e=>{
+    keys[e.key]=true;
+    if(e.key==='ArrowLeft')player.leftBlinker=true;
+    if(e.key==='ArrowRight')player.rightBlinker=true;
+    if(e.key==='ArrowDown')player.braking=true;
+    if(e.key==='Enter'&&document.getElementById('unlockBox').classList.contains('show'))checkPassword();
+});
+document.addEventListener('keyup',e=>{
+    keys[e.key]=false;
+    if(e.key==='ArrowLeft')player.leftBlinker=false;
+    if(e.key==='ArrowRight')player.rightBlinker=false;
+    if(e.key==='ArrowDown')player.braking=false;
+});
+
+function createObstacle(){
+    const lanes=[150,250,350];
+    const lane=lanes[Math.floor(Math.random()*lanes.length)];
+    obstacles.push({x:lane-20,y:-60,width:40,height:60});
+}
+function createGasStation(){
+    gasStations.push({x:220,y:-120,width:160,height:100});
+}
+
+function drawRoad(){
+    ctx.fillStyle='#333'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#0a0'; ctx.fillRect(0,0,120,canvas.height); ctx.fillRect(480,0,120,canvas.height);
+    ctx.strokeStyle='#ff0'; ctx.lineWidth=5;
+    for(let i=0;i<10;i++){
+        const y=(i*80+roadOffset)%canvas.height;
+        ctx.beginPath(); ctx.moveTo(200,y); ctx.lineTo(200,y+40); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(400,y); ctx.lineTo(400,y+40); ctx.stroke();
+    }
+}
+
+function drawPlayer(){
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(player.x+3,player.y+63,player.width,5);
+    ctx.fillStyle='#e74c3c'; ctx.fillRect(player.x,player.y,player.width,player.height);
+    ctx.fillStyle='#c0392b'; ctx.fillRect(player.x,player.y,player.width,15);
+    ctx.fillStyle='#3498db'; ctx.fillRect(player.x+5,player.y+12,player.width-10,18);
+    ctx.fillStyle='#2980b9'; ctx.fillRect(player.x+5,player.y+35,player.width-10,15);
+    ctx.fillStyle='#000';
+    ctx.fillRect(player.x-5,player.y+8,8,18); ctx.fillRect(player.x+player.width-3,player.y+8,8,18);
+    ctx.fillRect(player.x-5,player.y+34,8,18); ctx.fillRect(player.x+player.width-3,player.y+34,8,18);
+    ctx.fillStyle='#fff'; ctx.fillRect(player.x+5,player.y+2,8,6); ctx.fillRect(player.x+player.width-13,player.y+2,8,6);
+    if(player.leftBlinker&&Date.now()%500<250){
+        ctx.fillStyle='#ff0'; ctx.beginPath();
+        ctx.moveTo(player.x-8,player.y+20); ctx.lineTo(player.x,player.y+15); ctx.lineTo(player.x,player.y+25); ctx.fill();
+    }
+    if(player.rightBlinker&&Date.now()%500<250){
+        ctx.fillStyle='#ff0'; ctx.beginPath();
+        ctx.moveTo(player.x+player.width+8,player.y+20); ctx.lineTo(player.x+player.width,player.y+15); ctx.lineTo(player.x+player.width,player.y+25); ctx.fill();
+    }
+    if(player.braking){
+        ctx.fillStyle='#f00'; ctx.fillRect(player.x+5,player.y+player.height-5,10,4); ctx.fillRect(player.x+player.width-15,player.y+player.height-5,10,4);
+    }
+}
+
+function drawObstacles(){
+    obstacles.forEach(obs=>{
+        ctx.fillStyle='#3498db'; ctx.fillRect(obs.x,obs.y,obs.width,obs.height);
+        ctx.fillStyle='#2c3e50'; ctx.fillRect(obs.x+5,obs.y+10,obs.width-10,20);
+        ctx.fillStyle='#000';
+        ctx.fillRect(obs.x-5,obs.y+10,8,15); ctx.fillRect(obs.x+obs.width-3,obs.y+10,8,15);
+        ctx.fillRect(obs.x-5,obs.y+35,8,15); ctx.fillRect(obs.x+obs.width-3,obs.y+35,8,15);
+    });
+}
+
+function drawGasStations(){
+    gasStations.forEach(s=>{
+        ctx.fillStyle='#e74c3c'; ctx.fillRect(s.x,s.y,s.width,s.height);
+        ctx.fillStyle='#c0392b'; ctx.fillRect(s.x-10,s.y,s.width+20,15);
+        ctx.fillStyle='#f39c12';
+        ctx.fillRect(s.x+20,s.y+20,30,50); ctx.fillRect(s.x+110,s.y+20,30,50);
+        ctx.fillStyle='#000'; ctx.fillRect(s.x+25,s.y+25,20,20); ctx.fillRect(s.x+115,s.y+25,20,20);
+        ctx.fillStyle='#0f0'; ctx.fillRect(s.x+27,s.y+27,16,16); ctx.fillRect(s.x+117,s.y+27,16,16);
+        ctx.fillStyle='#fff'; ctx.font='bold 16px Arial'; ctx.fillText('⛽ GAS',s.x+50,s.y+50);
+        ctx.font='10px Arial'; ctx.fillText('R$ 5,99',s.x+55,s.y+65);
+    });
+}
+
+function collision(r1,r2){
+    return r1.x<r2.x+r2.width&&r1.x+r1.width>r2.x&&r1.y<r2.y+r2.height&&r1.y+r1.height>r2.y;
+}
+
+function updateHUD(){
+    const cfg=phaseConfig[currentPhase];
+    document.getElementById('speed').textContent=cfg.baseSpeed+' KM/H';
+    document.getElementById('distance').textContent=Math.floor(distance)+'M';
+    document.getElementById('fuel').textContent=Math.floor(fuel)+'%';
+    document.getElementById('fuelBar').style.width=fuel+'%';
+}
+
+function endGame(){
+    gameRunning=false;
+    document.getElementById('finalDistance').textContent=Math.floor(distance)+'M';
+    document.getElementById('gameOverModal').classList.add('show');
+}
+function closeModal(){ document.getElementById('gameOverModal').classList.remove('show'); }
+
+function restartGame(){
+    fuel=100; distance=0; speed=60; obstacles=[]; gasStations=[];
+    player.x=canvas.width/2-20; player.leftBlinker=false; player.rightBlinker=false; player.braking=false;
+    refueling=false; gameRunning=true;
+    document.getElementById('gameOverModal').classList.remove('show');
+    document.getElementById('refuelingMsg').style.display='none';
+    gameLoop();
+}
+
+function gameLoop(){
+    if(!gameRunning)return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawRoad(); drawGasStations(); drawObstacles(); drawPlayer();
+    const cfg=phaseConfig[currentPhase];
+    if(!refueling){
+        if((keys['ArrowLeft']||touchLeft)&&player.x>120){player.x-=player.speed;player.leftBlinker=true;}
+        else player.leftBlinker=false;
+        if((keys['ArrowRight']||touchRight)&&player.x<440){player.x+=player.speed;player.rightBlinker=true;}
+        else player.rightBlinker=keys['ArrowRight']||touchRight;
+        player.braking=keys['ArrowDown']||false;
+        roadOffset+=5;
+    }
+    obstacles.forEach((obs,i)=>{
+        if(!refueling)obs.y+=3;
+        if(obs.y>canvas.height){obstacles.splice(i,1);distance+=10;}
+        if(collision(player,obs)){fuel-=20;obstacles.splice(i,1);}
+    });
+    gasStations.forEach((s,i)=>{
+        if(!refueling)s.y+=3;
+        if(s.y>canvas.height)gasStations.splice(i,1);
+        if(collision(player,s)&&!refueling){
+            refueling=true;refuelAmount=0;
+            document.getElementById('refuelingMsg').style.display='block';
+            const iv=setInterval(()=>{
+                if(refuelAmount<50){refuelAmount+=2;fuel=Math.min(100,fuel+2);document.getElementById('refuelPct').textContent=Math.floor((refuelAmount/50)*100)+'%';}
+                else{clearInterval(iv);refueling=false;gasStations.splice(i,1);document.getElementById('refuelingMsg').style.display='none';}
+            },100);
+        }
+    });
+    if(!refueling&&Math.random()<cfg.obstacleFreq)createObstacle();
+    if(!refueling&&Math.random()<0.005&&fuel<40&&gasStations.length===0)createGasStation();
+    if(!refueling){fuel-=cfg.fuelDrain;distance+=0.1;}
+    if(fuel<=0)endGame();
+    updateHUD();
+    requestAnimationFrame(gameLoop);
+}
+
+/* ── Mobile ── */
+const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768;
+if(isMobile)document.getElementById('mobileControls').classList.add('active');
+function toggleMobile(){ document.getElementById('mobileControls').classList.toggle('active'); }
+
+const bL=document.getElementById('btnLeft'), bR=document.getElementById('btnRight');
+bL.addEventListener('touchstart',e=>{e.preventDefault();touchLeft=true;bL.classList.add('pressed');});
+bL.addEventListener('touchend',e=>{e.preventDefault();touchLeft=false;bL.classList.remove('pressed');});
+bR.addEventListener('touchstart',e=>{e.preventDefault();touchRight=true;bR.classList.add('pressed');});
+bR.addEventListener('touchend',e=>{e.preventDefault();touchRight=false;bR.classList.remove('pressed');});
+bL.addEventListener('mousedown',()=>{touchLeft=true;bL.classList.add('pressed');});
+bL.addEventListener('mouseup',()=>{touchLeft=false;bL.classList.remove('pressed');});
+bR.addEventListener('mousedown',()=>{touchRight=true;bR.classList.add('pressed');});
+bR.addEventListener('mouseup',()=>{touchRight=false;bR.classList.remove('pressed');});
+document.getElementById('mobileControls').addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+/* ── Init ── */
+refreshPhaseBtns(); updatePhaseBadge(); gameLoop();
+</script>
+</body>
+</html>

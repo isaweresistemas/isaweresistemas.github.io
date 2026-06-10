@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❌⭕ Jogo da Velha - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 { text-align: center; color: #667eea; font-size: 2.5em; margin-bottom: 10px; }
+
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .score-item { text-align: center; }
+        .score-label { font-size: 0.9em; opacity: 0.9; }
+        .score-value { font-size: 2em; font-weight: bold; }
+
+        .turn-indicator {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            font-size: 4em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .cell:hover:not(.taken) {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .cell.taken { cursor: not-allowed; }
+        .cell.x { color: #e74c3c; }
+        .cell.o { color: #3498db; }
+
+        .cell.winner {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            animation: winPulse 0.5s infinite;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+        .btn-secondary { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            width: 100%;
+            margin-top: 40px;
+            background: rgba(5,13,46,0.97);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .isawere-footer .logo-text {
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .isawere-footer .footer-copy {
+            font-size: 0.78rem;
+            color: #b0bcd4;
+            text-align: center;
+            flex: 1;
+        }
+
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+
+        .isawere-footer .ceo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .isawere-footer .ceo-role { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .cell { font-size: 3em; }
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>❌⭕ Jogo da Velha</h1>
+        <p class="subtitle">Clássico jogo para 2 jogadores!</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">JOGADOR X</div>
+                <div class="score-value" id="scoreX">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">EMPATES</div>
+                <div class="score-value" id="scoreDraw">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">JOGADOR O</div>
+                <div class="score-value" id="scoreO">0</div>
+            </div>
+        </div>
+
+        <div class="turn-indicator" id="turnIndicator">Vez do Jogador ❌</div>
+
+        <div class="board" id="board"></div>
+
+        <div class="btn-container">
+            <button class="btn" onclick="resetGame()">🔄 Nova Partida</button>
+            <button class="btn btn-secondary" onclick="resetScore()">📊 Zerar Placar</button>
+            <a class="btn" href="../jogos.html">🎮 Ver Outros Jogos</a>
+        </div>
+    </div>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="font-size:2.5em;margin-bottom:20px;"></h2>
+            <p id="modalMessage" style="font-size:1.5em;margin-bottom:30px;"></p>
+            <button class="btn" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        let board = ['','','','','','','','',''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let scores = { X: 0, O: 0, draw: 0 };
+
+        const winningConditions = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        function initializeBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleCellClick);
+                boardEl.appendChild(cell);
+            }
+        }
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const index = cell.dataset.index;
+            if (board[index] !== '' || !gameActive) return;
+            board[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            cell.classList.add('taken', currentPlayer.toLowerCase());
+            if (checkWinner()) {
+                scores[currentPlayer]++;
+                updateScore();
+                highlightWinningCells();
+                setTimeout(() => showModal('Fim de Jogo!', `Jogador ${currentPlayer} venceu! 🎉`), 500);
+                gameActive = false;
+            } else if (board.every(c => c !== '')) {
+                scores.draw++;
+                updateScore();
+                setTimeout(() => showModal('Fim de Jogo!', 'Empate! 🤝'), 500);
+                gameActive = false;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateTurnIndicator();
+            }
+        }
+
+        function checkWinner() {
+            return winningConditions.some(([a,b,c]) => board[a] && board[a] === board[b] && board[a] === board[c]);
+        }
+
+        function highlightWinningCells() {
+            winningConditions.forEach(condition => {
+                const [a,b,c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    document.querySelectorAll('.cell').forEach((cell, i) => {
+                        if (condition.includes(i)) cell.classList.add('winner');
+                    });
+                }
+            });
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            resetGame();
+        }
+
+        function resetGame() {
+            board = ['','','','','','','','',''];
+            currentPlayer = 'X';
+            gameActive = true;
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('taken','x','o','winner');
+            });
+            updateTurnIndicator();
+        }
+
+        function resetScore() {
+            if (confirm('Deseja realmente zerar o placar?')) {
+                scores = { X: 0, O: 0, draw: 0 };
+                updateScore();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('scoreX').textContent = scores.X;
+            document.getElementById('scoreO').textContent = scores.O;
+            document.getElementById('scoreDraw').textContent = scores.draw;
+        }
+
+        function updateTurnIndicator() {
+            const el = document.getElementById('turnIndicator');
+            el.textContent = `Vez do Jogador ${currentPlayer === 'X' ? '❌' : '⭕'}`;
+            el.style.color = currentPlayer === 'X' ? '#e74c3c' : '#3498db';
+        }
+
+        initializeBoard();
+        updateScore();
+    </script>
+</body>
+</html>

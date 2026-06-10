@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🫧 Bolhas Estouradinhas - Baby Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #56ccf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── FASES ── */
+        .phases-bar {
+            display: flex; gap: 10px; justify-content: center;
+            margin-bottom: 18px; flex-wrap: wrap;
+        }
+        .phase-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 50px;
+            border: 2px solid transparent;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 0.9em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .phase-btn.active {
+            background: linear-gradient(135deg, #ff6b9d, #c06c84);
+            color: white; box-shadow: 0 4px 15px rgba(255,107,157,0.5);
+            transform: translateY(-2px);
+        }
+        .phase-btn.unlocked:not(.active) {
+            background: white; border-color: #ff6b9d; color: #ff6b9d;
+        }
+        .phase-btn.soft-locked {
+            background: rgba(255,255,255,0.4); color: #fff;
+            border-color: rgba(255,255,255,0.6); cursor: pointer;
+        }
+        .phase-btn.soft-locked:hover { background: rgba(255,255,255,0.6); }
+        .phase-badge {
+            font-size: 0.7em; padding: 2px 8px; border-radius: 50px;
+            background: rgba(255,255,255,0.25); font-weight: 600;
+        }
+
+        /* ── UNLOCK BOX ── */
+        .unlock-box {
+            display: none; max-width: 500px; width: 90%;
+            background: rgba(255,255,255,0.92);
+            border: 2px solid #ff6b9d;
+            border-radius: 20px; padding: 22px;
+            margin-bottom: 18px; text-align: center;
+        }
+        .unlock-box.show { display: block; }
+        .unlock-title { font-size: 1.05em; font-weight: 800; color: #c06c84; margin-bottom: 6px; }
+        .unlock-desc { font-size: 0.85em; color: #666; margin-bottom: 14px; line-height: 1.5; }
+        .unlock-yt-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #ff0000; color: white; padding: 10px 22px;
+            border-radius: 50px; font-weight: 700; font-size: 0.88em;
+            text-decoration: none; transition: all 0.3s; margin-bottom: 16px;
+        }
+        .unlock-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+        .unlock-input-row { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+        .unlock-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #ff6b9d;
+            border-radius: 10px; font-size: 1em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            outline: none; text-align: center;
+        }
+        .unlock-input:focus { border-color: #c06c84; }
+        .unlock-submit {
+            background: linear-gradient(135deg, #ff6b9d, #c06c84);
+            color: white; border: none; padding: 10px 18px;
+            border-radius: 10px; font-weight: 700; cursor: pointer;
+            font-size: 0.9em; transition: all 0.3s; white-space: nowrap;
+        }
+        .unlock-submit:hover { transform: translateY(-2px); }
+        .unlock-error { color: #dc3545; font-size: 0.82em; margin-top: 8px; display: none; }
+
+        .game-container {
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .score {
+            background: white;
+            color: #ff6b9d;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 2em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        canvas {
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            max-width: 100%;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+
+        /* ── ISAWERE FOOTER ── */
+        .isawere-footer {
+            width: 100%;
+            margin-top: 40px;
+            background: rgba(5,13,46,0.92);
+            border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+        }
+
+        .isawere-footer .logo-text {
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #00d4ff, #2d8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .isawere-footer .footer-copy {
+            font-size: 0.78rem;
+            color: #b0bcd4;
+            text-align: center;
+            flex: 1;
+        }
+
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+
+        .isawere-footer .ceo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(45,140,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .isawere-footer .ceo-badge .ceo-role { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-badge .ceo-name { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-badge .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+
+        .isawere-footer .btn-custom {
+            background: linear-gradient(135deg, #1a5fff, #00d4ff);
+            color: #fff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .score { font-size: 1.5em; padding: 15px 30px; }
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🫧 Bolhas Estouradinhas 🫧</h1>
+
+        <!-- FASES -->
+        <div class="phases-bar">
+            <button class="phase-btn active unlocked" id="phaseBtn1" onclick="selectPhase(1)">
+                🟢 Fase 1 <span class="phase-badge">GRÁTIS</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn2" onclick="tryUnlock(2)">
+                🎈 Fase 2 <span class="phase-badge">SENHA</span>
+            </button>
+            <button class="phase-btn soft-locked" id="phaseBtn3" onclick="tryUnlock(3)">
+                🌈 Fase 3 <span class="phase-badge">SENHA</span>
+            </button>
+        </div>
+
+        <!-- UNLOCK BOX -->
+        <div class="unlock-box" id="unlockBox">
+            <div class="unlock-title">🎬 Pegue a senha no canal da ISAWERE e desbloqueie!</div>
+            <div class="unlock-desc" id="unlockDesc"></div>
+            <a class="unlock-yt-btn" id="unlockYtBtn" href="#" target="_blank">
+                ▶ Assistir no YouTube e pegar a senha
+            </a><br>
+            <div class="unlock-input-row">
+                <input class="unlock-input" type="text" id="unlockInput" placeholder="SENHA" maxlength="20"
+                       onkeydown="if(event.key==='Enter') checkPassword()">
+                <button class="unlock-submit" onclick="checkPassword()">Desbloquear 🔓</button>
+            </div>
+            <div class="unlock-error" id="unlockError">❌ Senha incorreta. Assista ao vídeo para descobrir!</div>
+        </div>
+
+        <div class="score">
+            Pontos: <span id="scoreValue">0</span> 🌟
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+        <div class="controls">
+            <button class="btn" onclick="location.reload()">🔄 Novo Jogo</button>
+            <a class="btn" href="../jogos.html">🎮 Ver Outros Jogos</a>
+        </div>
+    </div>
+
+    <!-- ISAWERE FOOTER -->
+    <footer class="isawere-footer">
+        <div class="logo-text">ISAWERE</div>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="https://wa.me/5583996750560" target="_blank">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        /* ═══════════════════════════════════════════
+           CONFIGURAÇÃO DAS FASES
+        ═══════════════════════════════════════════ */
+        const phaseConfig = {
+            1: {
+                maxBubbles: 12, spawnInterval: 900, minSize: 30, maxSize: 70,
+                minSpeed: 0.5, maxSpeed: 1.5, pointsPerBubble: 10,
+                ytLink: null, password: null,
+                desc: ''
+            },
+            2: {
+                maxBubbles: 18, spawnInterval: 600, minSize: 20, maxSize: 80,
+                minSpeed: 1.0, maxSpeed: 2.5, pointsPerBubble: 20,
+                password: 'BOLHAS2',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'Na Fase 2 as bolhas ficam mais rápidas e você ganha mais pontos! Assista ao nosso vídeo no YouTube, pegue a senha e venha se divertir!'
+            },
+            3: {
+                maxBubbles: 25, spawnInterval: 350, minSize: 15, maxSize: 90,
+                minSpeed: 1.8, maxSpeed: 3.5, pointsPerBubble: 30,
+                password: 'SUPER3',
+                ytLink: 'https://www.youtube.com/@IsawereSistemas',
+                desc: 'A Fase 3 é o desafio máximo: bolhas minúsculas e gigantes, velocidade turbinada e pontuação triplicada! Pegue a senha no canal da ISAWERE!'
+            }
+        };
+
+        let currentPhase = 1;
+        let pendingPhase = null;
+        let unlockedPhases = JSON.parse(localStorage.getItem('bolhas_unlocked') || '[1]');
+        let score = 0;
+        let bubbles = [];
+        let spawnTimer = null;
+
+        const colors = ['#ff6b9d','#c06c84','#56ccf2','#a8e6cf','#ffd93d','#ff6bcb','#6bcbff','#ffb347','#b8ff6b','#ff9a6b'];
+
+        /* ── SISTEMA DE FASES ── */
+        function refreshPhaseBtns() {
+            [1,2,3].forEach(n => {
+                const btn = document.getElementById('phaseBtn' + n);
+                btn.className = 'phase-btn';
+                if (n === currentPhase) btn.classList.add('active', 'unlocked');
+                else if (unlockedPhases.includes(n)) btn.classList.add('unlocked');
+                else btn.classList.add('soft-locked');
+            });
+        }
+
+        function selectPhase(n) {
+            if (!unlockedPhases.includes(n)) { tryUnlock(n); return; }
+            currentPhase = n;
+            pendingPhase = null;
+            document.getElementById('unlockBox').classList.remove('show');
+            refreshPhaseBtns();
+            restartGame();
+        }
+
+        function tryUnlock(n) {
+            if (unlockedPhases.includes(n)) { selectPhase(n); return; }
+            pendingPhase = n;
+            const cfg = phaseConfig[n];
+            document.getElementById('unlockDesc').textContent = cfg.desc;
+            document.getElementById('unlockYtBtn').href = cfg.ytLink;
+            document.getElementById('unlockInput').value = '';
+            document.getElementById('unlockError').style.display = 'none';
+            document.getElementById('unlockBox').classList.add('show');
+            document.getElementById('unlockInput').focus();
+        }
+function checkPassword() {
+    const input = document.getElementById('unlockInput').value.trim().toUpperCase();
+    fetch('../senhas.json')
+      .then(r => r.json())
+      .then(data => {
+        const correct = (data['bolhas_fase' + pendingPhase] || '').toUpperCase();
+        if (input === correct) {
+            if (!unlockedPhases.includes(pendingPhase)) unlockedPhases.push(pendingPhase);
+            localStorage.setItem('bolhas_unlocked', JSON.stringify(unlockedPhases));
+            document.getElementById('unlockBox').classList.remove('show');
+            selectPhase(pendingPhase);
+        } else {
+            document.getElementById('unlockError').style.display = 'block';
+            const inp = document.getElementById('unlockInput');
+            inp.style.borderColor = '#dc3545';
+            setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+        }
+      });  // 👈 este }); estava faltando
+}
+        /* ── JOGO ── */
+        function createBubble() {
+            const cfg = phaseConfig[currentPhase];
+            const size = Math.random() * (cfg.maxSize - cfg.minSize) + cfg.minSize;
+            bubbles.push({
+                x: Math.random() * (canvas.width - size * 2) + size,
+                y: canvas.height + size,
+                size,
+                speed: Math.random() * (cfg.maxSpeed - cfg.minSpeed) + cfg.minSpeed,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                popped: false,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: (Math.random() - 0.5) * 0.05
+            });
+        }
+
+        function drawBubble(bubble) {
+            if (bubble.popped) return;
+            bubble.wobble += bubble.wobbleSpeed;
+            const wx = bubble.x + Math.sin(bubble.wobble) * 3;
+            const gradient = ctx.createRadialGradient(
+                wx - bubble.size / 3, bubble.y - bubble.size / 3, 0,
+                wx, bubble.y, bubble.size
+            );
+            gradient.addColorStop(0, 'rgba(255,255,255,0.85)');
+            gradient.addColorStop(0.45, bubble.color + 'bb');
+            gradient.addColorStop(1, bubble.color);
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(wx, bubble.y, bubble.size, 0, Math.PI * 2);
+            ctx.fill();
+            // brilho
+            ctx.fillStyle = 'rgba(255,255,255,0.55)';
+            ctx.beginPath();
+            ctx.arc(wx - bubble.size / 3.5, bubble.y - bubble.size / 3.5, bubble.size / 3.8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cfg = phaseConfig[currentPhase];
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                const b = bubbles[i];
+                if (!b.popped) {
+                    b.y -= b.speed;
+                    drawBubble(b);
+                    if (b.y < -b.size) bubbles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        function popBubbleAt(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (clientX - rect.left) * scaleX;
+            const y = (clientY - rect.top) * scaleY;
+            const cfg = phaseConfig[currentPhase];
+            bubbles.forEach(bubble => {
+                if (!bubble.popped) {
+                    const dx = x - bubble.x;
+                    const dy = y - bubble.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < bubble.size) {
+                        bubble.popped = true;
+                        score += cfg.pointsPerBubble;
+                        document.getElementById('scoreValue').textContent = score;
+                        canvas.style.transform = 'scale(1.015)';
+                        setTimeout(() => canvas.style.transform = 'scale(1)', 80);
+                    }
+                }
+            });
+        }
+
+        canvas.addEventListener('click', e => popBubbleAt(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const t = e.touches[0];
+            popBubbleAt(t.clientX, t.clientY);
+        }, { passive: false });
+
+        function restartGame() {
+            bubbles = [];
+            score = 0;
+            document.getElementById('scoreValue').textContent = 0;
+            if (spawnTimer) clearInterval(spawnTimer);
+            const cfg = phaseConfig[currentPhase];
+            spawnTimer = setInterval(() => {
+                if (bubbles.filter(b => !b.popped).length < cfg.maxBubbles) createBubble();
+            }, cfg.spawnInterval);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('unlockBox').classList.contains('show')) checkPassword();
+        });
+
+        /* INIT */
+        refreshPhaseBtns();
+        restartGame();
+        update();
+    </script>
+</body>
+</html>

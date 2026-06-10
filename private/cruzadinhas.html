@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 Cruzadinha - Isawere Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .game-container {
+            background: white; border-radius: 20px; padding: 30px;
+            max-width: 1200px; width: 100%; margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 20px;
+        }
+        h1 { text-align: center; color: #11998e; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .game-area { display: grid; grid-template-columns: 1fr 350px; gap: 30px; margin-bottom: 30px; }
+        .grid-container { background: #f8f9fa; padding: 20px; border-radius: 15px; border: 3px solid #11998e; }
+        .crossword-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; max-width: 500px; margin: 0 auto; }
+        .cell {
+            aspect-ratio: 1; background: white; border: 2px solid #ddd;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; font-weight: bold; text-transform: uppercase;
+            position: relative; cursor: pointer; transition: all 0.3s;
+        }
+        .cell.black  { background: #333; cursor: default; }
+        .cell.active { background: #b3f0e6; border-color: #11998e; }
+        .cell input { width: 100%; height: 100%; border: none; text-align: center; font-size: 1em; font-weight: bold; text-transform: uppercase; background: transparent; }
+        .cell input:focus { outline: none; background: #e6f9f5; }
+        .cell-number { position: absolute; top: 2px; left: 3px; font-size: 0.5em; color: #666; }
+        .clues-container { background: #f8f9fa; padding: 20px; border-radius: 15px; border: 3px solid #11998e; max-height: 600px; overflow-y: auto; }
+        .clues-section { margin-bottom: 25px; }
+        .clues-section h3 { color: #11998e; margin-bottom: 15px; font-size: 1.3em; }
+        .clue-item { padding: 10px; margin-bottom: 10px; background: white; border-radius: 8px; border-left: 4px solid #11998e; cursor: pointer; transition: all 0.3s; }
+        .clue-item:hover { background: #e6f9f5; transform: translateX(5px); }
+        .clue-item.completed { background: #d4edda; border-left-color: #28a745; }
+        .clue-number { font-weight: bold; color: #11998e; margin-right: 8px; }
+        .btn-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white; border: none; padding: 15px 30px; border-radius: 10px;
+            font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(17,153,142,0.5); }
+        .btn-secondary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-secondary:hover { box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+
+        /* ISAWERE FOOTER */
+        .isawere-footer {
+            width: 100%; max-width: 1200px; margin-top: 10px;
+            background: rgba(5,13,46,0.97); border-top: 1px solid rgba(45,140,255,0.25);
+            padding: 1.5rem 5%; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            border-radius: 16px; font-family: 'Segoe UI', sans-serif;
+        }
+        .isawere-footer .logo-text { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, #00d4ff, #2d8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .isawere-footer .footer-copy { font-size: 0.78rem; color: #b0bcd4; text-align: center; flex: 1; }
+        .isawere-footer .footer-copy span { color: #00d4ff; font-weight: 600; }
+        .isawere-footer .ceo-badge { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(45,140,255,0.2); padding: 0.5rem 1rem; border-radius: 50px; }
+        .isawere-footer .ceo-role    { font-size: 0.65rem; color: #b0bcd4; }
+        .isawere-footer .ceo-name    { font-weight: 700; font-size: 0.82rem; color: #fff; }
+        .isawere-footer .ceo-company { font-size: 0.62rem; color: #00d4ff; }
+        .isawere-footer .btn-custom { background: linear-gradient(135deg, #1a5fff, #00d4ff); color: #fff; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 600; font-size: 0.78rem; text-decoration: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; }
+        .isawere-footer .btn-custom:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        @media (max-width: 968px) {
+            .game-area { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8em; }
+            .crossword-grid { grid-template-columns: repeat(10, 30px); }
+            .cell { font-size: 1em; }
+        }
+        @media (max-width: 768px) {
+            .isawere-footer { justify-content: center; text-align: center; }
+            .isawere-footer .footer-copy { flex: unset; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🧩 Cruzadinha</h1>
+        <p class="subtitle">Preencha todas as palavras usando as dicas!</p>
+        <div class="game-area">
+            <div class="grid-container">
+                <div class="crossword-grid" id="grid"></div>
+            </div>
+            <div class="clues-container">
+                <div class="clues-section">
+                    <h3>➡️ HORIZONTAL</h3>
+                    <div id="horizontalClues"></div>
+                </div>
+                <div class="clues-section">
+                    <h3>⬇️ VERTICAL</h3>
+                    <div id="verticalClues"></div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="btn" onclick="checkAnswers()">✅ Verificar Respostas</button>
+            <button class="btn" onclick="clearGrid()">🗑️ Limpar Tudo</button>
+            <a class="btn btn-secondary" href="../jogos.html">🎲 Ver Outros Jogos</a>
+        </div>
+    </div>
+
+    <footer class="isawere-footer">
+        <a class="logo-text" href="https://www.isawere.com.br" target="_blank" style="text-decoration:none;">ISAWERE</a>
+        <div class="footer-copy">
+            © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
+            <span style="font-size:0.7rem;color:rgba(176,188,212,0.55);">Jogos educativos personalizados para escolas e negócios.</span>
+        </div>
+        <div class="ceo-badge">
+            <div>
+                <div class="ceo-role">Fundador & CEO</div>
+                <div class="ceo-name">Ivan Rosas</div>
+                <div class="ceo-company">ISAWERE Sistemas</div>
+            </div>
+        </div>
+        <a class="btn-custom" href="../jogos.html#contact">🎯 Personalizar Jogo</a>
+    </footer>
+
+    <script>
+        const gridLayout = [
+            [1, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [3, 0, 0, 0, 0, 4, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 5, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [6, 0, 0, 0, 0, 0, 7, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+
+        const words = {
+            horizontal: [
+                { number: 1, row: 0, col: 0, word: "GATO", clue: "Animal doméstico que mia" },
+                { number: 3, row: 3, col: 0, word: "CASA", clue: "Lugar onde moramos" },
+                { number: 5, row: 5, col: 2, word: "SOL",  clue: "Estrela que ilumina o dia" },
+                { number: 6, row: 7, col: 0, word: "AMOR", clue: "Sentimento de carinho profundo" }
+            ],
+            vertical: [
+                { number: 1, row: 0, col: 0, word: "GRAMA", clue: "Vegetação verde no jardim" },
+                { number: 2, row: 0, col: 3, word: "TOCA",  clue: "Abrigo de animais" },
+                { number: 4, row: 3, col: 5, word: "ARARA", clue: "Ave colorida brasileira" },
+                { number: 7, row: 7, col: 6, word: "RIO",   clue: "Curso de água natural" }
+            ]
+        };
+
+        let grid = [];
+
+        function isCellUsed(row, col) {
+            for (let w of words.horizontal)
+                if (row === w.row && col >= w.col && col < w.col + w.word.length) return true;
+            for (let w of words.vertical)
+                if (col === w.col && row >= w.row && row < w.row + w.word.length) return true;
+            return false;
+        }
+
+        function initializeGrid() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = ''; grid = [];
+            for (let row = 0; row < 10; row++) {
+                grid[row] = [];
+                for (let col = 0; col < 10; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row; cell.dataset.col = col;
+                    if (gridLayout[row][col] === 0 && !isCellUsed(row, col)) {
+                        cell.classList.add('black');
+                    } else {
+                        const input = document.createElement('input');
+                        input.maxLength = 1;
+                        input.addEventListener('input',   e => handleInput(e, row, col));
+                        input.addEventListener('keydown', e => handleKeyDown(e, row, col));
+                        cell.appendChild(input);
+                        if (gridLayout[row][col] > 0) {
+                            const num = document.createElement('div');
+                            num.className = 'cell-number';
+                            num.textContent = gridLayout[row][col];
+                            cell.appendChild(num);
+                        }
+                    }
+                    grid[row][col] = cell;
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function initializeClues() {
+            const hDiv = document.getElementById('horizontalClues');
+            const vDiv = document.getElementById('verticalClues');
+            hDiv.innerHTML = ''; vDiv.innerHTML = '';
+            words.horizontal.forEach(w => {
+                const d = document.createElement('div');
+                d.className = 'clue-item';
+                d.innerHTML = '<span class="clue-number">' + w.number + '.</span>' + w.clue + ' (' + w.word.length + ' letras)';
+                d.onclick = () => highlightWord(w, 'horizontal');
+                hDiv.appendChild(d);
+            });
+            words.vertical.forEach(w => {
+                const d = document.createElement('div');
+                d.className = 'clue-item';
+                d.innerHTML = '<span class="clue-number">' + w.number + '.</span>' + w.clue + ' (' + w.word.length + ' letras)';
+                d.onclick = () => highlightWord(w, 'vertical');
+                vDiv.appendChild(d);
+            });
+        }
+
+        function highlightWord(word, dir) {
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+            if (dir === 'horizontal') {
+                for (let i = 0; i < word.word.length; i++) grid[word.row][word.col + i].classList.add('active');
+                grid[word.row][word.col].querySelector('input') && grid[word.row][word.col].querySelector('input').focus();
+            } else {
+                for (let i = 0; i < word.word.length; i++) grid[word.row + i][word.col].classList.add('active');
+                grid[word.row][word.col].querySelector('input') && grid[word.row][word.col].querySelector('input').focus();
+            }
+        }
+
+        function handleInput(e, row, col) {
+            e.target.value = e.target.value.toUpperCase();
+            if (e.target.value && col < 9) { var n = grid[row][col+1].querySelector('input'); if(n) n.focus(); }
+        }
+
+        function handleKeyDown(e, row, col) {
+            var prev, next, up, down;
+            if (e.key === 'Backspace'  && !e.target.value && col > 0) { prev = grid[row][col-1].querySelector('input'); if(prev) prev.focus(); }
+            else if (e.key === 'ArrowRight' && col < 9) { next = grid[row][col+1].querySelector('input'); if(next) next.focus(); }
+            else if (e.key === 'ArrowLeft'  && col > 0) { prev = grid[row][col-1].querySelector('input'); if(prev) prev.focus(); }
+            else if (e.key === 'ArrowDown'  && row < 9) { down = grid[row+1][col].querySelector('input'); if(down) down.focus(); }
+            else if (e.key === 'ArrowUp'    && row > 0) { up   = grid[row-1][col].querySelector('input'); if(up)   up.focus(); }
+        }
+
+        function checkAnswers() {
+            var correct = 0, total = 0;
+            function check(w, getCell) {
+                for (var i = 0; i < w.word.length; i++) {
+                    total++;
+                    var input = getCell(i).querySelector('input');
+                    if (!input) continue;
+                    if (input.value.toUpperCase() === w.word[i]) {
+                        input.style.background = '#d4edda'; input.style.color = '#155724'; correct++;
+                    } else {
+                        input.style.background = '#f8d7da'; input.style.color = '#721c24';
+                    }
+                }
+            }
+            words.horizontal.forEach(function(w){ check(w, function(i){ return grid[w.row][w.col+i]; }); });
+            words.vertical.forEach(function(w){   check(w, function(i){ return grid[w.row+i][w.col]; }); });
+            var pct = Math.round(correct / total * 100);
+            setTimeout(function(){
+                alert(pct === 100
+                    ? '🎉 PARABÉNS! 🎉\n\nVocê acertou todas as palavras!\nPontuação: ' + pct + '%'
+                    : 'Pontuação: ' + pct + '%\nAcertos: ' + correct + '/' + total + '\n\nContinue tentando!');
+            }, 300);
+        }
+
+        function clearGrid() {
+            if (confirm('Deseja realmente limpar todas as respostas?')) {
+                document.querySelectorAll('input').forEach(function(inp){
+                    inp.value = ''; inp.style.background = 'transparent'; inp.style.color = '#000';
+                });
+            }
+        }
+
+        initializeGrid();
+        initializeClues();
+    </script>
+</body>
+</html>
