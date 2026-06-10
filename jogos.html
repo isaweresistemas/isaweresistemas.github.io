@@ -386,6 +386,64 @@
     .game-name { font-size: 0.85rem; }
     .game-desc { display: none; }
   }
+
+  /* ══════════════════════════════
+     YOUTUBE TUTI BANNER
+  ══════════════════════════════ */
+  .yt-tuti-banner {
+    margin: 0 5% 2.5rem;
+    background: linear-gradient(135deg, #1a0a0a 0%, #2d0000 40%, #1a0a1a 100%);
+    border: 1px solid rgba(255,60,60,0.4);
+    border-radius: 24px; padding: 1.8rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(255,0,0,0.12);
+  }
+  .yt-tuti-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 90% 50%, rgba(255,60,60,0.1), transparent 60%);
+    pointer-events: none;
+  }
+  .yt-tuti-pulse {
+    position: absolute; top: 12px; right: 16px;
+    display: flex; align-items: center; gap: 5px;
+    background: #ff0000; color: #fff;
+    font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 50px;
+    animation: ytPulse 2s ease-in-out infinite;
+  }
+  @keyframes ytPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0.5); }
+    50%       { box-shadow: 0 0 0 6px rgba(255,0,0,0); }
+  }
+  .yt-tuti-pulse::before { content: '●'; font-size: 0.55rem; }
+  .yt-tuti-icon {
+    font-size: 3.2rem; flex-shrink: 0;
+    filter: drop-shadow(0 4px 12px rgba(255,100,100,0.4));
+    animation: tutiFloat 3s ease-in-out infinite alternate;
+  }
+  @keyframes tutiFloat {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-6px); }
+  }
+  .yt-tuti-text { flex: 1; min-width: 200px; position: relative; }
+  .yt-tuti-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #ff6b6b; margin-bottom: 0.35rem; }
+  .yt-tuti-title { font-family: 'Nunito', sans-serif; font-size: clamp(1rem, 2.5vw, 1.35rem); font-weight: 900; line-height: 1.2; margin-bottom: 0.4rem; color: #fff; }
+  .yt-tuti-title span { background: linear-gradient(135deg, #ff6b6b, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .yt-tuti-desc { font-size: 0.82rem; color: var(--gray-soft); line-height: 1.55; }
+  .yt-tuti-btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    background: #ff0000; color: #fff; padding: 0.7rem 1.6rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.85rem; text-decoration: none;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; flex-shrink: 0; position: relative;
+    box-shadow: 0 4px 20px rgba(255,0,0,0.4);
+  }
+  .yt-tuti-btn:hover { background: #cc0000; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,0,0,0.5); }
+  @media (max-width: 600px) {
+    .yt-tuti-banner { flex-direction: column; text-align: center; padding: 1.5rem; }
+    .yt-tuti-pulse { top: 10px; right: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -440,6 +498,20 @@
     <div class="stat-num">Web</div>
     <div class="stat-label">Sem instalação</div>
   </div>
+</div>
+
+<!-- TUTI YOUTUBE BANNER -->
+<div class="yt-tuti-banner reveal">
+  <div class="yt-tuti-pulse">▶ YouTube</div>
+  <div class="yt-tuti-icon">☁️</div>
+  <div class="yt-tuti-text">
+    <div class="yt-tuti-tag">🎬 Canal no YouTube</div>
+    <div class="yt-tuti-title"><span>Tuti — a nuvenzinha exploradora</span></div>
+    <div class="yt-tuti-desc">Assista ao canal da Tuti, a nuvenzinha que viaja pelo mundo aprendendo coisas incríveis! Conteúdo educativo e divertido para crianças. Não esqueça de se inscrever! ☁️✨</div>
+  </div>
+  <a class="yt-tuti-btn" href="https://youtu.be/z8qHbj3UKmE?si=-qn3hwMNFH2Rt1oa" target="_blank">
+    ▶ Assistir agora
+  </a>
 </div>
 
 <!-- GAMES SECTION -->
