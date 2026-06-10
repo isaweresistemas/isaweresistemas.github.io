@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuti - Nuvem Exploradora</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a1628; font-family:'Nunito',sans-serif; overflow:hidden; height:100vh; width:100vw; display:flex; align-items:center; justify-content:center; }
+
+  /* TELA DE SENHA */
+  #senha-screen { position:fixed; inset:0; background:linear-gradient(135deg,#0a0e2a 0%,#1a2550 40%,#0d3b6e 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; }
+  .stars-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .star { position:absolute; background:white; border-radius:50%; animation:twinkle 2s infinite alternate; }
+  @keyframes twinkle { 0%{opacity:0.2;transform:scale(1)} 100%{opacity:1;transform:scale(1.4)} }
+  .senha-box { background:rgba(255,255,255,0.08); border:2px solid rgba(100,180,255,0.3); border-radius:32px; padding:40px 50px; display:flex; flex-direction:column; align-items:center; gap:20px; backdrop-filter:blur(10px); box-shadow:0 8px 60px rgba(0,150,255,0.2); max-width:420px; width:90%; position:relative; z-index:2; animation:floatBox 3s ease-in-out infinite; }
+  @keyframes floatBox { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .senha-mascotes { display:flex; align-items:flex-end; gap:6px; line-height:1; filter:drop-shadow(0 4px 20px rgba(0,200,255,0.6)); }
+  .senha-mascotes .nuvem { font-size:80px; animation:bounceN 1s ease-in-out infinite alternate; }
+  .senha-mascotes .abelha { font-size:44px; margin-bottom:6px; animation:bounceA 1.2s ease-in-out infinite alternate; }
+  @keyframes bounceN { 0%{transform:scale(1) rotate(-5deg)} 100%{transform:scale(1.1) rotate(5deg)} }
+  @keyframes bounceA { 0%{transform:scale(1) rotate(8deg) translateY(0)} 100%{transform:scale(1.15) rotate(-8deg) translateY(-6px)} }
+  .senha-titulo { font-family:'Fredoka One',cursive; font-size:26px; color:#fff; text-align:center; line-height:1.2; text-shadow:0 0 20px rgba(100,200,255,0.8); }
+  .senha-sub { font-size:13px; color:rgba(200,230,255,0.7); text-align:center; }
+  .senha-hint { font-size:13px; color:rgba(255,220,100,0.8); text-align:center; background:rgba(255,200,50,0.1); padding:8px 16px; border-radius:20px; border:1px solid rgba(255,200,50,0.2); }
+  .senha-input { width:100%; padding:14px 20px; font-size:20px; font-family:'Fredoka One',cursive; letter-spacing:4px; text-align:center; border:2px solid rgba(100,180,255,0.4); border-radius:16px; background:rgba(255,255,255,0.1); color:white; outline:none; transition:border-color 0.3s,box-shadow 0.3s; }
+  .senha-input:focus { border-color:#64c8ff; box-shadow:0 0 20px rgba(100,200,255,0.4); }
+  .senha-input.erro { border-color:#ff6464; animation:shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+  .senha-input::placeholder { color:rgba(255,255,255,0.3); letter-spacing:2px; }
+  .btn-entrar { width:100%; padding:16px; font-family:'Fredoka One',cursive; font-size:22px; background:linear-gradient(135deg,#3b9eff,#0062cc); color:white; border:none; border-radius:16px; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 20px rgba(0,100,255,0.4); }
+  .btn-entrar:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,100,255,0.6); }
+  .msg-erro { color:#ff8080; font-size:13px; text-align:center; height:18px; }
+
+  /* JOGO */
+  #game-container { display:none; width:100vw; height:100vh; position:relative; overflow:hidden; }
+  #game-canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+  /* HUD */
+  #hud { position:absolute; top:0; left:0; right:0; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,rgba(0,0,0,0.5),transparent); z-index:10; pointer-events:none; }
+  .hud-item { font-family:'Fredoka One',cursive; color:white; font-size:20px; text-shadow:0 2px 8px rgba(0,0,0,0.8); display:flex; align-items:center; gap:8px; }
+  #score-display { color:#ffd700; }
+  #lives-display { color:#ff6b6b; }
+  #fase-display { position:absolute; top:14px; left:50%; transform:translateX(-50%); font-family:'Fredoka One',cursive; font-size:14px; color:#ffd700; text-shadow:0 0 12px rgba(255,215,0,0.6); white-space:nowrap; pointer-events:none; }
+
+  /* Progress */
+  #progress-wrap { position:absolute; top:60px; left:50%; transform:translateX(-50%); width:200px; z-index:10; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .progress-label { font-family:'Fredoka One',cursive; font-size:12px; color:rgba(200,230,255,0.7); }
+  .progress-bar-bg { width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; border:1px solid rgba(100,180,255,0.2); }
+  #progress-fill { height:100%; background:linear-gradient(90deg,#22c55e,#3b9eff); border-radius:10px; transition:width 0.3s; }
+
+  /* Mobile */
+  #mobile-controls { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:none; gap:30px; z-index:10; }
+  .mobile-btn { width:70px; height:70px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:50%; font-size:28px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); user-select:none; -webkit-user-select:none; }
+  @media (max-width:700px) { #mobile-controls{display:flex} }
+
+  /* Overlays */
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:20; background:rgba(0,0,20,0.85); backdrop-filter:blur(6px); }
+  .overlay-box { background:linear-gradient(135deg,#1a2550,#0d3b6e); border:2px solid rgba(100,180,255,0.4); border-radius:28px; padding:40px 48px; text-align:center; max-width:480px; width:90%; box-shadow:0 8px 60px rgba(0,100,255,0.3); display:flex; flex-direction:column; align-items:center; gap:18px; }
+  .overlay-emoji { font-size:68px; }
+  .overlay-title { font-family:'Fredoka One',cursive; font-size:30px; color:#fff; text-shadow:0 0 20px rgba(100,200,255,0.8); }
+  .overlay-text { font-size:15px; color:rgba(200,230,255,0.85); line-height:1.65; }
+  .overlay-score { font-family:'Fredoka One',cursive; font-size:26px; color:#ffd700; }
+  .senha-dia { background:linear-gradient(135deg,rgba(255,200,50,0.15),rgba(255,150,0,0.1)); border:2px solid rgba(255,200,50,0.4); border-radius:16px; padding:14px 22px; font-family:'Fredoka One',cursive; font-size:20px; color:#ffd700; letter-spacing:2px; text-shadow:0 0 12px rgba(255,200,50,0.8); }
+  .senha-dia-label { font-size:13px; color:rgba(255,200,100,0.7); font-family:'Nunito',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+  .btn-game { padding:14px 36px; font-family:'Fredoka One',cursive; font-size:20px; background:linear-gradient(135deg,#3b9eff,#0062cc); color:white; border:none; border-radius:14px; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 20px rgba(0,100,255,0.4); }
+  .btn-game:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,100,255,0.6); }
+  .btn-game.verde { background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 4px 20px rgba(0,180,80,0.4); }
+  .btn-game.verde:hover { box-shadow:0 8px 30px rgba(0,180,80,0.6); }
+  .btn-game.amarelo { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 4px 20px rgba(245,158,11,0.4); }
+  .btn-game.amarelo:hover { box-shadow:0 8px 30px rgba(245,158,11,0.6); }
+  #overlay-fase { display:none; }
+  #overlay-fase .overlay-box { border-color:rgba(255,215,0,0.5); background:linear-gradient(135deg,#1a2a10,#2d4a0e); }
+</style>
+</head>
+<body>
+
+<!-- TELA DE SENHA -->
+<div id="senha-screen">
+  <div class="stars-bg" id="stars-bg"></div>
+  <div class="senha-box">
+    <div class="senha-mascotes">
+      <span class="nuvem">&#x2601;&#xFE0F;</span><span class="abelha">&#x1F41D;</span>
+    </div>
+    <div class="senha-titulo">Aventuras da Tuti<br>&amp; Mel, a Abelhinha!</div>
+    <div class="senha-sub">&#x1F338; Explore cidades incriveis do Brasil!</div>
+    <div class="senha-hint">&#x1F510; Digite a senha do Canal das Aventuras de Tuti</div>
+    <input class="senha-input" id="senha-input" type="password" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" maxlength="10" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') verificarSenha()">
+    <div class="msg-erro" id="msg-erro"></div>
+    <button class="btn-entrar" onclick="verificarSenha()">&#x1F680; Entrar na Aventura!</button>
+  </div>
+</div>
+
+<!-- JOGO -->
+<div id="game-container">
+  <canvas id="game-canvas"></canvas>
+  <div id="hud">
+    <div class="hud-item" id="score-display">&#x2B50; 0</div>
+    <div class="hud-item" id="city-display"></div>
+    <div class="hud-item" id="lives-display">&#x2764;&#xFE0F;&#x2764;&#xFE0F;&#x2764;&#xFE0F;</div>
+  </div>
+  <div id="fase-display">&#x1F3D8; Fase 1 - Sao Jose dos Cordeiros, PB</div>
+  <div id="progress-wrap">
+    <div class="progress-label">Exploracao da Fase</div>
+    <div class="progress-bar-bg"><div id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="mobile-controls">
+    <div class="mobile-btn" ontouchstart="keys.up=true" ontouchend="keys.up=false">&#x2B06;&#xFE0F;</div>
+    <div class="mobile-btn" ontouchstart="keys.down=true" ontouchend="keys.down=false">&#x2B07;&#xFE0F;</div>
+  </div>
+
+  <!-- Overlay inicio -->
+  <div class="overlay" id="overlay-inicio">
+    <div class="overlay-box">
+      <div class="overlay-emoji">&#x2601;&#xFE0F;&#x1F41D;</div>
+      <div class="overlay-title">Tuti & Mel Exploradoras!</div>
+      <div class="overlay-text">
+        Ajude a Tuti e Mel a explorar cidades incriveis!<br><br>
+        &#x1F335; <b>Fase 1:</b> Sao Jose dos Cordeiros - PB<br>
+        &#x1F306; <b>Fase 2:</b> Sao Goncalo - RJ<br><br>
+        &#x2B50; <b>Colete os itens</b> de cada cidade<br>
+        &#x26C8;&#xFE0F; <b>Desvie das tempestades!</b><br><br>
+        <small>Use setas / mouse / toque para voar</small>
+      </div>
+      <button class="btn-game verde" onclick="iniciarJogo()">&#x1F3D2; Comecar Aventura!</button>
+    </div>
+  </div>
+
+  <!-- Overlay fase concluida -->
+  <div class="overlay" id="overlay-fase">
+    <div class="overlay-box">
+      <div class="overlay-emoji" id="fase-emoji">&#x1F389;</div>
+      <div class="overlay-title" id="fase-titulo">Fase 1 Concluida!</div>
+      <div class="overlay-text" id="fase-texto"></div>
+      <div class="overlay-score" id="fase-score"></div>
+      <button class="btn-game amarelo" onclick="iniciarFase2()">&#x1F680; Proxima Fase!</button>
+    </div>
+  </div>
+
+  <!-- Overlay fim -->
+  <div class="overlay" id="overlay-fim" style="display:none">
+    <div class="overlay-box">
+      <div class="overlay-emoji" id="fim-emoji">&#x1F3C6;</div>
+      <div class="overlay-title" id="fim-titulo">Aventura Completa!</div>
+      <div class="overlay-text" id="fim-texto"></div>
+      <div class="overlay-score" id="fim-score"></div>
+      <div class="senha-dia-label">&#x1F3C6; Voce completou as 2 fases!</div>
+      <div class="senha-dia">Parabens Exploradora! &#x1F41D;&#x2601;&#xFE0F;</div>
+      <button class="btn-game" onclick="reiniciarJogo()">&#x1F504; Jogar Novamente!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ESTRELAS DO FUNDO
+(function(){
+  var bg=document.getElementById('stars-bg');
+  for(var i=0;i<80;i++){
+    var s=document.createElement('div');
+    s.className='star';
+    var sz=Math.random()*3+1;
+    s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s;animation-duration:'+(1.5+Math.random()*2)+'s;';
+    bg.appendChild(s);
+  }
+})();
+
+// SENHA
+function verificarSenha(){
+  var inp=document.getElementById('senha-input');
+  var msg=document.getElementById('msg-erro');
+  var val=inp.value.trim().toLowerCase();
+  if(val==='mel123'){
+    document.getElementById('senha-screen').style.display='none';
+    document.getElementById('game-container').style.display='block';
+    initGame();
+  } else {
+    inp.classList.add('erro');
+    msg.textContent='Senha errada! Dica: encontre no Canal das Aventuras de Tuti!';
+    setTimeout(function(){inp.classList.remove('erro');inp.value='';},800);
+  }
+}
+
+// JOGO
+var canvas=document.getElementById('game-canvas');
+var ctx=canvas.getContext('2d');
+var W,H;
+var gameRunning=false;
+var animId;
+var faseAtual=1;
+var tuti,score,lives,progress,gameOver;
+var items=[],clouds=[],particles=[],bgClouds=[];
+var keys={up:false,down:false};
+var mouseY=null;
+var lastItem=0,lastCloud=0,lastBgCloud=0;
+var frameCount=0;
+var shakeTimer=0;
+
+var FASES={
+  1:{
+    nome:'Sao Jose dos Cordeiros - PB',
+    meta:120,
+    itens:[
+      {emoji:'\u{1F335}',valor:5,cor:'#84cc16'},
+      {emoji:'\u{1F410}',valor:5,cor:'#f97316'},
+      {emoji:'\u{2B50}',valor:3,cor:'#ffd700'},
+      {emoji:'\u{1F4A7}',valor:4,cor:'#38bdf8'},
+      {emoji:'\u{1F33B}',valor:6,cor:'#fbbf24'},
+      {emoji:'\u{1F36F}',valor:8,cor:'#f59e0b'},
+    ],
+    temAbelha:true
+  },
+  2:{
+    nome:'Sao Goncalo - RJ',
+    meta:150,
+    itens:[
+      {emoji:'\u{1F30A}',valor:5,cor:'#38bdf8'},
+      {emoji:'\u{1F3B8}',valor:6,cor:'#a78bfa'},
+      {emoji:'\u{2B50}',valor:3,cor:'#ffd700'},
+      {emoji:'\u{1F334}',valor:4,cor:'#22c55e'},
+      {emoji:'\u{1F99C}',valor:7,cor:'#f472b6'},
+      {emoji:'\u{1F48E}',valor:8,cor:'#a78bfa'},
+    ],
+    temAbelha:false
+  }
+};
+
+function getFase(){ return FASES[faseAtual]; }
+
+function resize(){
+  W=canvas.width=canvas.offsetWidth;
+  H=canvas.height=canvas.offsetHeight;
+  if(tuti){ tuti.x=W*0.15; }
+}
+
+function initGame(){
+  resize();
+  window.addEventListener('resize',resize);
+  faseAtual=1;
+  atualizarHUDFase();
+  document.getElementById('overlay-inicio').style.display='flex';
+}
+
+function atualizarHUDFase(){
+  var f=getFase();
+  document.getElementById('fase-display').textContent='Fase '+faseAtual+' - '+f.nome;
+}
+
+function iniciarJogo(){
+  faseAtual=1;
+  atualizarHUDFase();
+  document.getElementById('overlay-inicio').style.display='none';
+  document.getElementById('overlay-fim').style.display='none';
+  document.getElementById('overlay-fase').style.display='none';
+  iniciarFaseAtual();
+}
+
+function iniciarFase2(){
+  faseAtual=2;
+  atualizarHUDFase();
+  document.getElementById('overlay-fase').style.display='none';
+  iniciarFaseAtual();
+}
+
+function iniciarFaseAtual(){
+  score=0; lives=3; progress=0; gameOver=false;
+  items=[]; clouds=[]; particles=[]; bgClouds=[];
+  frameCount=0; shakeTimer=0; lastItem=0; lastCloud=0; lastBgCloud=0;
+  tuti={x:W*0.15,y:H/2,vy:0,radius:35,invincible:0,scale:1,scaleDir:0.003,abelhaAngle:0};
+  for(var i=0;i<6;i++) bgClouds.push(newBgCloud(Math.random()*W));
+  updateHUD();
+  gameRunning=true;
+  if(animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+function newBgCloud(x){
+  return{x:x||W+60,y:Math.random()*H,speed:0.3+Math.random()*0.5,size:40+Math.random()*80,opacity:0.05+Math.random()*0.1};
+}
+
+function loop(){
+  if(!gameRunning) return;
+  animId=requestAnimationFrame(loop);
+  frameCount++;
+  update();
+  draw();
+}
+
+function update(){
+  if(gameOver) return;
+  var fase=getFase();
+  var speed=3+Math.floor(score/50)*0.4;
+  var targetY=mouseY!==null?mouseY:tuti.y;
+  if(mouseY!==null) tuti.vy+=(targetY-tuti.y)*0.08;
+  if(keys.up) tuti.vy-=0.6;
+  if(keys.down) tuti.vy+=0.6;
+  tuti.vy*=0.88;
+  tuti.y+=tuti.vy;
+  tuti.y=Math.max(tuti.radius,Math.min(H-tuti.radius,tuti.y));
+  tuti.scale+=tuti.scaleDir;
+  if(tuti.scale>1.05||tuti.scale<0.95) tuti.scaleDir*=-1;
+  tuti.abelhaAngle+=0.05;
+  if(tuti.invincible>0) tuti.invincible--;
+  if(shakeTimer>0) shakeTimer--;
+
+  if(frameCount-lastItem>50-Math.min(30,Math.floor(score/25))){lastItem=frameCount;spawnItem(speed);}
+  if(frameCount-lastCloud>90-Math.min(55,Math.floor(score/20))){lastCloud=frameCount;spawnCloud(speed);}
+  if(frameCount-lastBgCloud>120){lastBgCloud=frameCount;bgClouds.push(newBgCloud());}
+
+  items=items.filter(function(item){
+    item.x-=speed;
+    item.angle=(item.angle||0)+0.05;
+    item.y+=Math.sin(item.angle)*0.6;
+    if(item.x<-40) return false;
+    var dx=tuti.x-item.x,dy=tuti.y-item.y;
+    if(Math.sqrt(dx*dx+dy*dy)<tuti.radius+item.radius){coletarItem(item);return false;}
+    return true;
+  });
+
+  clouds=clouds.filter(function(cloud){
+    cloud.x-=speed*0.85;
+    cloud.y+=cloud.vy;
+    if(cloud.y<60||cloud.y>H-60) cloud.vy*=-1;
+    if(cloud.x<-80) return false;
+    if(tuti.invincible>0) return true;
+    var dx=tuti.x-cloud.x,dy=tuti.y-cloud.y;
+    if(Math.sqrt(dx*dx+dy*dy)<tuti.radius+cloud.radius-10){perderVida();return false;}
+    return true;
+  });
+
+  particles=particles.filter(function(p){
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.1;p.life--;p.opacity=p.life/p.maxLife;return p.life>0;
+  });
+
+  bgClouds=bgClouds.filter(function(c){c.x-=c.speed;return c.x>-200;});
+
+  progress=Math.min(100,(score/fase.meta)*100);
+  document.getElementById('progress-fill').style.width=progress+'%';
+
+  if(score>=fase.meta&&!gameOver){
+    gameOver=true;gameRunning=false;
+    setTimeout(function(){
+      if(faseAtual===1) mostrarFaseConcluida();
+      else mostrarFimJogo(true);
+    },500);
+  }
+}
+
+function spawnItem(speed){
+  var fase=getFase();
+  var item=fase.itens[Math.floor(Math.random()*fase.itens.length)];
+  items.push({x:W+40,y:80+Math.random()*(H-160),radius:22,emoji:item.emoji,valor:item.valor,cor:item.cor,angle:Math.random()*Math.PI*2});
+}
+
+function spawnCloud(speed){
+  clouds.push({x:W+60,y:80+Math.random()*(H-160),radius:32+Math.random()*20,vy:(Math.random()-0.5)*1.5});
+}
+
+function coletarItem(item){
+  score+=item.valor;
+  for(var i=0;i<8;i++){
+    var a=(Math.PI*2/8)*i;
+    particles.push({x:item.x,y:item.y,vx:Math.cos(a)*(2+Math.random()*2),vy:Math.sin(a)*(2+Math.random()*2)-1,life:40+Math.random()*20,maxLife:60,opacity:1,cor:item.cor,size:4+Math.random()*4});
+  }
+  updateHUD();
+}
+
+function perderVida(){
+  lives--;tuti.invincible=90;shakeTimer=20;updateHUD();
+  if(lives<=0){gameOver=true;gameRunning=false;setTimeout(function(){mostrarFimJogo(false);},600);}
+}
+
+function updateHUD(){
+  document.getElementById('score-display').textContent='⭐ '+score;
+  var h='';for(var i=0;i<Math.max(0,lives);i++) h+='❤️';
+  document.getElementById('lives-display').textContent=h;
+}
+
+// DESENHO
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  var sx=0,sy=0;
+  if(shakeTimer>0){sx=(Math.random()-0.5)*10;sy=(Math.random()-0.5)*6;}
+  ctx.save();ctx.translate(sx,sy);
+
+  desenharFundo();
+
+  // Pontos de estrela no canvas
+  for(var i=0;i<30;i++){
+    var x=((i*137+frameCount*0.1)%W);
+    var y=((i*97)%H);
+    var fl=0.3+0.7*Math.abs(Math.sin(frameCount*0.02+i));
+    ctx.globalAlpha=fl*0.5;ctx.fillStyle='rgba(255,255,255,0.6)';
+    ctx.fillRect(x,y,2,2);
+  }
+  ctx.globalAlpha=1;
+
+  // Nuvens de fundo
+  bgClouds.forEach(function(c){
+    ctx.globalAlpha=c.opacity;ctx.fillStyle='white';
+    drawCloudShape(ctx,c.x,c.y,c.size);
+  });
+  ctx.globalAlpha=1;
+
+  // Particulas
+  particles.forEach(function(p){
+    ctx.globalAlpha=p.opacity;ctx.fillStyle=p.cor;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+
+  // Itens
+  items.forEach(function(item){
+    var glow=ctx.createRadialGradient(item.x,item.y,0,item.x,item.y,item.radius*2);
+    glow.addColorStop(0,item.cor+'60');glow.addColorStop(1,'transparent');
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(item.x,item.y,item.radius*2,0,Math.PI*2);ctx.fill();
+    ctx.font=(item.radius*1.4)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(item.emoji,item.x,item.y);
+  });
+
+  // Tempestades
+  clouds.forEach(function(cloud){
+    ctx.save();
+    var glow=ctx.createRadialGradient(cloud.x,cloud.y,0,cloud.x,cloud.y,cloud.radius*2);
+    glow.addColorStop(0,'rgba(255,100,50,0.3)');glow.addColorStop(1,'transparent');
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cloud.x,cloud.y,cloud.radius*2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#4a5568';drawCloudShape(ctx,cloud.x,cloud.y,cloud.radius);
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.shadowColor='#fbbf24';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.moveTo(cloud.x-4,cloud.y+5);ctx.lineTo(cloud.x+2,cloud.y+14);ctx.lineTo(cloud.x-2,cloud.y+14);ctx.lineTo(cloud.x+4,cloud.y+25);ctx.stroke();
+    ctx.shadowBlur=0;ctx.restore();
+  });
+
+  desenharTuti();
+  ctx.restore();
+}
+
+function desenharFundo(){
+  if(faseAtual===1){
+    // Caatinga
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0d1a08');g.addColorStop(0.45,'#112808');g.addColorStop(1,'#1e3a10');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // Chao
+    ctx.fillStyle='#3d2b1a';ctx.fillRect(0,H*0.82,W,H*0.18);
+    // Cactos silhueta
+    ctx.fillStyle='#1a4a10';
+    for(var i=0;i<7;i++){
+      var cx=i*(W/6)+30;var cy=H*0.82;var alt=30+(i*17%40);
+      ctx.fillRect(cx-5,cy-alt,10,alt);
+      ctx.fillRect(cx-22,cy-alt*0.6,14,7);
+      ctx.fillRect(cx+8,cy-alt*0.45,14,7);
+    }
+    // Brilho do sol no horizonte
+    var sg=ctx.createRadialGradient(W*0.78,H*0.82,0,W*0.78,H*0.82,90);
+    sg.addColorStop(0,'rgba(255,200,50,0.22)');sg.addColorStop(1,'transparent');
+    ctx.fillStyle=sg;ctx.beginPath();ctx.arc(W*0.78,H*0.82,90,0,Math.PI*2);ctx.fill();
+  } else {
+    // Sao Goncalo - noite / baia
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0a1628');g.addColorStop(0.4,'#0d2b55');g.addColorStop(1,'#0a1628');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // Agua / Baia
+    var ag=ctx.createLinearGradient(0,H*0.75,0,H);
+    ag.addColorStop(0,'#0a3060');ag.addColorStop(1,'#051830');
+    ctx.fillStyle=ag;ctx.fillRect(0,H*0.78,W,H*0.22);
+    // Reflexo na agua
+    ctx.globalAlpha=0.25;ctx.fillStyle='#38bdf8';
+    for(var i=0;i<5;i++) ctx.fillRect(W*0.08+i*W*0.18,H*0.8+Math.sin(frameCount*0.03+i)*3,55,3);
+    ctx.globalAlpha=1;
+    // Predios
+    ctx.fillStyle='#0a1a35';
+    var predios=[{x:0,w:60,h:80},{x:68,w:38,h:110},{x:115,w:52,h:70},{x:175,w:33,h:130},{x:215,w:48,h:90},{x:W-250,w:52,h:100},{x:W-190,w:38,h:140},{x:W-144,w:58,h:80},{x:W-78,w:78,h:110}];
+    predios.forEach(function(p){
+      ctx.fillStyle='#0a1a35';ctx.fillRect(p.x,H*0.78-p.h,p.w,p.h);
+      ctx.fillStyle='rgba(255,220,100,0.35)';
+      for(var j=0;j<Math.floor(p.h/14);j++){
+        for(var k=0;k<Math.floor(p.w/12);k++){
+          if((j+k+faseAtual)%3!==0) ctx.fillRect(p.x+k*12+3,H*0.78-p.h+j*14+4,6,7);
+        }
+      }
+    });
+  }
+}
+
+function desenharTuti(){
+  ctx.save();
+  var alpha=tuti.invincible>0?(Math.floor(frameCount/5)%2===0?0.4:1):1;
+  ctx.globalAlpha=alpha;
+  ctx.translate(tuti.x,tuti.y);
+  ctx.scale(tuti.scale,tuti.scale);
+
+  // Rastro
+  var tg=ctx.createLinearGradient(-60,0,0,0);
+  tg.addColorStop(0,'transparent');tg.addColorStop(0.5,'rgba(56,189,248,0.15)');tg.addColorStop(1,'rgba(56,189,248,0.4)');
+  ctx.fillStyle=tg;ctx.beginPath();ctx.ellipse(-40,10,55,12,0.2,0,Math.PI*2);ctx.fill();
+
+  // Particulas propulsor
+  if(frameCount%3===0){
+    particles.push({x:tuti.x-40,y:tuti.y+10,vx:-2-Math.random()*2,vy:(Math.random()-0.5)*2,life:20,maxLife:20,opacity:1,cor:Math.random()>0.5?'#38bdf8':'#fbbf24',size:3+Math.random()*3});
+  }
+
+  // Nuvem fofa
+  desenharNuvemFofa(ctx,0,0,tuti.radius);
+
+  ctx.restore();
+  ctx.globalAlpha=1;
+
+  // Abelhinha Mel - fase 1
+  if(faseAtual===1 && getFase().temAbelha){
+    var ox=tuti.x+Math.cos(tuti.abelhaAngle*0.8)*60;
+    var oy=tuti.y+Math.sin(tuti.abelhaAngle*0.8)*12-32;
+    desenharAbelhinha(ctx,ox,oy,frameCount);
+  }
+}
+
+function desenharNuvemFofa(ctx,x,y,r){
+  ctx.shadowColor='#64c8ff';ctx.shadowBlur=18;
+  ctx.fillStyle='#e8f4ff';
+  ctx.beginPath();
+  ctx.arc(x,y,r*0.75,0,Math.PI*2);
+  ctx.arc(x-r*0.55,y+r*0.18,r*0.52,0,Math.PI*2);
+  ctx.arc(x+r*0.55,y+r*0.18,r*0.52,0,Math.PI*2);
+  ctx.arc(x-r*0.25,y+r*0.42,r*0.46,0,Math.PI*2);
+  ctx.arc(x+r*0.25,y+r*0.42,r*0.46,0,Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur=0;
+  // Bochechas
+  ctx.globalAlpha=0.35;ctx.fillStyle='#ffb6c1';
+  ctx.beginPath();ctx.ellipse(x-r*0.38,y+r*0.22,r*0.22,r*0.14,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x+r*0.38,y+r*0.22,r*0.22,r*0.14,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  // Olhos
+  ctx.fillStyle='#1a1a2e';
+  ctx.beginPath();ctx.ellipse(x-r*0.25,y-r*0.08,r*0.12,r*0.15,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x+r*0.25,y-r*0.08,r*0.12,r*0.15,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='white';
+  ctx.beginPath();ctx.arc(x-r*0.21,y-r*0.12,r*0.05,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x+r*0.29,y-r*0.12,r*0.05,0,Math.PI*2);ctx.fill();
+  // Sorriso
+  ctx.strokeStyle='#1a1a2e';ctx.lineWidth=2.5;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(x,y+r*0.18,r*0.22,0.15,Math.PI-0.15);ctx.stroke();
+}
+
+function desenharAbelhinha(ctx,x,y,frame){
+  ctx.save();
+  var oc=Math.sin(frame*0.15)*2;
+  ctx.translate(x,y+oc);
+  var r=13;
+  // Asas
+  ctx.globalAlpha=0.5+Math.sin(frame*0.5)*0.25;
+  ctx.fillStyle='#bfefff';
+  ctx.beginPath();ctx.ellipse(-r*1.0,-r*0.75,r*0.9,r*0.48,-0.4,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(r*1.0,-r*0.75,r*0.9,r*0.48,0.4,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  // Corpo amarelo
+  ctx.fillStyle='#fbbf24';
+  ctx.beginPath();ctx.ellipse(0,0,r*0.72,r,0,0,Math.PI*2);ctx.fill();
+  // Listras pretas
+  ctx.fillStyle='#1a1a2e';
+  ctx.beginPath();ctx.ellipse(0,-r*0.25,r*0.72,r*0.17,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(0,r*0.2,r*0.72,r*0.17,0,0,Math.PI*2);ctx.fill();
+  // Cabeca
+  ctx.fillStyle='#fbbf24';
+  ctx.beginPath();ctx.arc(0,-r-r*0.35,r*0.58,0,Math.PI*2);ctx.fill();
+  // Antenas
+  ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1.5;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(-r*0.18,-r-r*0.8);ctx.lineTo(-r*0.48,-r-r*1.5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(r*0.18,-r-r*0.8);ctx.lineTo(r*0.48,-r-r*1.5);ctx.stroke();
+  ctx.fillStyle='#f97316';
+  ctx.beginPath();ctx.arc(-r*0.48,-r-r*1.5,2.8,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(r*0.48,-r-r*1.5,2.8,0,Math.PI*2);ctx.fill();
+  // Olhinhos
+  ctx.fillStyle='#1a1a2e';
+  ctx.beginPath();ctx.ellipse(-r*0.22,-r-r*0.35,2.8,3.3,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(r*0.22,-r-r*0.35,2.8,3.3,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='white';
+  ctx.beginPath();ctx.arc(-r*0.17,-r-r*0.4,1.2,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(r*0.27,-r-r*0.4,1.2,0,Math.PI*2);ctx.fill();
+  // Sorriso
+  ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(0,-r-r*0.22,r*0.19,0.2,Math.PI-0.2);ctx.stroke();
+  // Bochechas
+  ctx.globalAlpha=0.4;ctx.fillStyle='#ffb6c1';
+  ctx.beginPath();ctx.ellipse(-r*0.38,-r-r*0.28,3.5,2.2,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(r*0.38,-r-r*0.28,3.5,2.2,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+
+function drawCloudShape(ctx,x,y,r){
+  ctx.beginPath();
+  ctx.arc(x,y,r*0.7,0,Math.PI*2);
+  ctx.arc(x-r*0.55,y+r*0.2,r*0.5,0,Math.PI*2);
+  ctx.arc(x+r*0.55,y+r*0.2,r*0.5,0,Math.PI*2);
+  ctx.arc(x-r*0.25,y+r*0.45,r*0.45,0,Math.PI*2);
+  ctx.arc(x+r*0.25,y+r*0.45,r*0.45,0,Math.PI*2);
+  ctx.fill();
+}
+
+function mostrarFaseConcluida(){
+  var ov=document.getElementById('overlay-fase');
+  ov.style.display='flex';
+  document.getElementById('fase-emoji').textContent='🎉🐝';
+  document.getElementById('fase-titulo').textContent='Fase 1 Concluida!';
+  document.getElementById('fase-texto').innerHTML='Incrivel! Tuti e Mel exploraram<br><b>Sao Jose dos Cordeiros - PB!</b><br><br>🌵 A Caatinga guarda muitos tesouros!<br>🐝 Mel vai para a proxima aventura!<br><br>Prepare-se para <b>Sao Goncalo - RJ!</b> 🌊';
+  document.getElementById('fase-score').textContent='⭐ '+score+' pontos';
+}
+
+function mostrarFimJogo(vitoria){
+  var ov=document.getElementById('overlay-fim');
+  ov.style.display='flex';
+  document.getElementById('fim-emoji').textContent=vitoria?'🏆🐝☁️':'💫';
+  document.getElementById('fim-titulo').textContent=vitoria?'Aventura Completa!':'Continue Explorando!';
+  document.getElementById('fim-texto').innerHTML=vitoria
+    ?'Parabens! Tuti e Mel exploraram o Brasil!<br>🌵 <b>Sao Jose dos Cordeiros - PB</b><br>🌊 <b>Sao Goncalo - RJ</b><br>Voces sao exploradoras incriveis! ✨'
+    :'Nao desanime! A Tuti e a Mel precisam de voce!<br>Continue explorando! 🌟';
+  document.getElementById('fim-score').textContent='⭐ '+score+' pontos';
+}
+
+function reiniciarJogo(){
+  document.getElementById('overlay-fim').style.display='none';
+  document.getElementById('overlay-fase').style.display='none';
+  faseAtual=1;atualizarHUDFase();iniciarFaseAtual();
+}
+
+// Controles
+window.addEventListener('keydown',function(e){
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W'){keys.up=true;e.preventDefault();}
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){keys.down=true;e.preventDefault();}
+});
+window.addEventListener('keyup',function(e){
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W') keys.up=false;
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S') keys.down=false;
+});
+canvas.addEventListener('mousemove',function(e){
+  var rect=canvas.getBoundingClientRect();mouseY=e.clientY-rect.top;
+});
+canvas.addEventListener('mouseleave',function(){mouseY=null;});
+canvas.addEventListener('touchmove',function(e){
+  e.preventDefault();var rect=canvas.getBoundingClientRect();mouseY=e.touches[0].clientY-rect.top;
+},{passive:false});
+canvas.addEventListener('touchend',function(){mouseY=null;});
+</script>
+</body>
+</html>
