@@ -528,7 +528,7 @@
 
         function checkPassword() {
             const input = document.getElementById('unlockInput').value.trim();
-            fetch('../senhas.json')
+            fetch('senhas.json')
                 .then(r => r.json())
                 .then(data => {
                     const correct = (data['carmen_mundo' + pendingWorld] || '');
