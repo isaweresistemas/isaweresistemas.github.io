@@ -466,7 +466,23 @@
       </div>
     </div>
 
-    <!-- Slide 6 -->
+    <!-- Slide 6 — Eventos Pro -->
+    <div class="carousel-slide">
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.95) 0%,rgba(100,30,180,0.18) 100%);"></div>
+      <div class="cs-content" style="max-width:660px;">
+        <div class="cs-tag" style="background:rgba(160,80,255,0.15);color:#c084fc;border:1px solid rgba(160,80,255,0.35);">🎟️ Novo — Gestão de Eventos</div>
+        <div class="cs-title">
+          <span style="background:linear-gradient(135deg,var(--white),#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Isawere Eventos Pro</span>
+        </div>
+        <p class="cs-desc" style="color:var(--gray-light);">Controle de senhas e ingressos para shows, formaturas, festas e qualquer evento. Validação por QR Code, sincronização em nuvem e relatórios em tempo real — tudo no celular ou computador.</p>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+          <a class="cs-btn" href="https://www.isawere.com.br/eventos/" target="_blank" style="background:linear-gradient(135deg,#7c3aed,#c084fc);color:#fff;">🎟️ Acessar o sistema →</a>
+          <a class="cs-btn" href="#contact" style="background:rgba(160,80,255,0.15);color:#c084fc;border:1px solid rgba(160,80,255,0.35);">Solicitar demonstração</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
     <div class="carousel-slide">
       <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.93) 0%,rgba(26,95,255,0.10) 100%);"></div>
       <div class="cs-content" style="max-width:660px;">
@@ -737,6 +753,25 @@
   <div class="cards-grid">
 
     <div class="card th-purple reveal">
+      <div class="card-icon">🎟️</div>
+      <div class="card-name">Isawere Eventos Pro</div>
+      <div class="card-tagline">Controle de Senhas & Ingressos para Eventos</div>
+      <p class="card-desc">Sistema completo para gerenciar entradas em shows, formaturas, festas e eventos de qualquer porte. Validação instantânea por QR Code, múltiplos operadores simultâneos e sincronização em nuvem via Google Sheets.</p>
+      <ul class="card-features">
+        <li>Geração e impressão de ingressos com QR Code</li>
+        <li>Validação na portaria em tempo real (celular ou computador)</li>
+        <li>Múltiplos operadores simultâneos com controle de acesso</li>
+        <li>Sincronização automática com Google Sheets</li>
+        <li>Relatórios e histórico completo de entradas</li>
+        <li>Funciona offline com sincronização posterior</li>
+      </ul>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <a class="card-link" href="https://www.isawere.com.br/eventos/" target="_blank">🎟️ Acessar o sistema →</a>
+        <a class="card-link" href="#contact" style="background:rgba(160,80,255,0.08);">Solicitar demonstração →</a>
+      </div>
+    </div>
+
+    <div class="card th-purple reveal">
       <div class="card-icon">💍</div>
       <div class="card-name">Gestão de Casamentos</div>
       <div class="card-tagline">Organização Completa de Eventos</div>
@@ -895,8 +930,9 @@
                 <option>Disciplina de Educação Tecnológica</option>
               </optgroup>
               <optgroup label="── Aplicativos ──">
+                <option>Isawere Eventos Pro (Controle de Ingressos)</option>
                 <option>Gestão de Casamentos</option>
-                <option>Sistema Administrativo & Financeiro</option>
+                <option>Sistema Administrativo &amp; Financeiro</option>
               </optgroup>
               <option>Tenho interesse em mais de uma solução</option>
             </select>
@@ -936,7 +972,7 @@
    CAROUSEL
 ═══════════════════════════════════ */
 let current = 0;
-const TOTAL = 6;
+const TOTAL = 7;
 const track = document.getElementById('carouselTrack');
 const navEl = document.getElementById('carouselNav');
 
