@@ -57,8 +57,9 @@
   }
   .carousel-track { display: flex; transition: transform 0.7s cubic-bezier(0.77,0,0.175,1); }
   .carousel-slide {
-    min-width: 100%; position: relative;
+    min-width: 100%; max-width: 100%; position: relative;
     display: flex; align-items: center; padding: 3rem 8% 3.5rem; flex-shrink: 0;
+    overflow: hidden;
   }
   .cs-overlay { position: absolute; inset: 0; }
   .cs-content { position: relative; max-width: 600px; z-index: 2; width: 100%; }
@@ -365,9 +366,9 @@
 
     /* ── Carousel mobile ── */
     #carousel { height: auto; }
-    .carousel-track { align-items: stretch; }
+    .carousel-track { align-items: flex-start; width: 100%; }
     .carousel-slide {
-      padding: 1.6rem 5% 3rem;
+      padding: 1.6rem 12% 3rem 5%;
       align-items: flex-start;
       min-height: 0;
       height: auto;
@@ -392,7 +393,6 @@
       max-width: 100%;
       margin-bottom: 0.9rem;
       display: block !important;
-      overflow: visible !important;
       -webkit-line-clamp: unset !important;
     }
     .cs-btn {
@@ -459,7 +459,7 @@
       <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(5,10,40,0.97) 45%,rgba(26,95,255,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.15);color:var(--blue-electric);border:1px solid rgba(45,140,255,0.3);">🩺 Sistema de Saúde</div>
-        <div class="cs-title">ISAWERE <span style="background:linear-gradient(135deg,var(--blue-electric),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Agendamentos Médicos</span></div>
+        <div class="cs-title">ISAWERE<br><span style="background:linear-gradient(135deg,var(--blue-electric),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Agendamentos Médicos</span></div>
         <p class="cs-desc">Gestão de consultas, exames e filas de espera.<br>Agende em lote, emita comprovantes e acompanhe tudo em tempo real.</p>
         <a class="cs-btn" href="https://www.youtube.com/watch?v=2AMZonJVXHM&t=3s" target="_blank" style="background:linear-gradient(135deg,var(--blue-bright),var(--cyan));color:#fff;">▶ Ver demonstração</a>
       </div>
