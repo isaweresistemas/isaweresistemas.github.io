@@ -284,6 +284,57 @@
   .benefit-desc { font-size: 0.84rem; color: var(--gray-soft); line-height: 1.6; }
 
   /* ══════════════════════════════
+     EDITORA — CATÁLOGO
+  ══════════════════════════════ */
+  .editora-highlight {
+    display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), rgba(245,166,35,0.03));
+    border: 1px solid rgba(245,166,35,0.4); border-radius: 16px;
+    padding: 1rem 1.3rem; margin-bottom: 2.2rem; font-size: 0.85rem; line-height: 1.5;
+  }
+  .editora-highlight .eh-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .editora-highlight strong { color: var(--gold); }
+
+  .editora-cat { margin-bottom: 2.4rem; }
+  .editora-cat-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem;
+    margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .editora-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .editora-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.55rem 1rem; border-radius: 12px; font-size: 0.82rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s; background: none;
+    font-family: 'DM Sans', sans-serif; color: var(--white);
+  }
+  .editora-chip:hover { transform: translateY(-2px); }
+  .editora-chip.available {
+    background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.35); color: var(--cyan);
+  }
+  .editora-chip.available:hover { background: rgba(0,212,255,0.18); border-color: var(--cyan); }
+  .editora-chip.available::after { content: '✓'; font-size: 0.72rem; opacity: 0.85; }
+  .editora-chip.soon {
+    background: rgba(255,255,255,0.03); border: 1px dashed rgba(176,188,212,0.3); color: var(--gray-soft);
+  }
+  .editora-chip.soon:hover { border-color: rgba(176,188,212,0.55); color: var(--gray-light); }
+  .editora-chip.soon .soon-tag {
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    background: rgba(176,188,212,0.15); padding: 0.1rem 0.4rem; border-radius: 50px;
+  }
+
+  /* toast "em breve" */
+  #editoraToast {
+    position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
+    background: rgba(5,13,46,0.97); border: 1px solid rgba(0,212,255,0.4);
+    color: var(--white); padding: 0.9rem 1.4rem; border-radius: 14px;
+    font-size: 0.85rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+    max-width: 90%; text-align: center;
+  }
+  #editoraToast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ══════════════════════════════
      CONTACT SECTION
   ══════════════════════════════ */
   #contact {
@@ -406,8 +457,8 @@
 
     /* ── Tabs mobile ── */
     .tab-btn { padding: 0.65rem 0.7rem 0.7rem; font-size: 0.72rem; gap: 0.2rem; flex-direction: column; align-items: center; min-width: 0; }
-    .tab-btn .tab-label { display: none; font-size: 0.62rem; line-height: 1.1; text-align: center; max-width: 58px; white-space: normal; }
-    .tab-btn.active .tab-label { display: block; }
+    .tab-btn .tab-label { display: block; font-size: 0.62rem; line-height: 1.1; text-align: center; max-width: 62px; white-space: normal; color: var(--gray-soft); }
+    .tab-btn.active .tab-label { color: var(--white); font-weight: 700; }
     .tab-btn .tab-icon { font-size: 1.2rem; }
 
     /* ── Layout mobile ── */
@@ -438,6 +489,7 @@
 <header>
   <div class="logo-text">ISAWERE</div>
   <nav class="header-nav">
+    <a href="#" onclick="switchTab('editora')">Isawere Editora</a>
     <a href="#" onclick="switchTab('saude')">Saúde</a>
     <a href="#" onclick="switchTab('educacao')">Educação</a>
     <a href="#" onclick="switchTab('formacoes')">Formações</a>
@@ -538,6 +590,17 @@
       </div>
     </div>
 
+    <!-- Slide 8 — Isawere Editora -->
+    <div class="carousel-slide">
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(20,12,0,0.97) 45%,rgba(245,166,35,0.09) 100%);"></div>
+      <div class="cs-content">
+        <div class="cs-tag" style="background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.4);">📚 Nova Linha</div>
+        <div class="cs-title">Isawere <span style="background:linear-gradient(135deg,var(--gold),#ffcc66);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Editora</span></div>
+        <p class="cs-desc">Livros pedagógicos, desenhos para colorir, papercraft,<br>jogos e materiais prontos para educadores e escolas.</p>
+        <a class="cs-btn" href="#" onclick="switchTab('editora')" style="background:linear-gradient(135deg,#b87800,var(--gold));color:#fff;">📖 Conhecer a Editora →</a>
+      </div>
+    </div>
+
   </div>
   <button class="carousel-arrow prev" onclick="carouselMove(-1)">‹</button>
   <button class="carousel-arrow next" onclick="carouselMove(1)">›</button>
@@ -549,6 +612,10 @@
 ════════════════════════════════════════════ -->
 <div id="tab-nav">
   <div class="tab-list" role="tablist">
+    <button class="tab-btn" data-tab="editora" onclick="switchTab('editora')">
+      <span class="tab-icon">📚</span><span class="tab-label">Isawere Editora</span>
+      <span class="tab-highlight">NOVO</span>
+    </button>
     <button class="tab-btn active" data-tab="saude" onclick="switchTab('saude')">
       <span class="tab-icon">🩺</span><span class="tab-label">Saúde</span>
     </button>
@@ -848,6 +915,187 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
+     PANEL: ISAWERE EDITORA
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-editora">
+  <div class="panel-header reveal">
+    <div class="panel-label">Nova Linha de Produtos</div>
+    <h2 class="panel-title">Isawere Editora</h2>
+    <p class="panel-desc">Livros pedagógicos, desenhos para colorir, papercraft, jogos e materiais prontos para educadores, escolas e famílias.</p>
+  </div>
+
+  <div class="editora-highlight reveal">
+    <div class="eh-icon">✅</div>
+    <div><strong>Já disponíveis para compra:</strong> toda a linha de Desenhos para Colorir, o Livro para Colorir, o Livro de Gamificação Invertida e as Apostilas para Concursos. Clique nos itens marcados com ✓ para comprar agora. Os demais produtos do catálogo estão em desenvolvimento — clique para saber mais.</div>
+  </div>
+
+  <!-- 📚 Livros Pedagógicos -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">📚 Livros Pedagógicos</div>
+    <div class="editora-chips">
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Livro para Colorir</a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Coordenação Motora')">Livro de Coordenação Motora <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Recorte e Colagem')">Livro de Recorte e Colagem <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Caligrafia')">Livro de Caligrafia <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Alfabetização')">Livro de Alfabetização <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Matemática')">Livro de Matemática <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Ciências')">Livro de Ciências <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Geografia')">Livro de Geografia <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de História')">Livro de História <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Inglês')">Livro de Inglês <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Livro de Desafios')">Livro de Desafios <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mega Livro de Atividades')">Mega Livro de Atividades <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🎨 Desenhos para Colorir -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🎨 Desenhos para Colorir</div>
+    <div class="editora-chips">
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Animais</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Dinossauros</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Espaço</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Profissões</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Fundo do Mar</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Corpo Humano</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Folclore</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Emoções</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Bíblia Infantil</a>
+    </div>
+  </div>
+
+  <!-- 📖 Outros produtos já disponíveis -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">📖 Outros Produtos Disponíveis</div>
+    <div class="editora-chips">
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Livro de Gamificação Invertida</a>
+      <a class="editora-chip available" href="https://www.isawere.com.br/store/comprar.html" target="_blank">Apostilas para Concursos</a>
+    </div>
+  </div>
+
+  <!-- ✂ Papercraft -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">✂️ Papercraft</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Animais')">Animais <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Fazenda')">Fazenda <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Dinossauros')">Dinossauros <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Sistema Solar')">Sistema Solar <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Corpo Humano')">Corpo Humano <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Profissões')">Profissões <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Meios de Transporte')">Meios de Transporte <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Robôs')">Robôs <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Papercraft — Kit Completo')">Kit Completo <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🔖 Marcadores de Página -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🔖 Marcadores de Página</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Incentivo à Leitura')">Incentivo à Leitura <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Animais')">Animais <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Matemática')">Matemática <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Ciências')">Ciências <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Bíblicos')">Bíblicos <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Marcadores — Personalizáveis')">Personalizáveis <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🏫 Murais Escolares -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🏫 Murais Escolares</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Volta às Aulas')">Volta às Aulas <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Bem-vindos')">Bem-vindos <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Festa Junina')">Festa Junina <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Primavera')">Primavera <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Páscoa')">Páscoa <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Natal')">Natal <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Folclore')">Folclore <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Meio Ambiente')">Meio Ambiente <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Consciência Negra')">Consciência Negra <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Aniversariantes')">Aniversariantes <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Mural — Incentivo à Leitura')">Incentivo à Leitura <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 📒 Álbuns -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">📒 Álbuns</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum da Escola')">Álbum da Escola <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum do Sistema Solar')">Álbum do Sistema Solar <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum de Ciências')">Álbum de Ciências <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum da Alfabetização')">Álbum da Alfabetização <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum de Matemática')">Álbum de Matemática <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum de Profissões')">Álbum de Profissões <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Álbum do Folclore')">Álbum do Folclore <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🤖 Robótica -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🤖 Robótica</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Robótica Infantil')">Robótica Infantil <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Scratch')">Scratch <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Cultura Maker')">Cultura Maker <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Programação Desplugada')">Programação Desplugada <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Arduino Básico')">Arduino Básico <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Micro:bit')">Micro:bit <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Inteligência Artificial para Crianças')">Inteligência Artificial para Crianças <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🎲 Jogos Pedagógicos -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🎲 Jogos Pedagógicos</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Dominó Matemático')">Dominó Matemático <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Dominó das Letras')">Dominó das Letras <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Bingo das Sílabas')">Bingo das Sílabas <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Bingo Matemático')">Bingo Matemático <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Jogo da Memória')">Jogo da Memória <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Trilha Educativa')">Trilha Educativa <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Quebra-cabeças')">Quebra-cabeças <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Kit com 20 Jogos')">Kit com 20 Jogos <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 📅 Planners -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">📅 Planners</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Planner Escolar')">Planner Escolar <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Planner do Professor')">Planner do Professor <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Agenda Escolar')">Agenda Escolar <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Diário de Classe')">Diário de Classe <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Caderno do Coordenador')">Caderno do Coordenador <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+  <!-- 🎓 Cursos -->
+  <div class="editora-cat reveal">
+    <div class="editora-cat-title">🎓 Cursos</div>
+    <div class="editora-chips">
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Canva para Professores')">Canva para Professores <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — ChatGPT na Educação')">ChatGPT na Educação <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Inteligência Artificial na Educação')">Inteligência Artificial na Educação <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Produção de Materiais Pedagógicos')">Produção de Materiais Pedagógicos <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Scratch')">Scratch <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Robótica Educacional')">Robótica Educacional <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Arduino')">Arduino <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Micro:bit')">Micro:bit <span class="soon-tag">em breve</span></a>
+      <a class="editora-chip soon" href="#" onclick="return emBreve('Curso — Cultura Maker')">Cultura Maker <span class="soon-tag">em breve</span></a>
+    </div>
+  </div>
+
+</div>
+
+<div id="editoraToast"></div>
+
+<!-- ═══════════════════════════════════════════
      PANEL: POR QUE ISAWERE
 ════════════════════════════════════════════ -->
 <div class="tab-panel" id="panel-porque">
@@ -917,10 +1165,6 @@
       <h2 class="contact-title">Vamos conversar sobre o seu projeto?</h2>
       <p class="contact-sub">Nossa equipe está pronta para apresentar a solução ideal para a sua realidade. Sem complicação.</p>
       <div class="contact-methods">
-        <a class="contact-item" href="https://wa.me/5583996750560" target="_blank">
-          <div class="ci-icon">📱</div>
-          <div><div class="ci-label">WhatsApp</div><div class="ci-value">(83) 99675-0560</div></div>
-        </a>
         <a class="contact-item" href="mailto:isaweresistemas@gmail.com">
           <div class="ci-icon">✉️</div>
           <div><div class="ci-label">E-mail</div><div class="ci-value">isaweresistemas@gmail.com</div></div>
@@ -929,16 +1173,11 @@
           <div class="ci-icon">🌐</div>
           <div><div class="ci-label">Site</div><div class="ci-value">www.isawere.com.br</div></div>
         </a>
-        <div class="contact-item" style="pointer-events:none;">
-          <div class="ci-icon">📍</div>
-          <div><div class="ci-label">Localização</div><div class="ci-value">Campina Grande — PB</div></div>
-        </div>
       </div>
       <div class="social-row">
         <a class="social-btn" href="https://www.youtube.com/@IsawereSistemas" target="_blank">▶ YouTube</a>
         <a class="social-btn" href="https://www.linkedin.com/company/isawere-sistemas" target="_blank">in LinkedIn</a>
         <a class="social-btn" href="https://www.instagram.com/isaweresistemas" target="_blank">📸 Instagram</a>
-        <a class="social-btn" href="https://wa.me/5583996750560" target="_blank">💬 WhatsApp</a>
       </div>
     </div>
 
@@ -1015,7 +1254,7 @@
    CAROUSEL
 ═══════════════════════════════════ */
 let current = 0;
-const TOTAL = 7;
+const TOTAL = 8;
 const track = document.getElementById('carouselTrack');
 const navEl = document.getElementById('carouselNav');
 
@@ -1065,6 +1304,19 @@ function switchTab(tabId) {
   }
   // scroll page to tab nav
   document.getElementById('tab-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return false;
+}
+
+/* ═══════════════════════════════════
+   EDITORA — TOAST "EM BREVE"
+═══════════════════════════════════ */
+let toastTimer = null;
+function emBreve(nome) {
+  const toast = document.getElementById('editoraToast');
+  toast.textContent = '🚧 ' + nome + ' está em desenvolvimento — em breve com novidades! Volte para conferir. 📚';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   return false;
 }
 
@@ -1124,7 +1376,7 @@ async function handleFormSubmit() {
     document.getElementById('formSucesso').style.display = 'block';
 
   } catch (err) {
-    alert('Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.');
+    alert('Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo e-mail.');
     btn.disabled = false;
     btn.textContent = 'Enviar Mensagem →';
   }
