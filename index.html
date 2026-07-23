@@ -479,30 +479,46 @@
   ══════════════════════════════ */
   .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════════════════════════════
+     MEGA SECTIONS (Soluções / Sistemas)
+  ══════════════════════════════ */
+  .mega-section { padding: 90px 5% 20px; }
+  .mega-header { text-align: center; max-width: 760px; margin: 0 auto 2.6rem; }
+  .mega-label {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 0.8rem;
+  }
+  .mega-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(2rem, 5.5vw, 3.4rem); letter-spacing: -1px; line-height: 1.08;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--white), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .mega-desc { color: var(--gray-soft); font-size: 1rem; line-height: 1.75; }
+  .mega-rule { width: 64px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--blue-bright), var(--cyan)); margin: 1.5rem auto 0; }
+
+  .sub-tab-nav { border-bottom: 1px solid rgba(45,140,255,0.15); margin-bottom: 2.6rem; }
+  .sub-tab-nav .tab-list { justify-content: center; }
+  @media (max-width: 860px) { .sub-tab-nav .tab-list { justify-content: flex-start; } }
+
+  .section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(45,140,255,0.28), transparent); margin: 10px 5% 0; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     HEADER
-════════════════════════════════════════════ -->
 <header>
   <div class="logo-text">ISAWERE</div>
   <nav class="header-nav">
-    <a href="#" onclick="switchTab('editora')">Isawere Editora</a>
-    <a href="#" onclick="switchTab('saude')">Saúde</a>
-    <a href="#" onclick="switchTab('educacao')">Educação</a>
-    <a href="#" onclick="switchTab('formacoes')">Formações</a>
-    <a href="#" onclick="switchTab('disciplinas')">Disciplinas</a>
-    <a href="#" onclick="switchTab('apps')">Aplicativos</a>
+    <a href="#solucoes">Soluções Educacionais</a>
+    <a href="#sistemas">Nossos Sistemas</a>
+    <a href="#porque">Por que ISAWERE</a>
     <a href="#contact">Contato</a>
   </nav>
   <a class="btn-cta" href="#contact">Fale Conosco</a>
 </header>
 
-<!-- ═══════════════════════════════════════════
-     CAROUSEL
-════════════════════════════════════════════ -->
 <div id="carousel">
   <div class="carousel-track" id="carouselTrack">
 
@@ -546,7 +562,7 @@
         <div class="cs-tag" style="background:rgba(45,140,255,0.12);color:#60c0ff;border:1px solid rgba(45,140,255,0.3);">🤖 Disciplina Escolar</div>
         <div class="cs-title">Robótica e <span style="background:linear-gradient(135deg,#60c0ff,#00e8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Educação<br>Tecnológica</span></div>
         <p class="cs-desc">Disciplina alinhada à BNCC com robótica,<br>programação e IA para o Fundamental 1 e 2.</p>
-        <a class="cs-btn" href="#" onclick="switchTab('disciplinas')" style="background:linear-gradient(135deg,#1a5fff,#60c0ff);color:#fff;">Saiba mais →</a>
+        <a class="cs-btn" href="#" onclick="switchTab('solucoes','disciplinas')" style="background:linear-gradient(135deg,#1a5fff,#60c0ff);color:#fff;">Saiba mais →</a>
       </div>
     </div>
 
@@ -557,7 +573,7 @@
         <div class="cs-tag" style="background:rgba(26,158,92,0.15);color:#2ecf80;border:1px solid rgba(26,158,92,0.3);">🎓 Formação Docente</div>
         <div class="cs-title">Educação <span style="background:linear-gradient(135deg,#2ecf80,#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Tecnológica</span></div>
         <p class="cs-desc">Formação para professores em Educação Tecnológica.<br>32h em 4 encontros, online ou presencial.</p>
-        <a class="cs-btn" href="#" onclick="switchTab('formacoes')" style="background:linear-gradient(135deg,#1a9e5c,#2ecf80);color:#fff;">Conhecer formação →</a>
+        <a class="cs-btn" href="#" onclick="switchTab('solucoes','formacoes')" style="background:linear-gradient(135deg,#1a9e5c,#2ecf80);color:#fff;">Conhecer formação →</a>
       </div>
     </div>
 
@@ -597,7 +613,7 @@
         <div class="cs-tag" style="background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.4);">📚 Nova Linha</div>
         <div class="cs-title">Isawere <span style="background:linear-gradient(135deg,var(--gold),#ffcc66);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Editora</span></div>
         <p class="cs-desc">Livros pedagógicos, desenhos para colorir, papercraft,<br>jogos e materiais prontos para educadores e escolas.</p>
-        <a class="cs-btn" href="#" onclick="switchTab('editora')" style="background:linear-gradient(135deg,#b87800,var(--gold));color:#fff;">📖 Conhecer a Editora →</a>
+        <a class="cs-btn" href="#" onclick="switchTab('solucoes','editora')" style="background:linear-gradient(135deg,#b87800,var(--gold));color:#fff;">📖 Conhecer a Editora →</a>
       </div>
     </div>
 
@@ -608,316 +624,42 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
-     TAB NAVIGATION
+     SECTION 1 — SOLUÇÕES EDUCACIONAIS TECNOLÓGICAS
 ════════════════════════════════════════════ -->
-<div id="tab-nav">
-  <div class="tab-list" role="tablist">
-    <button class="tab-btn" data-tab="editora" onclick="switchTab('editora')">
-      <span class="tab-icon">📚</span><span class="tab-label">Isawere Editora</span>
-      <span class="tab-highlight">NOVO</span>
-    </button>
-    <button class="tab-btn active" data-tab="saude" onclick="switchTab('saude')">
-      <span class="tab-icon">🩺</span><span class="tab-label">Saúde</span>
-    </button>
-    <button class="tab-btn" data-tab="educacao" onclick="switchTab('educacao')">
-      <span class="tab-icon">🏫</span><span class="tab-label">Educação</span>
-    </button>
-    <button class="tab-btn" data-tab="formacoes" onclick="switchTab('formacoes')">
-      <span class="tab-icon">🎓</span><span class="tab-label">Formações</span>
-    </button>
-    <button class="tab-btn" data-tab="disciplinas" onclick="switchTab('disciplinas')">
-      <span class="tab-icon">🤖</span><span class="tab-label">Disciplinas</span>
-      <span class="tab-highlight">PROMOÇÃO</span>
-    </button>
-    <button class="tab-btn" data-tab="apps" onclick="switchTab('apps')">
-      <span class="tab-icon">📱</span><span class="tab-label">Aplicativos</span>
-    </button>
-    <button class="tab-btn" data-tab="porque" onclick="switchTab('porque')">
-      <span class="tab-icon">⭐</span><span class="tab-label">Por que ISAWERE</span>
-    </button>
+<section class="mega-section" id="solucoes">
+  <div class="mega-header reveal">
+    <div class="mega-label">Área Educacional</div>
+    <h2 class="mega-title">Soluções Educacionais Tecnológicas</h2>
+    <p class="mega-desc">Da editora própria às disciplinas em sala de aula: um ecossistema completo para levar tecnologia, robótica e conteúdo de qualidade para dentro da sua escola.</p>
+    <div class="mega-rule"></div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════════
-     PANEL: SAÚDE
-════════════════════════════════════════════ -->
-<div class="tab-panel active" id="panel-saude">
-  <div class="panel-header reveal">
-    <div class="panel-label">Área da Saúde</div>
-    <h2 class="panel-title">Sistemas para Saúde & Clínicas</h2>
-    <p class="panel-desc">Soluções modernas para gestão de pacientes, consultas e clínicas — com agilidade, segurança e relatórios em tempo real.</p>
+  <div class="sub-tab-nav" id="tabnav-solucoes">
+    <div class="tab-list" role="tablist">
+      <button class="tab-btn active" data-group="solucoes" data-tab="editora" onclick="return switchTab('solucoes','editora')">
+        <span class="tab-icon">📚</span><span class="tab-label">Isawere Editora</span>
+        <span class="tab-highlight">NOVO</span>
+      </button>
+      <button class="tab-btn" data-group="solucoes" data-tab="formacoes" onclick="return switchTab('solucoes','formacoes')">
+        <span class="tab-icon">🎓</span><span class="tab-label">Formações Educacionais</span>
+      </button>
+      <button class="tab-btn" data-group="solucoes" data-tab="disciplinas" onclick="return switchTab('solucoes','disciplinas')">
+        <span class="tab-icon">🤖</span><span class="tab-label">Disciplinas Tecnológicas</span>
+        <span class="tab-highlight">PROMOÇÃO</span>
+      </button>
+      <button class="tab-btn" data-group="solucoes" data-tab="software" onclick="return switchTab('solucoes','software')">
+        <span class="tab-icon">🕹️</span><span class="tab-label">Software e Jogos Educacionais</span>
+      </button>
+      <button class="tab-btn" data-group="solucoes" data-tab="robo" onclick="return switchTab('solucoes','robo')">
+        <span class="tab-icon">🦾</span><span class="tab-label">Robô Interativo Educacional</span>
+      </button>
+      <button class="tab-btn" data-group="solucoes" data-tab="video3d" onclick="return switchTab('solucoes','video3d')">
+        <span class="tab-icon">🎬</span><span class="tab-label">Produção de Vídeos 3D</span>
+      </button>
+    </div>
   </div>
-  <div class="cards-grid">
 
-    <div class="card th-blue reveal">
-      <div class="card-icon">🩺</div>
-      <div class="card-name">ISAWERE Agendamentos</div>
-      <div class="card-tagline">Consultas & Exames Médicos</div>
-      <p class="card-desc">Gerencie filas, consultas e exames de forma simples, rápida e organizada — plataforma moderna para equipes de saúde.</p>
-      <ul class="card-features">
-        <li>Cadastro ágil de pacientes e encaminhamentos</li>
-        <li>Agendamentos individuais ou em lote</li>
-        <li>Comprovantes e listas para impressão</li>
-        <li>Relatórios e indicadores em tempo real</li>
-        <li>Envio de informações de agendamento por mensagem</li>
-      </ul>
-      <a class="card-link" href="https://www.youtube.com/watch?v=2AMZonJVXHM&t=3s" target="_blank">▶ Ver demonstração →</a>
-    </div>
-
-    <div class="card th-gold reveal">
-      <div class="card-icon">📋</div>
-      <div class="card-name">Prontuário Eletrônico</div>
-      <div class="card-tagline">Gestão de Clínicas & Consultórios</div>
-      <p class="card-desc">Administre sua clínica com inteligência. Histórico completo, agenda visual, faturamento e indicadores automáticos.</p>
-      <ul class="card-features">
-        <li>Cadastro com filtros inteligentes de pacientes</li>
-        <li>Histórico completo em uma única tela</li>
-        <li>Agenda visual e prática para toda a equipe</li>
-        <li>Faturamento e indicadores financeiros automáticos</li>
-        <li>Relatórios para decisões mais seguras</li>
-      </ul>
-      <a class="card-link" href="https://www.youtube.com/watch?v=Psy84PUhwu8" target="_blank">▶ Ver demonstração →</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANEL: EDUCAÇÃO
-════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-educacao">
-  <div class="panel-header reveal">
-    <div class="panel-label">Área da Educação</div>
-    <h2 class="panel-title">Sistemas para Escolas & Instituições</h2>
-    <p class="panel-desc">Do gerenciamento da secretaria escolar aos jogos educacionais — tecnologia pensada para transformar o ambiente educacional.</p>
-  </div>
-  <div class="cards-grid">
-
-    <div class="card th-cyan reveal">
-      <div class="card-icon">🏫</div>
-      <div class="card-name">Prático Escolar</div>
-      <div class="card-tagline">Secretaria & Gestão Escolar Completa</div>
-      <p class="card-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Rotinas administrativas e pedagógicas em um único lugar.</p>
-      <ul class="card-features">
-        <li>Atestados, calendário escolar e planejamentos</li>
-        <li>Comunicação interna entre professores e gestão</li>
-        <li>Plantão pedagógico e listas de alunos</li>
-        <li>Relatórios e indicadores gerenciais</li>
-        <li>Acesso responsivo: computador, tablet ou celular</li>
-      </ul>
-      <a class="card-link" href="https://www.youtube.com/watch?v=LX8vJSsw6xY&t=39s" target="_blank">▶ Ver demonstração →</a>
-    </div>
-
-    <div class="card th-green reveal">
-      <div class="card-icon">🎮</div>
-      <div class="card-name">School Games</div>
-      <div class="card-tagline">Escola Virtual Interativa</div>
-      <p class="card-desc">Ambiente virtual que simula a escola — o aluno navega pelos ambientes, faz quizzes por disciplina e acumula pontos.</p>
-      <ul class="card-features">
-        <li>Mapa interativo: direção, salas, cantina, quadra e biblioteca</li>
-        <li>Quizzes por disciplina com feedbacks automáticos</li>
-        <li>Sistema de pontos, energia e inventário (mochila)</li>
-        <li>Perguntas cadastradas pelos próprios professores</li>
-        <li>Acesso via celular, tablet ou computador</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar informações →</a>
-    </div>
-
-    <div class="card th-gold reveal" style="border-color:rgba(251,191,36,0.35);background:rgba(251,191,36,0.04);">
-      <div class="card-icon" style="background:rgba(251,191,36,0.18);">🎮</div>
-      <div class="card-name">Jogos Clássicos Gratuitos</div>
-      <div class="card-tagline" style="color:#fbbf24;">Plataforma de Jogos Educativos</div>
-      <p class="card-desc">Acesse nossa plataforma gratuita de jogos clássicos com fins educativos — diversão e aprendizagem para alunos de todas as idades, direto no navegador.</p>
-      <ul class="card-features" style="--check-color:#fbbf24;">
-        <li>Raciocínio, memória e lógica</li>
-        <li>Ação, aventura e criatividade</li>
-        <li>Clássicos educativos: School Game, Bolhas Baby e mais</li>
-        <li>100% gratuito — sem instalação</li>
-        <li>Funciona em celular, tablet e computador</li>
-      </ul>
-      <a class="card-link" href="jogos.html" style="background:rgba(251,191,36,0.18);color:#fbbf24;">🎮 Acessar plataforma de jogos →</a>
-    </div>
-
-    <div class="card th-teal reveal">
-      <div class="card-icon">🕹️</div>
-      <div class="card-name">Softwares & Jogos Educacionais</div>
-      <div class="card-tagline">Personalizado para sua Instituição</div>
-      <p class="card-desc">Desenvolvemos jogos e softwares educacionais sob medida para a realidade e currículo da sua escola — engajamento real com aprendizagem.</p>
-      <ul class="card-features">
-        <li>Jogos por disciplina e faixa etária</li>
-        <li>Conteúdo alinhado ao currículo da escola</li>
-        <li>Interface intuitiva para alunos de todas as idades</li>
-        <li>Acompanhamento de progresso e desempenho</li>
-        <li>100% web — sem instalação</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar proposta →</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANEL: FORMAÇÕES
-════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-formacoes">
-  <div class="panel-header reveal">
-    <div class="panel-label">Formações Docentes</div>
-    <h2 class="panel-title">Capacitação que transforma escolas</h2>
-    <p class="panel-desc">Formações práticas e objetivas para professores e equipes pedagógicas — online, presencial ou híbrido.</p>
-  </div>
-  <div class="cards-grid">
-
-    <div class="card th-edu reveal">
-      <div class="card-icon">🎓</div>
-      <div class="card-name">Formação: Educação Tecnológica</div>
-      <div class="card-tagline">Para Professores de Todos os Componentes Curriculares</div>
-      <p class="card-desc">Estrutura uma cultura tecnológica na escola, alinhando a instituição às diretrizes do MEC e integrando tecnologia ao currículo com intencionalidade.</p>
-      <ul class="card-features">
-        <li>Carga horária: 32h em 4 encontros (flexível)</li>
-        <li>Modalidade: online e presencial</li>
-        <li>Apps: Google Workspace, Canva, Padlet, Kahoot</li>
-        <li>Programas: Wordwall, Mentimeter, Scratch, Google Classroom</li>
-        <li>Investimento: sob consulta</li>
-      </ul>
-      <a class="card-link" href="#contact">Agendar visita →</a>
-    </div>
-
-    <div class="card th-orange reveal">
-      <div class="card-icon">🛠️</div>
-      <div class="card-name">Formação: Ferramentas de TI para Educadores</div>
-      <div class="card-tagline">Tecnologias para Gestão & Ensino</div>
-      <p class="card-desc">Capacitação prática em ferramentas digitais do dia a dia para professores, coordenadores e gestores — otimizando comunicação, planejamento e avaliação.</p>
-      <ul class="card-features">
-        <li>Google Drive, Docs, Sheets e Forms</li>
-        <li>Apresentações dinâmicas e recursos visuais</li>
-        <li>Criação de formulários e pesquisas pedagógicas</li>
-        <li>Gerenciamento de turmas e comunicação digital</li>
-        <li>Flexível — online ou presencial, sob demanda</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar informações →</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANEL: DISCIPLINAS
-════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-disciplinas">
-  <div class="panel-header reveal">
-    <div class="panel-label">Disciplinas Escolares</div>
-    <h2 class="panel-title">Inovação dentro da sala de aula</h2>
-    <p class="panel-desc">Disciplinas estruturadas e aplicadas nas escolas, preparando alunos para o mundo digital com base na BNCC.</p>
-  </div>
-  <div class="cards-grid">
-
-    <div class="card card-promo th-teal reveal">
-      <div class="card-icon">🤖</div>
-      <div class="card-name">Disciplina de Robótica</div>
-      <div class="card-tagline">Robótica & Educação Tecnológica — Prof. Ivan Rosas</div>
-
-      <!-- PROMO BANNER -->
-      <div class="promo-banner">
-        <span class="promo-icon">🎁</span>
-        <div><strong>Assine e ganhe um robô!</strong> Ao contratar a disciplina de Robótica, sua escola recebe um robô educacional para interagir com os estudantes em sala de aula.</div>
-      </div>
-
-      <p class="card-desc">Disciplina alinhada à BNCC que mobiliza robótica, programação e IA para desenvolver pensamento crítico e criatividade, preparando alunos para o mundo globalizado.</p>
-      <ul class="card-features">
-        <li><strong>Level 1 – Fund. 1:</strong> Personalização de códigos (Low Code) e lógica com blocos animados</li>
-        <li><strong>Level 2 – Fund. 2:</strong> Programação de jogos, criação de sites e robótica avançada</li>
-        <li>3 etapas: Conectar / Criar / Multiplicar</li>
-        <li>Infraestrutura: kits de robótica, notebooks e internet</li>
-        <li>Carga horária: 20 aulas/mês | Público: 1º ao 9º ano</li>
-      </ul>
-      <a class="card-link" href="#contact" style="background:rgba(245,166,35,0.18);color:var(--gold);">🎁 Quero esta oferta →</a>
-    </div>
-
-    <div class="card th-edu reveal">
-      <div class="card-icon">💻</div>
-      <div class="card-name">Educação Tecnológica</div>
-      <div class="card-tagline">Cultura Digital & Tecnologias Interdisciplinares</div>
-      <p class="card-desc">Adequação às novas exigências educacionais do MEC, integrando a tecnologia ao currículo com intencionalidade — sem exigir laboratório de informática no início.</p>
-      <ul class="card-features">
-        <li>Planejamento de aulas com Google Workspace, Canva, Kahoot e Scratch</li>
-        <li>Metodologias ativas e projetos interdisciplinares</li>
-        <li>Cultura digital e protagonismo estudantil</li>
-        <li>Impressora 3D aplicada em Ciências, Matemática, Arte e Robótica</li>
-        <li>Avaliação com instrumentos tecnológicos qualitativos</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar proposta →</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANEL: APLICATIVOS
-════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-apps">
-  <div class="panel-header reveal">
-    <div class="panel-label">Aplicativos & Sistemas Especializados</div>
-    <h2 class="panel-title">Soluções para outros segmentos</h2>
-    <p class="panel-desc">Além de saúde e educação, desenvolvemos sistemas sob medida para eventos, gestão administrativa e financeira.</p>
-  </div>
-  <div class="cards-grid">
-
-    <div class="card th-purple reveal">
-      <div class="card-icon">🎟️</div>
-      <div class="card-name">Isawere Eventos Pro</div>
-      <div class="card-tagline">Controle de Senhas & Ingressos para Eventos</div>
-      <p class="card-desc">Sistema completo para gerenciar entradas em shows, formaturas, festas e eventos de qualquer porte. Validação instantânea por QR Code, múltiplos operadores simultâneos e sincronização em nuvem via Google Sheets.</p>
-      <ul class="card-features">
-        <li>Geração e impressão de ingressos com QR Code</li>
-        <li>Validação na portaria em tempo real (celular ou computador)</li>
-        <li>Múltiplos operadores simultâneos com controle de acesso</li>
-        <li>Sincronização automática com Google Sheets</li>
-        <li>Relatórios e histórico completo de entradas</li>
-        <li>Funciona offline com sincronização posterior</li>
-      </ul>
-      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
-        <a class="card-link" href="https://www.isawere.com.br/eventos/" target="_blank">🎟️ Acessar o sistema →</a>
-        <a class="card-link" href="#contact" style="background:rgba(160,80,255,0.08);">Solicitar demonstração →</a>
-      </div>
-    </div>
-
-    <div class="card th-purple reveal">
-      <div class="card-icon">💍</div>
-      <div class="card-name">Gestão de Casamentos</div>
-      <div class="card-tagline">Organização Completa de Eventos</div>
-      <p class="card-desc">Organize cada detalhe do grande dia com tecnologia. Convidados, presentes, senhas e etapas do evento — tudo centralizado e acessível.</p>
-      <ul class="card-features">
-        <li>Geração e gerenciamento de senhas do evento</li>
-        <li>Lista de presentes com controle de entrega</li>
-        <li>Checklist completo das etapas da festa</li>
-        <li>Confirmação de presença de convidados</li>
-        <li>Painel visual para a equipe organizadora</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar informações →</a>
-    </div>
-
-    <div class="card th-rose reveal">
-      <div class="card-icon">📊</div>
-      <div class="card-name">Sistemas Administrativos & Financeiros</div>
-      <div class="card-tagline">Controle & Gestão para sua Empresa</div>
-      <p class="card-desc">Desenvolvemos sistemas de gestão administrativa e financeira personalizados para a realidade do seu negócio — controle total em uma plataforma web.</p>
-      <ul class="card-features">
-        <li>Controle de receitas, despesas e fluxo de caixa</li>
-        <li>Gestão de clientes, fornecedores e contratos</li>
-        <li>Relatórios gerenciais e indicadores de desempenho</li>
-        <li>Acesso multi-usuário com níveis de permissão</li>
-        <li>Personalizado conforme as necessidades da empresa</li>
-      </ul>
-      <a class="card-link" href="#contact">Solicitar proposta →</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANEL: ISAWERE EDITORA
-════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-editora">
+  <div class="tab-panel active" data-group="solucoes" id="panel-solucoes-editora">
   <div class="panel-header reveal">
     <div class="panel-label">Nova Linha de Produtos</div>
     <h2 class="panel-title">Isawere Editora</h2>
@@ -1091,14 +833,457 @@
     </div>
   </div>
 
-</div>
 
-<div id="editoraToast"></div>
+  </div>
+
+  <div class="tab-panel" data-group="solucoes" id="panel-solucoes-formacoes">
+  <div class="panel-header reveal">
+    <div class="panel-label">Formações Docentes</div>
+    <h2 class="panel-title">Capacitação que transforma escolas</h2>
+    <p class="panel-desc">Formações práticas e objetivas para professores e equipes pedagógicas — online, presencial ou híbrido.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card th-edu reveal">
+      <div class="card-icon">🎓</div>
+      <div class="card-name">Formação: Educação Tecnológica</div>
+      <div class="card-tagline">Para Professores de Todos os Componentes Curriculares</div>
+      <p class="card-desc">Estrutura uma cultura tecnológica na escola, alinhando a instituição às diretrizes do MEC e integrando tecnologia ao currículo com intencionalidade.</p>
+      <ul class="card-features">
+        <li>Carga horária: 32h em 4 encontros (flexível)</li>
+        <li>Modalidade: online e presencial</li>
+        <li>Apps: Google Workspace, Canva, Padlet, Kahoot</li>
+        <li>Programas: Wordwall, Mentimeter, Scratch, Google Classroom</li>
+        <li>Investimento: sob consulta</li>
+      </ul>
+      <a class="card-link" href="#contact">Agendar visita →</a>
+    </div>
+
+    <div class="card th-orange reveal">
+      <div class="card-icon">🛠️</div>
+      <div class="card-name">Formação: Ferramentas de TI para Educadores</div>
+      <div class="card-tagline">Tecnologias para Gestão & Ensino</div>
+      <p class="card-desc">Capacitação prática em ferramentas digitais do dia a dia para professores, coordenadores e gestores — otimizando comunicação, planejamento e avaliação.</p>
+      <ul class="card-features">
+        <li>Google Drive, Docs, Sheets e Forms</li>
+        <li>Apresentações dinâmicas e recursos visuais</li>
+        <li>Criação de formulários e pesquisas pedagógicas</li>
+        <li>Gerenciamento de turmas e comunicação digital</li>
+        <li>Flexível — online ou presencial, sob demanda</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
+    </div>
+
+  </div>
+
+  </div>
+
+  <div class="tab-panel" data-group="solucoes" id="panel-solucoes-disciplinas">
+  <div class="panel-header reveal">
+    <div class="panel-label">Disciplinas Escolares</div>
+    <h2 class="panel-title">Inovação dentro da sala de aula</h2>
+    <p class="panel-desc">Disciplinas estruturadas e aplicadas nas escolas, preparando alunos para o mundo digital com base na BNCC.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card card-promo th-teal reveal">
+      <div class="card-icon">🤖</div>
+      <div class="card-name">Disciplina de Robótica</div>
+      <div class="card-tagline">Robótica & Educação Tecnológica — Prof. Ivan Rosas</div>
+
+      <!-- PROMO BANNER -->
+      <div class="promo-banner">
+        <span class="promo-icon">🎁</span>
+        <div><strong>Assine e ganhe um robô!</strong> Ao contratar a disciplina de Robótica, sua escola recebe um robô educacional para interagir com os estudantes em sala de aula.</div>
+      </div>
+
+      <p class="card-desc">Disciplina alinhada à BNCC que mobiliza robótica, programação e IA para desenvolver pensamento crítico e criatividade, preparando alunos para o mundo globalizado.</p>
+      <ul class="card-features">
+        <li><strong>Level 1 – Fund. 1:</strong> Personalização de códigos (Low Code) e lógica com blocos animados</li>
+        <li><strong>Level 2 – Fund. 2:</strong> Programação de jogos, criação de sites e robótica avançada</li>
+        <li>3 etapas: Conectar / Criar / Multiplicar</li>
+        <li>Infraestrutura: kits de robótica, notebooks e internet</li>
+        <li>Carga horária: 20 aulas/mês | Público: 1º ao 9º ano</li>
+      </ul>
+      <a class="card-link" href="#contact" style="background:rgba(245,166,35,0.18);color:var(--gold);">🎁 Quero esta oferta →</a>
+    </div>
+
+    <div class="card th-edu reveal">
+      <div class="card-icon">💻</div>
+      <div class="card-name">Educação Tecnológica</div>
+      <div class="card-tagline">Cultura Digital & Tecnologias Interdisciplinares</div>
+      <p class="card-desc">Adequação às novas exigências educacionais do MEC, integrando a tecnologia ao currículo com intencionalidade — sem exigir laboratório de informática no início.</p>
+      <ul class="card-features">
+        <li>Planejamento de aulas com Google Workspace, Canva, Kahoot e Scratch</li>
+        <li>Metodologias ativas e projetos interdisciplinares</li>
+        <li>Cultura digital e protagonismo estudantil</li>
+        <li>Impressora 3D aplicada em Ciências, Matemática, Arte e Robótica</li>
+        <li>Avaliação com instrumentos tecnológicos qualitativos</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar proposta →</a>
+    </div>
+
+  </div>
+
+  </div>
+
+  <!-- PANEL: SOFTWARE E JOGOS EDUCACIONAIS -->
+  <div class="tab-panel" data-group="solucoes" id="panel-solucoes-software">
+    <div class="panel-header reveal">
+      <div class="panel-label">Desenvolvimento sob Medida</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Software e Jogos Educacionais</h3>
+      <p class="panel-desc">Criamos softwares e jogos educacionais personalizados para a realidade e o currículo da sua instituição.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-teal reveal">
+      <div class="card-icon">🕹️</div>
+      <div class="card-name">Softwares & Jogos Educacionais</div>
+      <div class="card-tagline">Personalizado para sua Instituição</div>
+      <p class="card-desc">Desenvolvemos jogos e softwares educacionais sob medida para a realidade e currículo da sua escola — engajamento real com aprendizagem.</p>
+      <ul class="card-features">
+        <li>Jogos por disciplina e faixa etária</li>
+        <li>Conteúdo alinhado ao currículo da escola</li>
+        <li>Interface intuitiva para alunos de todas as idades</li>
+        <li>Acompanhamento de progresso e desempenho</li>
+        <li>100% web — sem instalação</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar proposta →</a>
+    </div>
+    </div>
+  </div>
+
+  <!-- PANEL: ROBÔ INTERATIVO EDUCACIONAL -->
+  <div class="tab-panel" data-group="solucoes" id="panel-solucoes-robo">
+    <div class="panel-header reveal">
+      <div class="panel-label">Diversão que Ensina</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Robô Interativo Educacional</h3>
+      <p class="panel-desc">Tecnologia que transforma: um totem-robô interativo com jogos educativos, pensado para aprender brincando em qualquer ambiente.</p>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card card-promo th-teal reveal">
+        <div class="card-icon">🤖</div>
+        <div class="card-name">Robô Interativo Educacional</div>
+        <div class="card-tagline">Diversão que Ensina. Tecnologia que Transforma!</div>
+        <p class="card-desc">Um robô interativo com tela touch e jogos educativos — mais que um robô, um parceiro na educação. Estimula o aprendizado brincando e transforma momentos de espera em experiências leves e produtivas.</p>
+        <ul class="card-features">
+          <li><strong>Aprendizagem brincando:</strong> jogos que desenvolvem raciocínio lógico, memória e criatividade</li>
+          <li><strong>Espera mais tranquila:</strong> transforma a espera em experiências leves, divertidas e produtivas</li>
+          <li><strong>Desenvolvimento socioemocional:</strong> estimula paciência, cooperação, respeito às regras e empatia</li>
+          <li><strong>Uso consciente da tecnologia:</strong> alternativa segura e educativa ao uso excessivo de telas</li>
+          <li><strong>Estimula autonomia e foco:</strong> concentração, tomada de decisão e persistência</li>
+          <li><strong>Ambiente acolhedor e interativo:</strong> atraente e inclusivo para todas as idades</li>
+        </ul>
+        <a class="card-link" href="#contact" style="background:rgba(245,166,35,0.18);color:var(--gold);">📦 Peça já o seu →</a>
+      </div>
+
+      <div class="card th-blue reveal">
+        <div class="card-icon">📍</div>
+        <div class="card-name">Ideal para Diversos Ambientes</div>
+        <div class="card-tagline">Não é só para escolas</div>
+        <p class="card-desc">Além de escolas, o Robô Interativo Educacional encanta e engaja em qualquer espaço de convivência ou espera:</p>
+        <div class="why-pills" style="margin-top:0;margin-bottom:1.2rem;">
+          <div class="pill">✈️ Aeroportos</div>
+          <div class="pill">🛍️ Shoppings</div>
+          <div class="pill">🩺 Clínicas e Consultórios</div>
+          <div class="pill">🏢 Condomínios</div>
+          <div class="pill">🏫 Escolas</div>
+          <div class="pill">🎪 Eventos e Feiras</div>
+          <div class="pill">🏬 Empresas e Recepções</div>
+          <div class="pill">🎡 Parques e Espaços de Lazer</div>
+        </div>
+        <div class="promo-banner">
+          <span class="promo-icon">🎨</span>
+          <div>Fazemos também <strong>conteúdo e personagens personalizados</strong> para a história da sua instituição.</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray-soft);margin-bottom:1rem;">* O modelo pode sofrer ajustes de acordo com o investimento.</p>
+        <a class="card-link" href="#contact">Solicitar proposta →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL: PRODUÇÃO DE VÍDEOS 3D -->
+  <div class="tab-panel" data-group="solucoes" id="panel-solucoes-video3d">
+    <div class="panel-header reveal">
+      <div class="panel-label">Conteúdo Animado</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Produção de Vídeos 3D</h3>
+      <p class="panel-desc">Vídeos animados em 3D para tornar aulas, apresentações e campanhas ainda mais envolventes.</p>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card th-purple reveal">
+        <div class="card-icon">🎬</div>
+        <div class="card-name">Produção de Vídeos 3D</div>
+        <div class="card-tagline">Animação Educacional & Institucional</div>
+        <p class="card-desc">Produzimos vídeos em 3D personalizados — do roteiro à animação final — em parceria com a Tuti, para deixar aulas, apresentações e campanhas ainda mais envolventes.</p>
+        <ul class="card-features">
+          <li>Roteiro, modelagem e animação 3D sob medida</li>
+          <li>Vídeos pedagógicos, institucionais e promocionais</li>
+          <li>Entrega em alta qualidade para web e redes sociais</li>
+          <li>Produção em parceria com a Tuti</li>
+        </ul>
+        <!-- TODO: substituir pelo link real da Tuti -->
+        <a class="card-link" href="#contact" target="_blank">🎬 Conhecer a Tuti →</a>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
 
 <!-- ═══════════════════════════════════════════
-     PANEL: POR QUE ISAWERE
+     SECTION 2 — NOSSOS SISTEMAS
 ════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-porque">
+<section class="mega-section" id="sistemas">
+  <div class="mega-header reveal">
+    <div class="mega-label">Nossos Produtos</div>
+    <h2 class="mega-title">Nossos Sistemas</h2>
+    <p class="mega-desc">Plataformas prontas para escolas, clínicas e eventos — 100% web, sem instalação, com agilidade e segurança no dia a dia.</p>
+    <div class="mega-rule"></div>
+  </div>
+
+  <div class="sub-tab-nav" id="tabnav-sistemas">
+    <div class="tab-list" role="tablist">
+      <button class="tab-btn active" data-group="sistemas" data-tab="jogos" onclick="return switchTab('sistemas','jogos')">
+        <span class="tab-icon">🎮</span><span class="tab-label">Jogos Personalizados</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="pratico" onclick="return switchTab('sistemas','pratico')">
+        <span class="tab-icon">🏫</span><span class="tab-label">Prático Escolar</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="schoolgames" onclick="return switchTab('sistemas','schoolgames')">
+        <span class="tab-icon">🕹️</span><span class="tab-label">School Games</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="eventos" onclick="return switchTab('sistemas','eventos')">
+        <span class="tab-icon">🎟️</span><span class="tab-label">Isawere Eventos Pro</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="casamento" onclick="return switchTab('sistemas','casamento')">
+        <span class="tab-icon">💍</span><span class="tab-label">Gestão de Casamento e Eventos</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="agendamentos" onclick="return switchTab('sistemas','agendamentos')">
+        <span class="tab-icon">🩺</span><span class="tab-label">Isawere Agendamentos Médicos</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="prontuario" onclick="return switchTab('sistemas','prontuario')">
+        <span class="tab-icon">📋</span><span class="tab-label">Prontuário Eletrônico</span>
+      </button>
+      <button class="tab-btn" data-group="sistemas" data-tab="evolucao" onclick="return switchTab('sistemas','evolucao')">
+        <span class="tab-icon">📈</span><span class="tab-label">Isawere Evolução Clínica</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PANEL: JOGOS PERSONALIZADOS -->
+  <div class="tab-panel active" data-group="sistemas" id="panel-sistemas-jogos">
+    <div class="panel-header reveal">
+      <div class="panel-label">Plataforma de Jogos</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Jogos Personalizados</h3>
+      <p class="panel-desc">Jogos educativos prontos para usar agora, com a opção de desenvolvermos jogos sob medida para a sua escola.</p>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card th-gold reveal" style="border-color:rgba(251,191,36,0.35);background:rgba(251,191,36,0.04);">
+        <div class="card-icon" style="background:rgba(251,191,36,0.18);">🎮</div>
+        <div class="card-name">Jogos Personalizados</div>
+        <div class="card-tagline" style="color:#fbbf24;">Plataforma Gratuita + Jogos Sob Medida</div>
+        <p class="card-desc">Acesse gratuitamente nossa plataforma de jogos clássicos com fins educativos — diversão e aprendizagem para alunos de todas as idades, direto no navegador. Também desenvolvemos jogos personalizados para a realidade da sua instituição.</p>
+        <ul class="card-features" style="--check-color:#fbbf24;">
+          <li>Raciocínio, memória e lógica</li>
+          <li>Ação, aventura e criatividade</li>
+          <li>Clássicos educativos: School Game, Bolhas Baby e mais</li>
+          <li>100% gratuito — sem instalação</li>
+          <li>Funciona em celular, tablet e computador</li>
+        </ul>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <a class="card-link" href="jogos.html" style="background:rgba(251,191,36,0.18);color:#fbbf24;">🎮 Acessar plataforma de jogos →</a>
+          <a class="card-link" href="#contact" style="background:rgba(251,191,36,0.08);color:#fbbf24;">Solicitar jogo personalizado →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-pratico">
+    <div class="panel-header reveal">
+      <div class="panel-label">Gestão Escolar</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Prático Escolar</h3>
+      <p class="panel-desc">Secretaria e gestão escolar completa, muito além das matrículas.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-cyan reveal">
+      <div class="card-icon">🏫</div>
+      <div class="card-name">Prático Escolar</div>
+      <div class="card-tagline">Secretaria & Gestão Escolar Completa</div>
+      <p class="card-desc">Um sistema para toda a secretaria escolar — muito além das matrículas. Rotinas administrativas e pedagógicas em um único lugar.</p>
+      <ul class="card-features">
+        <li>Atestados, calendário escolar e planejamentos</li>
+        <li>Comunicação interna entre professores e gestão</li>
+        <li>Plantão pedagógico e listas de alunos</li>
+        <li>Relatórios e indicadores gerenciais</li>
+        <li>Acesso responsivo: computador, tablet ou celular</li>
+      </ul>
+      <a class="card-link" href="https://www.youtube.com/watch?v=LX8vJSsw6xY&t=39s" target="_blank">▶ Ver demonstração →</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-schoolgames">
+    <div class="panel-header reveal">
+      <div class="panel-label">Escola Virtual</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">School Games</h3>
+      <p class="panel-desc">Ambiente virtual gamificado que simula a escola, com quizzes por disciplina.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-green reveal">
+      <div class="card-icon">🎮</div>
+      <div class="card-name">School Games</div>
+      <div class="card-tagline">Escola Virtual Interativa</div>
+      <p class="card-desc">Ambiente virtual que simula a escola — o aluno navega pelos ambientes, faz quizzes por disciplina e acumula pontos.</p>
+      <ul class="card-features">
+        <li>Mapa interativo: direção, salas, cantina, quadra e biblioteca</li>
+        <li>Quizzes por disciplina com feedbacks automáticos</li>
+        <li>Sistema de pontos, energia e inventário (mochila)</li>
+        <li>Perguntas cadastradas pelos próprios professores</li>
+        <li>Acesso via celular, tablet ou computador</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-eventos">
+    <div class="panel-header reveal">
+      <div class="panel-label">Gestão de Eventos</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Isawere Eventos Pro</h3>
+      <p class="panel-desc">Controle de senhas e ingressos com validação por QR Code para eventos de qualquer porte.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-purple reveal">
+      <div class="card-icon">🎟️</div>
+      <div class="card-name">Isawere Eventos Pro</div>
+      <div class="card-tagline">Controle de Senhas & Ingressos para Eventos</div>
+      <p class="card-desc">Sistema completo para gerenciar entradas em shows, formaturas, festas e eventos de qualquer porte. Validação instantânea por QR Code, múltiplos operadores simultâneos e sincronização em nuvem via Google Sheets.</p>
+      <ul class="card-features">
+        <li>Geração e impressão de ingressos com QR Code</li>
+        <li>Validação na portaria em tempo real (celular ou computador)</li>
+        <li>Múltiplos operadores simultâneos com controle de acesso</li>
+        <li>Sincronização automática com Google Sheets</li>
+        <li>Relatórios e histórico completo de entradas</li>
+        <li>Funciona offline com sincronização posterior</li>
+      </ul>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <a class="card-link" href="https://www.isawere.com.br/eventos/" target="_blank">🎟️ Acessar o sistema →</a>
+        <a class="card-link" href="#contact" style="background:rgba(160,80,255,0.08);">Solicitar demonstração →</a>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-casamento">
+    <div class="panel-header reveal">
+      <div class="panel-label">Gestão de Eventos</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Gestão de Casamento e Eventos</h3>
+      <p class="panel-desc">Organização completa do grande dia: convidados, presentes, senhas e etapas do evento.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-purple reveal">
+      <div class="card-icon">💍</div>
+      <div class="card-name">Gestão de Casamento e Eventos</div>
+      <div class="card-tagline">Organização Completa de Eventos</div>
+      <p class="card-desc">Organize cada detalhe do grande dia com tecnologia. Convidados, presentes, senhas e etapas do evento — tudo centralizado e acessível.</p>
+      <ul class="card-features">
+        <li>Geração e gerenciamento de senhas do evento</li>
+        <li>Lista de presentes com controle de entrega</li>
+        <li>Checklist completo das etapas da festa</li>
+        <li>Confirmação de presença de convidados</li>
+        <li>Painel visual para a equipe organizadora</li>
+      </ul>
+      <a class="card-link" href="#contact">Solicitar informações →</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-agendamentos">
+    <div class="panel-header reveal">
+      <div class="panel-label">Sistemas para Saúde</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Isawere Agendamentos Médicos</h3>
+      <p class="panel-desc">Gestão ágil de filas, consultas e exames para equipes de saúde.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-blue reveal">
+      <div class="card-icon">🩺</div>
+      <div class="card-name">ISAWERE Agendamentos</div>
+      <div class="card-tagline">Consultas & Exames Médicos</div>
+      <p class="card-desc">Gerencie filas, consultas e exames de forma simples, rápida e organizada — plataforma moderna para equipes de saúde.</p>
+      <ul class="card-features">
+        <li>Cadastro ágil de pacientes e encaminhamentos</li>
+        <li>Agendamentos individuais ou em lote</li>
+        <li>Comprovantes e listas para impressão</li>
+        <li>Relatórios e indicadores em tempo real</li>
+        <li>Envio de informações de agendamento por mensagem</li>
+      </ul>
+      <a class="card-link" href="https://www.youtube.com/watch?v=2AMZonJVXHM&t=3s" target="_blank">▶ Ver demonstração →</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-prontuario">
+    <div class="panel-header reveal">
+      <div class="panel-label">Sistemas para Saúde</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Prontuário Eletrônico</h3>
+      <p class="panel-desc">Administração inteligente da clínica: histórico, agenda visual e faturamento.</p>
+    </div>
+    <div class="cards-grid">
+    <div class="card th-gold reveal">
+      <div class="card-icon">📋</div>
+      <div class="card-name">Prontuário Eletrônico</div>
+      <div class="card-tagline">Gestão de Clínicas & Consultórios</div>
+      <p class="card-desc">Administre sua clínica com inteligência. Histórico completo, agenda visual, faturamento e indicadores automáticos.</p>
+      <ul class="card-features">
+        <li>Cadastro com filtros inteligentes de pacientes</li>
+        <li>Histórico completo em uma única tela</li>
+        <li>Agenda visual e prática para toda a equipe</li>
+        <li>Faturamento e indicadores financeiros automáticos</li>
+        <li>Relatórios para decisões mais seguras</li>
+      </ul>
+      <a class="card-link" href="https://www.youtube.com/watch?v=Psy84PUhwu8" target="_blank">▶ Ver demonstração →</a>
+    </div>
+    </div>
+  </div>
+
+  <!-- PANEL: ISAWERE EVOLUÇÃO CLÍNICA -->
+  <div class="tab-panel" data-group="sistemas" id="panel-sistemas-evolucao">
+    <div class="panel-header reveal">
+      <div class="panel-label">Acompanhamento Clínico</div>
+      <h3 class="panel-title" style="font-size:clamp(1.4rem,2.4vw,1.9rem);">Isawere Evolução Clínica</h3>
+      <p class="panel-desc">Complementa o Prontuário Eletrônico com o registro estruturado da evolução de cada paciente ao longo do tratamento.</p>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card th-gold reveal">
+        <div class="card-icon">📈</div>
+        <div class="card-name">Isawere Evolução Clínica</div>
+        <div class="card-tagline">Acompanhamento e Evolução de Pacientes</div>
+        <p class="card-desc">Registre a evolução clínica de cada paciente de forma estruturada — histórico de atendimentos, condutas e resultados centralizados em um só lugar, integrados ao Prontuário Eletrônico.</p>
+        <ul class="card-features">
+          <li>Registro cronológico da evolução de cada paciente</li>
+          <li>Campos estruturados por especialidade</li>
+          <li>Histórico completo acessível em qualquer atendimento</li>
+          <li>Integração com o Prontuário Eletrônico</li>
+          <li>Relatórios de acompanhamento clínico</li>
+        </ul>
+        <a class="card-link" href="#contact">Solicitar demonstração →</a>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<div class="stripe"></div>
+
+<section id="porque" style="padding:90px 5%;">
   <div class="panel-header reveal">
     <div class="panel-label">Por que ISAWERE</div>
     <h2 class="panel-title">Tecnologia que resolve de verdade.</h2>
@@ -1151,13 +1336,11 @@
       </div>
     </div>
   </div>
-</div>
+
+</section>
 
 <div class="stripe"></div>
 
-<!-- ═══════════════════════════════════════════
-     CONTACT
-════════════════════════════════════════════ -->
 <section id="contact">
   <div class="contact-inner">
     <div class="reveal">
@@ -1194,27 +1377,25 @@
             <label>Interesse</label>
             <select id="f-solucao">
               <option value="">Selecione uma solução...</option>
-              <optgroup label="── Saúde ──">
-                <option>ISAWERE Agendamentos Médicos</option>
-                <option>Prontuário Eletrônico para Clínicas</option>
-              </optgroup>
-              <optgroup label="── Educação ──">
-                <option>Prático Escolar</option>
-                <option>School Games (Escola Virtual)</option>
-                <option>Softwares & Jogos Educacionais Personalizados</option>
-              </optgroup>
-              <optgroup label="── Formações ──">
+              <optgroup label="── Soluções Educacionais Tecnológicas ──">
+                <option>Isawere Editora</option>
                 <option>Formação: Educação Tecnológica</option>
                 <option>Formação: Ferramentas de TI para Educadores</option>
-              </optgroup>
-              <optgroup label="── Disciplinas ──">
                 <option>Disciplina de Robótica (+ Robô Grátis 🎁)</option>
                 <option>Disciplina de Educação Tecnológica</option>
+                <option>Software & Jogos Educacionais Personalizados</option>
+                <option>Robô Interativo Educacional</option>
+                <option>Produção de Vídeos 3D</option>
               </optgroup>
-              <optgroup label="── Aplicativos ──">
+              <optgroup label="── Nossos Sistemas ──">
+                <option>Jogos Personalizados</option>
+                <option>Prático Escolar</option>
+                <option>School Games (Escola Virtual)</option>
                 <option>Isawere Eventos Pro (Controle de Ingressos)</option>
-                <option>Gestão de Casamentos</option>
-                <option>Sistema Administrativo &amp; Financeiro</option>
+                <option>Gestão de Casamento e Eventos</option>
+                <option>Isawere Agendamentos Médicos</option>
+                <option>Prontuário Eletrônico</option>
+                <option>Isawere Evolução Clínica</option>
               </optgroup>
               <option>Tenho interesse em mais de uma solução</option>
             </select>
@@ -1233,7 +1414,7 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+
 <footer>
   <div class="footer-copy">
     © 2026 <span>ISAWERE Sistemas</span>. Todos os direitos reservados.<br>
@@ -1248,6 +1429,7 @@
     </div>
   </div>
 </footer>
+
 
 <script>
 /* ═══════════════════════════════════
@@ -1281,13 +1463,13 @@ carEl.addEventListener('mouseleave', () => { autoTimer = setInterval(() => goTo(
 /* ═══════════════════════════════════
    TAB SYSTEM
 ═══════════════════════════════════ */
-function switchTab(tabId) {
-  // hide all panels
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  // deactivate all buttons
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  // activate target
-  const panel = document.getElementById('panel-' + tabId);
+function switchTab(group, tabId) {
+  // hide all panels within this group only
+  document.querySelectorAll('.tab-panel[data-group="' + group + '"]').forEach(p => p.classList.remove('active'));
+  // deactivate all buttons within this group only
+  document.querySelectorAll('.tab-btn[data-group="' + group + '"]').forEach(b => b.classList.remove('active'));
+  // activate target panel
+  const panel = document.getElementById('panel-' + group + '-' + tabId);
   if (panel) {
     panel.classList.add('active');
     // re-trigger reveal animations inside the panel
@@ -1296,14 +1478,16 @@ function switchTab(tabId) {
       setTimeout(() => revealObserver.observe(el), 10);
     });
   }
-  const btn = document.querySelector('[data-tab="' + tabId + '"]');
+  // activate target button
+  const btn = document.querySelector('.tab-btn[data-group="' + group + '"][data-tab="' + tabId + '"]');
   if (btn) {
     btn.classList.add('active');
     // scroll tab into view on mobile
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
-  // scroll page to tab nav
-  document.getElementById('tab-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // scroll page to this group's tab nav
+  const nav = document.getElementById('tabnav-' + group);
+  if (nav) nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return false;
 }
 
@@ -1381,6 +1565,7 @@ async function handleFormSubmit() {
     btn.textContent = 'Enviar Mensagem →';
   }
 }
+
 </script>
 </body>
 </html>
