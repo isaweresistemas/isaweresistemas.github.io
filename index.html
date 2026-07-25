@@ -483,7 +483,8 @@
   /* ══════════════════════════════
      MEGA SECTIONS (Soluções / Sistemas)
   ══════════════════════════════ */
-  .mega-section { padding: 90px 5% 20px; }
+  .mega-section { padding: 90px 5% 20px; display: none; }
+  .mega-section.mega-active { display: block; }
   .mega-header { text-align: center; max-width: 760px; margin: 0 auto 2.6rem; }
   .mega-label {
     font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
@@ -504,6 +505,129 @@
   @media (max-width: 860px) { .sub-tab-nav .tab-list { justify-content: flex-start; } }
 
   .section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(45,140,255,0.28), transparent); margin: 10px 5% 0; }
+
+  /* ══════════════════════════════
+     MEGA SWITCH (top-level selector)
+  ══════════════════════════════ */
+  .mega-switch { padding: 44px 5% 6px; background: #030a1e; }
+  .mega-switch-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem;
+    max-width: 1080px; margin: 0 auto;
+  }
+  @media (max-width: 760px) { .mega-switch-grid { grid-template-columns: 1fr; } }
+  .mega-tile {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+    text-align: left; padding: 1.5rem 1.7rem; border-radius: 20px;
+    border: 1px solid rgba(45,140,255,0.18); background: rgba(255,255,255,0.03);
+    cursor: pointer; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
+    font-family: 'DM Sans', sans-serif; width: 100%;
+  }
+  .mega-tile:hover { border-color: rgba(45,140,255,0.4); transform: translateY(-2px); }
+  .mega-tile-icon { font-size: 1.6rem; }
+  .mega-tile-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); }
+  .mega-tile-desc { font-size: 0.82rem; color: var(--gray-soft); line-height: 1.5; }
+  .mega-tile-arrow {
+    margin-top: 0.3rem; font-size: 0.78rem; font-weight: 700; color: var(--cyan);
+    opacity: 0; transform: translateX(-4px); transition: opacity 0.25s, transform 0.25s;
+  }
+  .mega-tile.active {
+    border-color: var(--cyan); background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(26,95,255,0.05));
+    box-shadow: 0 8px 30px rgba(0,212,255,0.12);
+  }
+  .mega-tile.active .mega-tile-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ══════════════════════════════
+     LIGHT THEME
+     (aplicado a tudo, exceto o cabeçalho fixo)
+  ══════════════════════════════ */
+  .light-theme { background: linear-gradient(180deg, #f4f7fc 0%, #eef2f9 100%); color: #16213e; }
+  /* #id selectors elsewhere in the sheet are more specific than .light-theme alone, so re-assert here */
+  #carousel.light-theme { background: linear-gradient(180deg, #f4f7fc 0%, #eef2f9 100%); }
+  #contact.light-theme { background: linear-gradient(180deg, #f4f7fc 0%, #eef2f9 100%); }
+
+  /* mega section titles */
+  .light-theme .mega-label { color: var(--blue-bright); }
+  .light-theme .mega-title {
+    background: linear-gradient(135deg, #0a1e40, #1a5fff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .light-theme .mega-desc { color: #5a6785; }
+  .light-theme .mega-rule { background: linear-gradient(90deg, var(--blue-bright), #0a1e40); }
+
+  /* sub-tabs */
+  .light-theme .sub-tab-nav { border-bottom-color: rgba(26,95,255,0.15); }
+  .light-theme .tab-btn { color: #5a6785; }
+  .light-theme .tab-btn:hover { color: #0a1e40; }
+  .light-theme .tab-btn.active { color: #0a1e40; }
+  .light-theme .tab-btn .tab-label { color: inherit; }
+  .light-theme .tab-btn.active .tab-label { color: #0a1e40; }
+
+  /* panels */
+  .light-theme .panel-label { color: var(--blue-bright); }
+  .light-theme .panel-title { color: #0a1e40; }
+  .light-theme .panel-desc { color: #5a6785; }
+
+  /* cards */
+  .light-theme .card { background: #ffffff; border-color: rgba(26,95,255,0.12); box-shadow: 0 4px 20px rgba(20,40,80,0.05); }
+  .light-theme .card:hover { border-color: rgba(26,95,255,0.32); box-shadow: 0 14px 40px rgba(26,95,255,0.12); }
+  .light-theme .card-name { color: #0a1e40; }
+  .light-theme .card-desc { color: #5a6785; }
+  .light-theme .card-features li { color: #33415c; }
+  .light-theme .promo-banner { background: linear-gradient(135deg, rgba(245,166,35,0.14), rgba(245,166,35,0.04)); }
+  .light-theme .pill { background: rgba(26,95,255,0.08); border-color: rgba(26,95,255,0.22); color: var(--blue-bright); }
+  .light-theme .card.card-promo { background: rgba(245,166,35,0.06); }
+
+  /* editora catalog chips */
+  .light-theme .editora-chip.soon { background: rgba(26,95,255,0.03); border-color: rgba(90,103,133,0.35); color: #5a6785; }
+  .light-theme .editora-chip.soon:hover { border-color: rgba(90,103,133,0.6); color: #33415c; }
+  .light-theme .editora-chip.soon .soon-tag { background: rgba(90,103,133,0.15); }
+
+  /* "por que" benefits */
+  .light-theme .benefit { background: #ffffff; border-color: rgba(26,95,255,0.12); }
+  .light-theme .benefit:hover { border-color: rgba(26,95,255,0.3); }
+  .light-theme .benefit-desc { color: #5a6785; }
+
+  /* mega switch tiles */
+  .light-theme.mega-switch, .mega-switch.light-theme { background: linear-gradient(180deg, #f4f7fc 0%, #eef2f9 100%); }
+  .light-theme .mega-tile { background: #ffffff; border-color: rgba(26,95,255,0.15); }
+  .light-theme .mega-tile:hover { border-color: rgba(26,95,255,0.35); transform: translateY(-2px); }
+  .light-theme .mega-tile-title { color: #0a1e40; }
+  .light-theme .mega-tile-desc { color: #5a6785; }
+  .light-theme .mega-tile.active {
+    border-color: var(--blue-bright);
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(26,95,255,0.04));
+    box-shadow: 0 8px 24px rgba(26,95,255,0.12);
+  }
+  .light-theme .mega-tile.active .mega-tile-title {
+    background: linear-gradient(135deg, #0a1e40, var(--blue-bright));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* carousel */
+  .light-theme .cs-desc { color: #5a6785; }
+  .light-theme .carousel-arrow { background: rgba(10,30,70,0.05); border-color: rgba(10,30,70,0.14); color: #0a1e40; }
+  .light-theme .carousel-arrow:hover { background: rgba(26,95,255,0.14); }
+  .light-theme .carousel-dot { background: rgba(10,30,70,0.2); }
+  .light-theme .carousel-dot.active { background: var(--blue-bright); }
+
+  /* contact section */
+  .light-theme .contact-sub { color: #5a6785; }
+  .light-theme .contact-item { background: #ffffff; border-color: rgba(26,95,255,0.14); color: #16213e; }
+  .light-theme .contact-item:hover { background: rgba(26,95,255,0.05); border-color: rgba(26,95,255,0.35); }
+  .light-theme .ci-label { color: #5a6785; }
+  .light-theme .form-box { background: #ffffff; border-color: rgba(26,95,255,0.15); }
+  .light-theme .form-group label { color: #5a6785; }
+  .light-theme .form-group input,
+  .light-theme .form-group select,
+  .light-theme .form-group textarea {
+    background: #f4f7fc; border-color: rgba(26,95,255,0.18); color: #16213e;
+  }
+  .light-theme .form-group input::placeholder,
+  .light-theme .form-group textarea::placeholder { color: rgba(90,103,133,0.55); }
+  .light-theme .form-group input:focus,
+  .light-theme .form-group select:focus,
+  .light-theme .form-group textarea:focus { border-color: var(--blue-electric); background: #ffffff; }
+  .light-theme .form-group select option { background: #ffffff; color: #16213e; }
 </style>
 </head>
 <body>
@@ -511,20 +635,20 @@
 <header>
   <div class="logo-text">ISAWERE</div>
   <nav class="header-nav">
-    <a href="#solucoes">Soluções Educacionais</a>
-    <a href="#sistemas">Nossos Sistemas</a>
+    <a href="#solucoes" onclick="switchMega('solucoes')">Soluções Educacionais</a>
+    <a href="#sistemas" onclick="switchMega('sistemas')">Nossos Sistemas</a>
     <a href="#porque">Por que ISAWERE</a>
     <a href="#contact">Contato</a>
   </nav>
   <a class="btn-cta" href="#contact">Fale Conosco</a>
 </header>
 
-<div id="carousel">
+<div id="carousel" class="light-theme">
   <div class="carousel-track" id="carouselTrack">
 
     <!-- Slide 1 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(5,10,40,0.97) 45%,rgba(26,95,255,0.10) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(26,95,255,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.15);color:var(--blue-electric);border:1px solid rgba(45,140,255,0.3);">🩺 Sistema de Saúde</div>
         <div class="cs-title">ISAWERE<br><span style="background:linear-gradient(135deg,var(--blue-electric),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Agendamentos Médicos</span></div>
@@ -535,7 +659,7 @@
 
     <!-- Slide 2 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(5,18,38,0.97) 45%,rgba(0,180,200,0.08) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(0,180,200,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">🏫 Gestão Escolar</div>
         <div class="cs-title">Prático <span style="background:linear-gradient(135deg,var(--cyan),#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Escolar</span></div>
@@ -546,7 +670,7 @@
 
     <!-- Slide 3 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(20,10,0,0.97) 45%,rgba(245,166,35,0.07) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(245,166,35,0.12) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.3);">📋 Clínicas & Consultórios</div>
         <div class="cs-title">Prontuário <span style="background:linear-gradient(135deg,var(--gold),#ffcc66);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Eletrônico</span></div>
@@ -557,7 +681,7 @@
 
     <!-- Slide 4 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(0,8,20,0.97) 45%,rgba(0,160,255,0.07) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(0,160,255,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(45,140,255,0.12);color:#60c0ff;border:1px solid rgba(45,140,255,0.3);">🤖 Disciplina Escolar</div>
         <div class="cs-title">Robótica e <span style="background:linear-gradient(135deg,#60c0ff,#00e8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Educação<br>Tecnológica</span></div>
@@ -568,7 +692,7 @@
 
     <!-- Slide 5 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(0,14,6,0.97) 45%,rgba(26,158,92,0.07) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(26,158,92,0.10) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(26,158,92,0.15);color:#2ecf80;border:1px solid rgba(26,158,92,0.3);">🎓 Formação Docente</div>
         <div class="cs-title">Educação <span style="background:linear-gradient(135deg,#2ecf80,#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Tecnológica</span></div>
@@ -579,13 +703,13 @@
 
     <!-- Slide 6 — Eventos Pro -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.95) 0%,rgba(100,30,180,0.18) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.92) 0%,rgba(140,60,220,0.14) 100%);"></div>
       <div class="cs-content" style="max-width:660px;">
         <div class="cs-tag" style="background:rgba(160,80,255,0.15);color:#c084fc;border:1px solid rgba(160,80,255,0.35);">🎟️ Novo — Gestão de Eventos</div>
         <div class="cs-title">
-          <span style="background:linear-gradient(135deg,var(--white),#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Isawere Eventos Pro</span>
+          <span style="background:linear-gradient(135deg,#0a1e40,#a050ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Isawere Eventos Pro</span>
         </div>
-        <p class="cs-desc" style="color:var(--gray-light);">Controle de ingressos para shows, formaturas e eventos.<br>Validação por QR Code e sincronização em nuvem,<br>direto do celular ou computador.</p>
+        <p class="cs-desc" style="color:#5a6785;">Controle de ingressos para shows, formaturas e eventos.<br>Validação por QR Code e sincronização em nuvem,<br>direto do celular ou computador.</p>
         <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
           <a class="cs-btn" href="https://www.isawere.com.br/eventos/" target="_blank" style="background:linear-gradient(135deg,#7c3aed,#c084fc);color:#fff;">🎟️ Acessar o sistema →</a>
           <a class="cs-btn" href="#contact" style="background:rgba(160,80,255,0.15);color:#c084fc;border:1px solid rgba(160,80,255,0.35);">Solicitar demonstração</a>
@@ -595,20 +719,20 @@
 
     <!-- Slide 7 -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(2,8,28,0.93) 0%,rgba(26,95,255,0.10) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.92) 0%,rgba(26,95,255,0.12) 100%);"></div>
       <div class="cs-content" style="max-width:660px;">
         <div class="cs-tag" style="background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">🌐 Acesse Agora</div>
         <div class="cs-title" style="font-size:clamp(1.4rem,5vw,3rem);">
-          <span style="background:linear-gradient(135deg,var(--white),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">www.isawere.com.br</span>
+          <span style="background:linear-gradient(135deg,#0a1e40,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">www.isawere.com.br</span>
         </div>
-        <p class="cs-desc" style="color:var(--gray-light);">Tecnologia que organiza e transforma.<br>Sistemas para saúde, educação e muito mais.</p>
+        <p class="cs-desc" style="color:#5a6785;">Tecnologia que organiza e transforma.<br>Sistemas para saúde, educação e muito mais.</p>
         <a class="cs-btn" href="https://www.isawere.com.br" target="_blank" style="background:linear-gradient(135deg,var(--blue-bright),var(--cyan));color:#fff;">Visitar o site →</a>
       </div>
     </div>
 
     <!-- Slide 8 — Isawere Editora -->
     <div class="carousel-slide">
-      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(20,12,0,0.97) 45%,rgba(245,166,35,0.09) 100%);"></div>
+      <div class="cs-overlay" style="background:linear-gradient(135deg,rgba(255,255,255,0.94) 45%,rgba(245,166,35,0.13) 100%);"></div>
       <div class="cs-content">
         <div class="cs-tag" style="background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.4);">📚 Nova Linha</div>
         <div class="cs-title">Isawere <span style="background:linear-gradient(135deg,var(--gold),#ffcc66);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Editora</span></div>
@@ -624,9 +748,29 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
+     MEGA SWITCH — escolha entre as duas áreas
+════════════════════════════════════════════ -->
+<div class="mega-switch light-theme">
+  <div class="mega-switch-grid">
+    <button class="mega-tile active" data-mega="solucoes" onclick="return switchMega('solucoes')">
+      <div class="mega-tile-icon">🎓</div>
+      <div class="mega-tile-title">Soluções Educacionais Tecnológicas</div>
+      <div class="mega-tile-desc">Editora, formações, disciplinas, robô interativo e vídeos 3D.</div>
+      <div class="mega-tile-arrow">Ver soluções ↓</div>
+    </button>
+    <button class="mega-tile" data-mega="sistemas" onclick="return switchMega('sistemas')">
+      <div class="mega-tile-icon">💻</div>
+      <div class="mega-tile-title">Nossos Sistemas</div>
+      <div class="mega-tile-desc">Jogos, gestão escolar, eventos, casamentos e sistemas de saúde.</div>
+      <div class="mega-tile-arrow">Ver sistemas ↓</div>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      SECTION 1 — SOLUÇÕES EDUCACIONAIS TECNOLÓGICAS
 ════════════════════════════════════════════ -->
-<section class="mega-section" id="solucoes">
+<section class="mega-section light-theme mega-active" id="solucoes">
   <div class="mega-header reveal">
     <div class="mega-label">Área Educacional</div>
     <h2 class="mega-title">Soluções Educacionais Tecnológicas</h2>
@@ -996,7 +1140,7 @@
           <span class="promo-icon">🎨</span>
           <div>Fazemos também <strong>conteúdo e personagens personalizados</strong> para a história da sua instituição.</div>
         </div>
-        <p style="font-size:0.78rem;color:var(--gray-soft);margin-bottom:1rem;">* O modelo pode sofrer ajustes de acordo com o investimento.</p>
+        <p style="font-size:0.78rem;color:#5a6785;margin-bottom:1rem;">* O modelo pode sofrer ajustes de acordo com o investimento.</p>
         <a class="card-link" href="#contact">Solicitar proposta →</a>
       </div>
 
@@ -1032,12 +1176,10 @@
 
 </section>
 
-<div class="section-divider"></div>
-
 <!-- ═══════════════════════════════════════════
      SECTION 2 — NOSSOS SISTEMAS
 ════════════════════════════════════════════ -->
-<section class="mega-section" id="sistemas">
+<section class="mega-section light-theme" id="sistemas">
   <div class="mega-header reveal">
     <div class="mega-label">Nossos Produtos</div>
     <h2 class="mega-title">Nossos Sistemas</h2>
@@ -1283,7 +1425,7 @@
 
 <div class="stripe"></div>
 
-<section id="porque" style="padding:90px 5%;">
+<section id="porque" class="light-theme" style="padding:90px 5%;">
   <div class="panel-header reveal">
     <div class="panel-label">Por que ISAWERE</div>
     <h2 class="panel-title">Tecnologia que resolve de verdade.</h2>
@@ -1291,7 +1433,7 @@
   </div>
   <div class="why-inner">
     <div class="reveal">
-      <p style="color:var(--gray-soft);line-height:1.75;font-size:0.95rem;">A ISAWERE Sistemas nasceu em Campina Grande — PB, com o propósito de oferecer tecnologia de qualidade para escolas, clínicas e empresas de todos os tamanhos. Cada solução é desenvolvida com foco em quem realmente usa: professores, secretárias, médicos, gestores.</p>
+      <p style="color:#5a6785;line-height:1.75;font-size:0.95rem;">A ISAWERE Sistemas nasceu em Campina Grande — PB, com o propósito de oferecer tecnologia de qualidade para escolas, clínicas e empresas de todos os tamanhos. Cada solução é desenvolvida com foco em quem realmente usa: professores, secretárias, médicos, gestores.</p>
       <div class="why-pills">
         <div class="pill">100% Web</div>
         <div class="pill">Sem instalação</div>
@@ -1341,7 +1483,7 @@
 
 <div class="stripe"></div>
 
-<section id="contact">
+<section id="contact" class="light-theme">
   <div class="contact-inner">
     <div class="reveal">
       <div class="contact-label-sm">Entre em Contato</div>
@@ -1461,9 +1603,30 @@ carEl.addEventListener('mouseenter', () => clearInterval(autoTimer));
 carEl.addEventListener('mouseleave', () => { autoTimer = setInterval(() => goTo(current + 1), 3500); });
 
 /* ═══════════════════════════════════
+   MEGA SWITCH (Soluções / Sistemas)
+═══════════════════════════════════ */
+function switchMega(mega) {
+  document.querySelectorAll('.mega-section').forEach(s => s.classList.remove('mega-active'));
+  document.querySelectorAll('.mega-tile').forEach(t => t.classList.remove('active'));
+  const sec = document.getElementById(mega);
+  if (sec) {
+    sec.classList.add('mega-active');
+    sec.querySelectorAll('.reveal').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => revealObserver.observe(el), 10);
+    });
+  }
+  const tile = document.querySelector('.mega-tile[data-mega="' + mega + '"]');
+  if (tile) tile.classList.add('active');
+  return false;
+}
+
+/* ═══════════════════════════════════
    TAB SYSTEM
 ═══════════════════════════════════ */
 function switchTab(group, tabId) {
+  // make sure the right mega-section (Soluções / Sistemas) is visible first
+  switchMega(group);
   // hide all panels within this group only
   document.querySelectorAll('.tab-panel[data-group="' + group + '"]').forEach(p => p.classList.remove('active'));
   // deactivate all buttons within this group only
